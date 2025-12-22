@@ -57,7 +57,40 @@ function add(){
 function msg(t){
   document.getElementById("msg").innerText = t;
 }
-</script>
+<script>
+let email = localStorage.getItem("logado");
+
+if(email !== "admin@admin.com"){
+  alert("Acesso negado");
+  window.location.href = "index.html";
+}
+</script><script>
+let email = localStorage.getItem("logado");
+
+if(email !== "admin@admin.com"){
+  alert("Acesso negado");
+  window.location.href = "index.html";
+}
+
+function add(){
+  let emailUser = document.getElementById("email").value;
+  let c = parseInt(document.getElementById("creditos").value);
+
+  let users = JSON.parse(localStorage.getItem("users")) || {};
+
+  if(users[emailUser]){
+    users[emailUser].creditos += c;
+    localStorage.setItem("users", JSON.stringify(users));
+    msg("Créditos adicionados");
+  } else {
+    msg("Usuário não encontrado");
+  }
+}
+
+function msg(t){
+  document.getElementById("msg").innerText = t;
+}
+  </script>
 
 </body>
 </html>
