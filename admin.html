@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Admin</title>
+</head>
+<body>
+
+<h2>Painel Admin</h2>
+
+<input id="dias" placeholder="Dias de validade"><br><br>
+<input id="creditos" placeholder="Créditos"><br><br>
+
+<select id="nivel">
+  <option value="FREE">FREE</option>
+  <option value="PREMIUM">PREMIUM</option>
+</select>
+<br><br>
+
+<button onclick="gerar()">Gerar Key</button>
+
+<p id="out"></p>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+/* 🔥 COLE SEU FIREBASE AQUI */
+const firebaseConfig = {
+  apiKey: "SUA_API_KEY",
+  authDomain: "SEU_AUTH_DOMAIN",
+  projectId: "SEU_PROJECT_ID"
+};
+/* 🔥 FIM */
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.gerar = async () => {
+  const d = parseInt(dias.value);
+  const c = parseInt(creditos.value);
+  const n = nivel.value;
+
+  if(!d || !c){
+    out.innerText = "Preencha todos os campos";
+    return;
+  }
+
+  const key = "PRO-" + Math.random().toString(36).substr(2,6).toUpperCase();
+
+  await setDoc(doc(db,"keys",key),{
+    level: n,
+    credits: c,
+    expires: Date.now() + d * 86400000
+  });
+
+  out.innerText = "✅ Key criada: " + key;
+};
+</script>
+
+</body>
+</html>
