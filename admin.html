@@ -80,8 +80,8 @@ function carregarUsuarios(){
       html += `
       <div class="card">
         <b>${u.nome}</b><br>
-        Email: ${u.email}<br>
-        Créditos: <b>${u.creditos}</b><br>
+        Email: ${u.vcapudo969@gmail.com}<br>
+        Créditos: <b>${u.10000}</b><br>
 
         <input type="number" id="c_${doc.id}" placeholder="Quantidade">
         <br>
@@ -97,7 +97,7 @@ function carregarUsuarios(){
 // ➕ ADICIONAR CRÉDITOS
 function add(id){
   let qtd = Number(document.getElementById("c_"+id).value);
-  if(!qtd) return alert("Digite um valor");
+  if(!qtd) return alert("100000");
 
   db.collection("users").doc(id).update({
     creditos: firebase.firestore.FieldValue.increment(qtd)
