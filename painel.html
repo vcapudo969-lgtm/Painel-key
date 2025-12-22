@@ -1,1 +1,40 @@
+<h2>Painel</h2>
+<p id="nivel"></p>
+<p id="creditos"></p>
 
+<button onclick="usar()">Usar recurso (-1)</button>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "SUA_API_KEY",
+  authDomain: "SEU_AUTH_DOMAIN",
+  projectId: "SEU_PROJECT_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const level = localStorage.getItem("level");
+const credits = parseInt(localStorage.getItem("credits"));
+const key = localStorage.getItem("key");
+
+nivel.innerText = "Plano: " + level;
+creditos.innerText = "Créditos: " + credits;
+
+window.usar = async () => {
+  if(credits <= 0){
+    alert("Sem créditos");
+    return;
+  }
+
+  await updateDoc(doc(db,"keys",key), {
+    credits: increment(-1)
+  });
+
+  localStorage.setItem("credits", credits - 1);
+  location.reload();
+};
+    </script>
