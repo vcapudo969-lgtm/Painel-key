@@ -1,238 +1,283 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+  <!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Painel Pdr Cheats</title>
+  <meta charset="UTF-8" />
+  <title>Painel - Gerar Keys</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
 
-<style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#0b0b0b;
-  color:white;
-  display:flex;
-}
-.sidebar{
-  width:250px;
-  background:#070707;
-  height:100vh;
-  padding:15px;
-  overflow-y:auto;
-}
-.sidebar h3{color:#22c55e}
-.sidebar a{
-  display:block;
-  padding:10px;
-  color:#ccc;
-  text-decoration:none;
-  border-radius:6px;
-  margin-bottom:5px;
-  cursor:pointer;
-}
-.sidebar a:hover,.sidebar a.active{
-  background:#111;
-  color:white;
-}
-.user{
-  position:absolute;
-  bottom:10px;
-  width:220px;
-}
-.logout{
-  background:#7f1d1d;
-  padding:10px;
-  border-radius:6px;
-  margin-top:10px;
-  cursor:pointer;
-  text-align:center;
-}
-.main{
-  flex:1;
-  padding:20px;
-}
-.tab-content{display:none}
-.tab-content.active{display:block}
-.card{
-  max-width:600px;
-  background:#111;
-  padding:20px;
-  border-radius:12px;
-  margin-bottom:20px;
-}
-select,input,button,textarea{
-  width:100%;
-  padding:10px;
-  margin:6px 0 12px;
-  border:none;
-  border-radius:8px;
-  background:#1a1a1a;
-  color:white;
-}
-button{
-  background:#22c55e;
-  font-weight:bold;
-  cursor:pointer;
-}
-.info{
-  background:#020617;
-  padding:10px;
-  border-radius:8px;
-}
-.keys{
-  background:black;
-  padding:10px;
-  border-radius:8px;
-  font-size:13px;
-  margin-top:10px;
-}
-.key-item{
-  background:#1a1a1a;
-  padding:8px;
-  border-left:4px solid #22c55e;
-  margin-bottom:5px;
-}
-</style>
+    body {
+      background: #050608;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background: #050608;
+      border-right: 1px solid #151820;
+      padding: 16px 12px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .logo span {
+      margin-left: 8px;
+    }
+    .menu-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #6b7280;
+      margin: 14px 0 6px;
+    }
+    .menu-item {
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #d1d5db;
+      cursor: pointer;
+    }
+    .menu-item.active {
+      background: #111827;
+      color: #fff;
+    }
+    .menu-item:hover {
+      background: #0b1120;
+    }
+    .user-area {
+      position: absolute;
+      bottom: 16px;
+      left: 12px;
+      right: 12px;
+      font-size: 12px;
+    }
+    .user-name {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .logout {
+      margin-top: 6px;
+      background: #7f1d1d;
+      text-align: center;
+      padding: 6px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    .logout:hover { background: #991b1b; }
+
+    /* Conteúdo principal */
+    .content {
+      flex: 1;
+      padding: 22px;
+      overflow-y: auto;
+    }
+
+    .card {
+      background: #0b0d10;
+      border-radius: 16px;
+      padding: 22px;
+      max-width: 480px;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+    p.sub {
+      font-size: 12px;
+      color: #a0a0a0;
+      margin-bottom: 20px;
+    }
+
+    .label {
+      font-size: 12px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #1c1f25;
+      background: #050608;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+    }
+    select:focus, input:focus { border-color: #6366f1; }
+
+    .credits-info {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 4px;
+    }
+
+    .summary {
+      margin-top: 10px;
+      font-size: 13px;
+    }
+    .summary span.green { color: #22c55e; }
+    .summary span.yellow { color: #eab308; }
+
+    .btn {
+      margin-top: 18px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 999px;
+      border: none;
+      background: #22c55e;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .btn:hover { background: #16a34a; }
+
+    .result {
+      margin-top: 18px;
+      background: #050608;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 12px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      .sidebar {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid #151820;
+        position: relative;
+      }
+      .user-area { position: static; margin-top: 16px; }
+    }
+  </style>
 </head>
+<body<
 
-<body>
+!-- Conteúdo principal -->
+  <div class="content">
+    <div class="card">
+      <h1>Gerar Keys</h1>
+      <p class="sub">Crie novas keys para seus clientes de forma rápida e eficiente.</p>
 
-<div class="sidebar">
-  <h3>Pdr Cheats</h3>
+      <div class="field">
+        <label class="label">Versão de Login *</label>
+        <select id="versaoLogin">
+          <option value="">Selecione uma versão de login</option>
+          <option value="mobile-v1">Mobile v1</option>
+          <option value="pc-v2">PC v2</option>
+        </select>
+      </div>
 
-  <a id="tab-dashboard" class="active" onclick="showTab('dashboard')">📊 Dashboard</a>
-  <a id="tab-gerar" onclick="showTab('gerar')">➕ Gerar Keys</a>
-  <a id="tab-comprar" onclick="showTab('comprar')">💰 Comprar Créditos</a>
-  <a id="tab-transferir" onclick="showTab('transferir')">🔄 Transferir</a>
+      <div class="field">
+        <label class="label">Dias/Horas de Validade *</label>
+        <select id="validade">
+          <option value="">Selecione uma versão primeiro</option>
+          <option value="1">1 Dia</option>
+          <option value="7">7 Dias</option>
+          <option value="30">30 Dias</option>
+          <option valeu="100">100 Dias</option>
+        </select>
+      </div>
 
-  <div class="user">
-    <b>pedro00</b><br>
-    💲 <span id="meusCreditos">100</span>
-    <div class="logout" onclick="logout()">Sair</div>
-  </div>
-</div>
+      <div class="field">
+        <label class="label">Créditos *</label>
+        <input id="creditos" type="number" min="1" value="1" />
+        <div class="credits-info">
+          Descontado automaticamente conforme a sua chave selecionada.
+        </div>
+      </div>
 
-<div class="main">
+      <div class="field">
+        <label class="label">Quantidade *</label>
+        <input id="quantidade" type="number" min="1" value="1" />
+      </div>
 
-<!-- DASHBOARD -->
-<div id="dashboard" class="tab-content active">
-  <h2>Dashboard</h2>
-  <div class="card">
-    Créditos disponíveis: <b id="dashCreditos">100</b>
-  </div>
-</div>
+      <div class="field">
+        <label class="label">Dispositivo *</label>
+        <select id="dispositivo">
+          <option value="1">1 Dispositivo</option>
+          <option value="2">2 Dispositivos</option>
+          <option value="3">3 Dispositivos</option>
+        </select>
+      </div>
 
-<!-- GERAR KEYS -->
-<div id="gerar" class="tab-content">
-  <h2>Gerar Keys</h2>
-  <div class="card">
-    <label>Validade</label>
-    <select id="validade" onchange="calc()">
-      <option value="1">1 dia (1 crédito)</option>
-      <option value="7">7 dias (5 créditos)</option>
-      <option value="30">30 dias (10 créditos)</option>
-    </select>
+      <div class="summary">
+        <div>Total de Créditos Necessários: <span class="yellow" id="totalNec">0</span></div>
+        <div>Seus Créditos: <span class="green" id="meusCred">989.759</span></div>
+      </div>
 
-    <label>Quantidade</label>
-    <input type="number" id="qtd" value="1" min="1" onchange="calc()">
+      <button class="btn" id="btnGerar">+ Gerar Keys</button>
 
-    <div class="info">
-      Total: <b id="total">1</b> créditos
+      <div class="result" id="resultado"></div>
     </div>
-
-    <button onclick="gerarKeys()">Gerar</button>
-    <div id="resultado" class="keys"></div>
   </div>
-</div>
 
-<!-- COMPRAR -->
-<div id="comprar" class="tab-content">
-  <h2>Comprar Créditos</h2>
-  <div class="card">
-    <select id="pacote">
-      <option value="50">50 créditos - R$19,90</option>
-      <option value="150">150 créditos - R$49,90</option>
-      <option value="350">350 créditos - R$99,90</option>
-    </select>
-    <button onclick="comprar()">Comprar (simulado)</button>
-  </div>
-</div>
+  <script>
+    const creditosInput = document.getElementById("creditos");
+    const quantidadeInput = document.getElementById("quantidade");
+    const totalNec = document.getElementById("totalNec");
+    const btnGerar = document.getElementById("btnGerar");
+    const resultado = document.getElementById("resultado");
 
-<!-- TRANSFERIR -->
-<div id="transferir" class="tab-content">
-  <h2>Transferir Créditos</h2>
-  <div class="card">
-    <input type="text" placeholder="Usuário">
-    <input type="number" id="valorTransferir" placeholder="Créditos">
-    <button onclick="transferir()">Transferir</button>
-  </div>
-</div>
+    function atualizarTotal() {
+      const c = Number(creditosInput.value) || 0;
+      const q = Number(quantidadeInput.value) || 0;
+      totalNec.textContent = c * q;
+    }
+    creditosInput.addEventListener("input", atualizarTotal);
+    quantidadeInput.addEventListener("input", atualizarTotal);
+    atualizarTotal();
 
-</div>
+    function gerarKey(tamanho = 24) {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let key = "";
+      for (let i = 0; i < tamanho; i++) {
+        const r = Math.floor(Math.random() * chars.length);
+        key += chars[r];
+      }
+      return key.match(/.{1,4}/g).join("-");
+    } // padrão de formatação visto em exemplos JS para license key.[web:23]
 
-<script>
-let creditos = 100;
+    btnGerar.addEventListener("click", () => {
+      const versao = document.getElementById("versaoLogin").value;
+      const validade = document.getElementById("validade").value;
+      const qtd = Number(quantidadeInput.value) || 0;
 
-function atualizar(){
-  document.getElementById("meusCreditos").innerText = creditos;
-  document.getElementById("dashCreditos").innerText = creditos;
-}
+      if (!versao || !validade || !qtd) {
+        alert("Preencha todos os campos obrigatórios.");
+        return;
+      }
 
-function showTab(tab){
-  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
-  document.getElementById(tab).classList.add('active');
-  document.getElementById("tab-"+tab).classList.add('active');
-}
+      const keys = [];
+      for (let i = 0; i < qtd; i++) {
+        keys.push(gerarKey(20));
+      }
 
-function calc(){
-  let v = Number(validade.value);
-  let q = Number(qtd.value);
-  let custo = v==1?1:v==7?5:10;
-  total.innerText = custo*q;
-}
+      resultado.textContent =
+        "Keys geradas (" + qtd + "):
 
-function gerarKeys(){
-  let total = Number(document.getElementById("total").innerText);
-  if(creditos < total){
-    alert("Créditos insuficientes");
-    return;
-  }
-  creditos -= total;
-  atualizar();
-
-  let html="";
-  for(let i=0;i<qtd.value;i++){
-    let k = "KEY-"+Math.random().toString(36).substring(2,10).toUpperCase();
-    html += `<div class="key-item">${k}</div>`;
-  }
-  resultado.innerHTML = html;
-}
-
-function comprar(){
-  let v = Number(pacote.value);
-  creditos += v;
-  atualizar();
-  alert("Créditos adicionados!");
-}
-
-function transferir(){
-  let v = Number(valorTransferir.value);
-  if(v>creditos || v<=0){
-    alert("Valor inválido");
-    return;
-  }
-  creditos -= v;
-  atualizar();
-  alert("Transferido!");
-}
-
-function logout(){
-  alert("Logout simulado");
-}
-
-calc();
-atualizar();
-</script>
-
+" + keys.join("
+");
+    });
+  </script>
 </body>
-  </html>
+  </html> 
