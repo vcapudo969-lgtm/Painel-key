@@ -1,40 +1,127 @@
-<h2>Painel</h2>
-<p id="nivel"></p>
-<p id="creditos"></p>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Painel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<button onclick="usar()">Usar recurso (-1)</button>
+<style>
+body{
+  background:#020617;
+  color:white;
+  font-family:Arial;
+  padding:20px;
+}
+.card{
+  background:#020617;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 0 15px black;
+  max-width:400px;
+  margin:auto;
+}
+h2{
+  text-align:center;
+}
+.info{
+  margin:10px 0;
+  font-size:16px;
+}
+button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:8px;
+  font-weight:bold;
+  cursor:pointer;
+}
+.gerar{
+  background:#22c55e;
+}
+.sair{
+  background:#ef4444;
+}
+.keys{
+  margin-top:15px;
+  background:#020617;
+  padding:10px;
+  border-radius:8px;
+  font-size:14px;
+}
+</style>
+</head>
+<body>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<div class="card">
+  <h2>👤 Painel do Usuário</h2>
 
-const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_AUTH_DOMAIN",
-  projectId: "SEU_PROJECT_ID"
-};
+  <div class="info" id="nome"></div>
+  <div class="info" id="email"></div>
+  <div class="info" id="creditos"></div>
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+  <button class="gerar" onclick="gerarKey()">
+    🔑 Gerar Key ( -1 crédito )
+  </button>
 
-const level = localStorage.getItem("level");
-const credits = parseInt(localStorage.getItem("credits"));
-const key = localStorage.getItem("key");
+  <div class="keys" id="listaKeys">
+    <b>Keys geradas:</b><br>
+  </div>
 
-nivel.innerText = "Plano: " + level;
-creditos.innerText = "Créditos: " + credits;
+  <button class="sair" onclick="sair()">Sair</button>
+</div>
 
-window.usar = async () => {
-  if(credits <= 0){
-    alert("Sem créditos");
+<script>
+// Verificação de login
+let emailLogado = localStorage.getItem("logado");
+let users = JSON.parse(localStorage.getItem("users")) || {};
+
+if(!emailLogado || !users[emailLogado]){
+  window.location.href = "index.html";
+}
+
+// Inicializar dados
+let user = users[emailLogado];
+user.keys = user.keys || [];
+
+function atualizar(){
+  document.getElementById("nome").innerText = "Nome: " + user.nome;
+  document.getElementById("email").innerText = "Email: " + emailLogado;
+  document.getElementById("creditos").innerText = "Créditos: " + user.creditos;
+
+  let lista = "<b>Keys geradas:</b><br>";
+  if(user.keys.length === 0){
+    lista += "Nenhuma key ainda";
+  } else {
+    user.keys.forEach(k => {
+      lista += k + "<br>";
+    });
+  }
+  document.getElementById("listaKeys").innerHTML = lista;
+
+  users[emailLogado] = user;
+  localStorage.setItem("users", JSON.stringify(users));
+}
+
+function gerarKey(){
+  if(user.creditos <= 0){
+    alert("Você não tem créditos suficientes");
     return;
   }
 
-  await updateDoc(doc(db,"keys",key), {
-    credits: increment(-1)
-  });
+  let novaKey = "KEY-" + Math.random().toString(36).substr(2,8).toUpperCase();
+  user.keys.push(novaKey);
+  user.creditos -= 1;
+  atualizar();
+}
 
-  localStorage.setItem("credits", credits - 1);
-  location.reload();
-};
-    </script>
+function sair(){
+  localStorage.removeItem("logado");
+  window.location.href = "index.html";
+}
+
+atualizar();
+</script>
+
+</body>
+</html>
