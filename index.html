@@ -25,12 +25,9 @@
       text-align: center;
     }
 
-    h2 {
-      margin-bottom: 16px;
-      font-size: 20px;
-    }
+    h2 { margin-bottom: 16px; font-size: 20px; }
 
-    input {
+    input, select {
       width: 100%;
       margin-bottom: 10px;
       padding: 8px 10px;
@@ -55,11 +52,14 @@
     #btnLoginUser:hover { background: #15803d; }
     #btnLoginAdmin:hover { background: #b91c1c; }
 
+    #btnCadastrar { background: #0ea5e9; color: #000; }
+    #btnCadastrar:hover { background: #0284c7; }
+
     .link {
       margin-top: 8px;
       font-size: 13px;
     }
-    .link a { color: #22c55e; text-decoration: none; }
+    .link a { color: #22c55e; text-decoration: none; cursor: pointer; }
 
     .msg {
       margin-top: 10px;
@@ -68,34 +68,69 @@
     }
     .msg.ok { color: #22c55e; }
     .msg.error { color: #f97316; }
+
+    .hidden { display: none; }
   </style>
 </head>
 <body>
   <div class="card">
-    <h2>Login</h2>
+    <!-- LOGIN -->
+    <div id="telaLogin">
+      <h2>Login</h2>
 
-    <input id="email" type="email" placeholder="seuemail@exemplo.com">
-    <input id="senha" type="password" placeholder="Senha">
+      <input id="loginEmail" type="email" placeholder="seuemail@exemplo.com">
+      <input id="loginSenha" type="password" placeholder="Senha">
 
-    <button id="btnLoginUser">Entrar</button>
-    <button id="btnLoginAdmin">Entrar como ADM</button>
+      <button id="btnLoginUser">Entrar</button>
+      <button id="btnLoginAdmin">Entrar como ADM</button>
 
-    <div class="link">
-      <a href="#" id="criarConta">Criar conta</a>
+      <div class="link">
+        <a id="linkCadastro">Criar conta</a>
+      </div>
+    </div>
+
+    <!-- CADASTRO -->
+    <div id="telaCadastro" class="hidden">
+      <h2>Criar conta</h2>
+
+      <input id="cadEmail" type="email" placeholder="seuemail@exemplo.com">
+      <input id="cadSenha" type="password" placeholder="Senha">
+      <select id="cadTipo">
+        <option value="user">Usuário comum</option>
+        <option value="admin">Administrador</option>
+      </select>
+
+      <button id="btnCadastrar">Cadastrar</button>
+
+      <div class="link">
+        <a id="linkVoltarLogin">Já tenho conta</a>
+      </div>
     </div>
 
     <div id="mensagem" class="msg"></div>
   </div>
 
   <script>
-    // "Banco de dados" em memória (apenas para teste)
-    const usuarios = [
-      { email: "teste@teste.com", senha: "123456", tipo: "user" },
-      { email: "admin@site.com", senha: "admin123", tipo: "admin" }
-    ];
+    // ----- UTILITÁRIOS -----
+    function getUsuarios() {
+      const dados = localStorage.getItem("usuariosPainel");
+      return dados ? JSON.parse(dados) : [];
+    }
 
-    const emailInput = document.getElementById("email");
-    const senhaInput = document.getElementById("senha");
+    function salvarUsuarios(lista) {
+      localStorage.setItem("usuariosPainel", JSON.stringify(lista));
+    }
+
+    // Cria usuário padrão admin se não existir
+    (function criaAdminDefault() {
+      const lista = getUsuarios();
+      const jaTemAdmin = lista.some(u => u.email === "admin@site.com");
+      if (!jaTemAdmin) {
+        lista.push({ email: "admin@site.com", senha: "admin123", tipo: "admin" });
+        salvarUsuarios(lista);
+      }
+    })();
+
     const msg = document.getElementById("mensagem");
 
     function mostrarMensagem(texto, ok = false) {
@@ -103,18 +138,30 @@
       msg.className = "msg " + (ok ? "ok" : "error");
     }
 
+    function mostrarLogin() {
+      document.getElementById("telaLogin").classList.remove("hidden");
+      document.getElementById("telaCadastro").classList.add("hidden");
+      mostrarMensagem("");
+    }
+
+    function mostrarCadastro() {
+      document.getElementById("telaCadastro").classList.remove("hidden");
+      document.getElementById("telaLogin").classList.add("hidden");
+      mostrarMensagem("");
+    }
+
+    // ----- LOGIN -----
     function login(tipoEsperado) {
-      const email = emailInput.value.trim();
-      const senha = senhaInput.value;
+      const email = document.getElementById("loginEmail").value.trim();
+      const senha = document.getElementById("loginSenha").value;
 
       if (!email || !senha) {
         mostrarMensagem("Preencha email e senha.");
         return;
       }
 
-      const user = usuarios.find(
-        u => u.email === email && u.senha === senha
-      );
+      const lista = getUsuarios();
+      const user = lista.find(u => u.email === email && u.senha === senha);
 
       if (!user) {
         mostrarMensagem("Email ou senha incorretos.");
@@ -131,7 +178,7 @@
         return;
       }
 
-      // Aqui você poderia redirecionar para o painel real:
+      // Aqui você poderia redirecionar para o painel:
       // window.location.href = "painel.html";
       mostrarMensagem("Login realizado como " + tipoEsperado.toUpperCase() + "!", true);
     }
@@ -142,10 +189,41 @@
     document.getElementById("btnLoginAdmin")
       .addEventListener("click", () => login("admin"));
 
-    document.getElementById("criarConta")
+    document.getElementById("linkCadastro")
       .addEventListener("click", (e) => {
         e.preventDefault();
-        mostrarMensagem("Cadastro ainda não implementado (apenas demonstração).");
+        mostrarCadastro();
+      });
+
+    document.getElementById("linkVoltarLogin")
+      .addEventListener("click", (e) => {
+        e.preventDefault();
+        mostrarLogin();
+      });
+
+    // ----- CADASTRO -----
+    document.getElementById("btnCadastrar")
+      .addEventListener("click", () => {
+        const email = document.getElementById("cadEmail").value.trim();
+        const senha = document.getElementById("cadSenha").value;
+        const tipo = document.getElementById("cadTipo").value;
+
+        if (!email || !senha) {
+          mostrarMensagem("Preencha email e senha para cadastrar.");
+          return;
+        }
+
+        const lista = getUsuarios();
+        if (lista.some(u => u.email === email)) {
+          mostrarMensagem("Já existe uma conta com esse email.");
+          return;
+        }
+
+        lista.push({ email, senha, tipo });
+        salvarUsuarios(lista);
+
+        mostrarMensagem("Conta criada com sucesso! Faça login.", true);
+        mostrarLogin();
       });
   </script>
 </body>
