@@ -72,3 +72,11 @@ if(localStorage.getItem("adm_logado") !== "sim"){
 
 </body>
 </html>
+<button onclick="logout()">Sair</button>
+
+<script>
+function logout(){
+  localStorage.removeItem("adm_logado");
+  window.location.href = "admin-login.html";
+}
+</script>
