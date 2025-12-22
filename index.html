@@ -1,13 +1,17 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
 <meta charset="UTF-8">
 <title>Login</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <style>
 body{
-  background:#020617;
-  color:white;
+  background:#0b0b15;
+  color:#fff;
   font-family:Arial;
   display:flex;
   justify-content:center;
@@ -15,85 +19,84 @@ body{
   height:100vh;
 }
 .box{
-  background:#020617;
-  padding:20px;
+  background:#111;
+  padding:25px;
   border-radius:10px;
-  width:90%;
-  max-width:350px;
-  box-shadow:0 0 15px black;
+  width:320px;
 }
 input,button{
   width:100%;
   padding:10px;
   margin-top:10px;
-  border-radius:6px;
   border:none;
+  border-radius:6px;
 }
-button{
-  background:#22c55e;
-  font-weight:bold;
-}
-.toggle{
-  margin-top:10px;
+button{font-weight:bold}
+.user{background:#22c55e}
+.admin{background:#ef4444}
+.link{
   color:#22c55e;
-  cursor:pointer;
+  text-align:center;
+  display:block;
+  margin-top:10px;
 }
 </style>
 </head>
 <body>
 
 <div class="box">
-  <h2 id="titulo">Login</h2>
+  <h2>Login</h2>
 
-  <input id="nome" placeholder="Nome" style="display:none">
   <input id="email" placeholder="Email">
   <input id="senha" type="password" placeholder="Senha">
 
-  <button onclick="acao()">Entrar</button>
+  <button class="user" onclick="loginUser()">Entrar</button>
+  <button class="admin" onclick="loginAdmin()">Entrar como ADM</button>
 
-  <p class="toggle" onclick="trocar()">Criar conta</p>
-  <p id="msg"></p>
+  <a class="link" href="register.html">Criar conta</a>
 </div>
 
 <script>
-let cadastro = false;
+// 🔥 CONFIG FIREBASE (SUBSTITUA)
+const firebaseConfig = {
+  apiKey: "SUA_API_KEY",
+  authDomain: "SEU_PROJETO.firebaseapp.com",
+  projectId: "SEU_PROJETO"
+};
 
-function trocar(){
-  cadastro = !cadastro;
-  document.getElementById("nome").style.display = cadastro ? "block" : "none";
-  document.getElementById("titulo").innerText = cadastro ? "Cadastro" : "Login";
-  document.querySelector("button").innerText = cadastro ? "Cadastrar" : "Entrar";
-  document.querySelector(".toggle").innerText = cadastro ? "Já tenho conta" : "Criar conta";
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// 👤 LOGIN USUÁRIO
+function loginUser(){
+  const email = email.value;
+  const senha = document.getElementById("senha").value;
+
+  auth.signInWithEmailAndPassword(email, senha)
+  .then(()=>location.href="painel.html")
+  .catch(()=>alert("Login inválido"));
 }
 
-function acao(){
-  let nome = document.getElementById("nome").value;
-  let email = document.getElementById("email").value;
-  let senha = document.getElementById("senha").value;
+// 👑 LOGIN ADM
+function loginAdmin(){
+  const email = email.value;
+  const senha = document.getElementById("senha").value;
 
-  let users = JSON.parse(localStorage.getItem("users")) || {};
-
-  if(cadastro){
-    if(users[email]){
-      msg("Email já cadastrado");
-      return;
-    }
-    users[email] = { nome, senha, creditos: 0 };
-    localStorage.setItem("users", JSON.stringify(users));
-    msg("Conta criada! Faça login");
-    trocar();
-  } else {
-    if(users[email] && users[email].senha === senha){
-      localStorage.setItem("logado", email);
-      window.location.href = "painel.html";
-    } else {
-      msg("Login inválido");
-    }
-  }
-}
-
-function msg(t){
-  document.getElementById("msg").innerText = t;
+  auth.signInWithEmailAndPassword(email, senha)
+  .then(res=>{
+    db.collection("users").doc(res.user.uid).get()
+    .then(doc=>{
+      if(doc.exists && doc.data().role === "admin"){
+        location.href="admin.html";
+      }else{
+        alert("Você não é ADM");
+        auth.signOut();
+      }
+    });
+  })
+  .catch(()=>alert("Login inválido"));
 }
 </script>
 
