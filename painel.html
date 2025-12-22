@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Painel Pdr Cheats</title>
+
 <style>
 body{
   margin:0;
@@ -18,10 +19,7 @@ body{
   padding:15px;
   overflow-y:auto;
 }
-.sidebar h3{
-  margin-top:0;
-  color:#22c55e;
-}
+.sidebar h3{color:#22c55e}
 .sidebar a{
   display:block;
   padding:10px;
@@ -31,7 +29,7 @@ body{
   margin-bottom:5px;
   cursor:pointer;
 }
-.sidebar a:hover, .sidebar a.active{
+.sidebar a:hover,.sidebar a.active{
   background:#111;
   color:white;
 }
@@ -42,24 +40,18 @@ body{
 }
 .logout{
   background:#7f1d1d;
-  color:white;
-  text-align:center;
   padding:10px;
   border-radius:6px;
   margin-top:10px;
   cursor:pointer;
+  text-align:center;
 }
 .main{
   flex:1;
   padding:20px;
-  position:relative;
 }
-.tab-content{
-  display:none;
-}
-.tab-content.active{
-  display:block;
-}
+.tab-content{display:none}
+.tab-content.active{display:block}
 .card{
   max-width:600px;
   background:#111;
@@ -70,13 +62,12 @@ body{
 select,input,button,textarea{
   width:100%;
   padding:10px;
-  margin-top:5px;
-  margin-bottom:15px;
+  margin:6px 0 12px;
   border:none;
   border-radius:8px;
-  box-sizing:border-box;
+  background:#1a1a1a;
+  color:white;
 }
-select,input,textarea{background:#1a1a1a;color:white}
 button{
   background:#22c55e;
   font-weight:bold;
@@ -86,66 +77,32 @@ button{
   background:#020617;
   padding:10px;
   border-radius:8px;
-  margin-bottom:10px;
 }
 .keys{
   background:black;
   padding:10px;
   border-radius:8px;
-  font-size:12px;
-  white-space:pre-wrap;
-  max-height:300px;
-  overflow-y:auto;
+  font-size:13px;
+  margin-top:10px;
 }
 .key-item{
   background:#1a1a1a;
   padding:8px;
-  margin:5px 0;
-  border-radius:4px;
-  border-left:3px solid #22c55e;
-}
-.api-section{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:15px;
-}
-@media (max-width:768px){
-  .api-section{grid-template-columns:1fr;}
-}
-.stats-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
-  gap:15px;
-}
-.stat-card{
-  background:#1a1a1a;
-  padding:15px;
-  border-radius:8px;
-  text-align:center;
+  border-left:4px solid #22c55e;
+  margin-bottom:5px;
 }
 </style>
 </head>
+
 <body>
 
 <div class="sidebar">
-  <h3>Pdr cheats</h3>
+  <h3>Pdr Cheats</h3>
 
-  <a onclick="showTab('dashboard')" id="tab-dashboard">📊 Dashboard</a>
-
-  <a onclick="showTab('gerar')" id="tab-gerar">➕ Gerar Keys</a>
-  <a onclick="showTab('gerenciar')" id="tab-gerenciar">👥 Gerenciar Keys</a>
-
-  <a onclick="showTab('personalizar')" id="tab-personalizar">🎨 Personalizar Keys</a>
-
-  <a onclick="showTab('api-keys')" id="tab-api-keys">🔑 API Keys</a>
-  <a onclick="showTab('docs')" id="tab-docs">📚 Docs API</a>
-
-  <a onclick="showTab('comprar')" id="tab-comprar">💰 Comprar Crédito</a>
-  <a onclick="showTab('transferir')" id="tab-transferir">🔄 Transferir Créditos</a>
-
-  <a onclick="showTab('perfil')" id="tab-perfil">👤 Meu Perfil</a>
-  <a onclick="showTab('afiliado')" id="tab-afiliado">🔗 Link de Afiliado</a>
-  <a onclick="showTab('reclamacoes')" id="tab-reclamacoes">⚠️ Reclamações</a>
+  <a id="tab-dashboard" class="active" onclick="showTab('dashboard')">📊 Dashboard</a>
+  <a id="tab-gerar" onclick="showTab('gerar')">➕ Gerar Keys</a>
+  <a id="tab-comprar" onclick="showTab('comprar')">💰 Comprar Créditos</a>
+  <a id="tab-transferir" onclick="showTab('transferir')">🔄 Transferir</a>
 
   <div class="user">
     <b>pedro00</b><br>
@@ -155,301 +112,127 @@ button{
 </div>
 
 <div class="main">
-  <!-- Dashboard -->
-  <div id="dashboard" class="tab-content active">
-    <h2>📊 Dashboard</h2>
-    <div class="stats-grid">
-      <div class="stat-card">
-        <h3>125</h3>
-        <p>Keys Geradas</p>
-      </div>
-      <div class="stat-card">
-        <h3>87</h3>
-        <p>Keys Ativas</p>
-      </div>
-      <div class="stat-card">
-        <h3>38</h3>
-        <p>Keys Expiradas</p>
-      </div>
-      <div class="stat-card">
-        <h3>100</h3>
-        <p>Créditos</p>
-      </div>
-    </div>
-    
-    <div class="card">
-      <h3>📈 Estatísticas do Mês</h3>
-      <div style="height:200px;background:#1a1a1a;border-radius:8px;padding:20px;">
-        Gráfico de uso (implementar com Chart.js)
-      </div>
-    </div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="tab-content active">
+  <h2>Dashboard</h2>
+  <div class="card">
+    Créditos disponíveis: <b id="dashCreditos">100</b>
   </div>
+</div>
 
-  <!-- Gerar Keys -->
-  <div id="gerar" class="tab-content">
-    <h2>➕ Gerar Keys</h2>
-    <div class="card">
-      <label>Versão de Login</label>
-      <select id="versao">
-        <option>Login v1</option>
-        <option>Login v2</option>
-      </select>
+<!-- GERAR KEYS -->
+<div id="gerar" class="tab-content">
+  <h2>Gerar Keys</h2>
+  <div class="card">
+    <label>Validade</label>
+    <select id="validade" onchange="calc()">
+      <option value="1">1 dia (1 crédito)</option>
+      <option value="7">7 dias (5 créditos)</option>
+      <option value="30">30 dias (10 créditos)</option>
+    </select>
 
-      <label>Validade</label>
-      <select id="validade" onchange="calc()">
-        <option value="1">1 Dia (1 crédito)</option>
-        <option value="7">7 Dias (5 créditos)</option>
-        <option value="30">30 Dias (10 créditos)</option>
-        <option value="90">90 Dias (25 créditos)</option>
-      </select>
+    <label>Quantidade</label>
+    <input type="number" id="qtd" value="1" min="1" onchange="calc()">
 
-      <label>Quantidade</label>
-      <input type="number" id="qtd" value="1" min="1" max="50" onchange="calc()">
-
-      <label>Dispositivo</label>
-      <select id="dispositivo">
-        <option>1 Dispositivo</option>
-        <option>2 Dispositivos</option>
-        <option>Ilimitado (+5 créditos)</option>
-      </select>
-
-      <div class="info">
-        Total de Créditos Necessários: <b id="total">0</b>
-      </div>
-
-      <button onclick="gerarKeys()">🔥 Gerar Keys</button>
-      <div id="resultado-gerar" class="keys"></div>
+    <div class="info">
+      Total: <b id="total">1</b> créditos
     </div>
-  </div>
 
-  <!-- Gerenciar Keys -->
-  <div id="gerenciar" class="tab-content">
-    <h2>👥 Gerenciar Keys</h2>
-    <div class="card">
-      <input type="text" id="busca-key" placeholder="🔍 Buscar por KEY ou usuário...">
-      <button onclick="buscarKeys()">Buscar</button>
-      
-      <div class="info">
-        Mostrando <b>12 de 125</b> keys • 
-        <select>
-          <option>Todas</option>
-          <option>Ativas</option>
-          <option>Expiradas</option>
-        </select>
-      </div>
-      
-      <div id="lista-keys" class="keys">
-        KEY-ABC123XYZ789 (pedro00) - 30 dias - Ativa<br>
-        KEY-DEF456UVW012 (maria22) - 7 dias - Expirada<br>
-        KEY-GHI789RST345 (joao99) - 1 dia - Ativa
-      </div>
-      
-      <button onclick="revogarKey()" style="background:#ef4444;">🚫 Revogar Selecionada</button>
-    </div>
+    <button onclick="gerarKeys()">Gerar</button>
+    <div id="resultado" class="keys"></div>
   </div>
+</div>
 
-  <!-- Personalizar Keys -->
-  <div id="personalizar" class="tab-content">
-    <h2>🎨 Personalizar Keys</h2>
-    <div class="card">
-      <label>Prefixo Personalizado</label>
-      <input type="text" id="prefixo" placeholder="ex: PDR-" maxlength="8">
-      
-      <label>Formato da Key</label>
-      <select id="formato">
-        <option value="12">12 caracteres (padrão)</option>
-        <option value="16">16 caracteres</option>
-        <option value="20">20 caracteres</option>
-      </select>
-      
-      <label>Caracteres Especiais</label>
-      <label><input type="checkbox"> Incluir números</label>
-      <label><input type="checkbox" checked> Incluir letras maiúsculas</label>
-      <label><input type="checkbox" checked> Incluir letras minúsculas</label>
-      
-      <button onclick="salvarCustomizacao()">💾 Salvar Personalização</button>
-      
-      <div class="info">
-        <b>Preview:</b> <span id="preview-key">PDR-ABC123XYZ789</span>
-      </div>
-    </div>
+<!-- COMPRAR -->
+<div id="comprar" class="tab-content">
+  <h2>Comprar Créditos</h2>
+  <div class="card">
+    <select id="pacote">
+      <option value="50">50 créditos - R$19,90</option>
+      <option value="150">150 créditos - R$49,90</option>
+      <option value="350">350 créditos - R$99,90</option>
+    </select>
+    <button onclick="comprar()">Comprar (simulado)</button>
   </div>
+</div>
 
-  <!-- API Keys -->
-  <div id="api-keys" class="tab-content">
-    <h2>🔑 API Keys</h2>
-    <div class="api-section">
-      <div>
-        <h3>Sua API Key</h3>
-        <div class="keys" id="api-key-display">pdr_api_abc123def456ghi789jkl012</div>
-        <button onclick="copiarAPI()">📋 Copiar</button>
-        <button onclick="regenerarAPI()" style="background:#f59e0b;">🔄 Regenerar</button>
-      </div>
-      <div>
-        <h3>Uso da API</h3>
-        <div class="info">
-          <b>1250</b> requests hoje<br>
-          <b>45,230</b> requests no mês
-        </div>
-        <button onclick="showDocs()">📚 Ver Documentação</button>
-      </div>
-    </div>
+<!-- TRANSFERIR -->
+<div id="transferir" class="tab-content">
+  <h2>Transferir Créditos</h2>
+  <div class="card">
+    <input type="text" placeholder="Usuário">
+    <input type="number" id="valorTransferir" placeholder="Créditos">
+    <button onclick="transferir()">Transferir</button>
   </div>
+</div>
 
-  <!-- Docs API -->
-  <div id="docs" class="tab-content">
-    <h2>📚 Documentação API</h2>
-    <div class="card">
-      <h3>Endpoint: Gerar Key</h3>
-      <code>POST /api/v1/generate</code>
-      <textarea readonly>curl -X POST https://api.pdrcheats.com/v1/generate \
-  -H "Authorization: Bearer pdr_api_abc123..." \
-  -H "Content-Type: application/json" \
-  -d '{
-    "validade": 30,
-    "quantidade": 1
-  }'</textarea>
-      
-      <h3>Resposta</h3>
-      <textarea readonly>{
-  "success": true,
-  "keys": ["KEY-ABC123XYZ789"],
-  "expira_em": "2025-01-22"
-}</textarea>
-    </div>
-  </div>
-
-  <!-- Comprar Créditos -->
-  <div id="comprar" class="tab-content">
-    <h2>💰 Comprar Créditos</h2>
-    <div class="card">
-      <label>Quantidade de Créditos</label>
-      <select id="qtd-comprar">
-        <option>50 créditos - R$ 19,90</option>
-        <option>150 créditos - R$ 49,90</option>
-        <option>350 créditos - R$ 99,90</option>
-        <option>1000 créditos - R$ 249,90</option>
-      </select>
-      
-      <label>Método de Pagamento</label>
-      <select>
-        <option>💳 Pix</option>
-        <option>💰 PicPay</option>
-        <option>🪙 Mercado Pago</option>
-      </select>
-      
-      <button onclick="comprarCreditos()" style="background:#10b981;">✅ Comprar Agora</button>
-    </div>
-  </div>
-
-  <!-- Outras abas simplificadas -->
-  <div id="transferir" class="tab-content">
-    <h2>🔄 Transferir Créditos</h2>
-    <div class="card">
-      <input type="text" placeholder="Username do destinatário">
-      <input type="number" placeholder="Quantidade de créditos" min="1">
-      <button onclick="transferir()">➡️ Transferir</button>
-    </div>
-  </div>
-
-  <div id="perfil" class="tab-content">
-    <h2>👤 Meu Perfil</h2>
-    <div class="card">
-      <input type="text" value="pedro00" readonly>
-      <input type="email" placeholder="email@exemplo.com">
-      <button>💾 Salvar Alterações</button>
-    </div>
-  </div>
-
-  <div id="afiliado" class="tab-content">
-    <h2>🔗 Link de Afiliado</h2>
-    <div class="card">
-      <div class="info">
-        Ganhe 20% de todas as compras dos seus indicados!
-      </div>
-      <input type="text" value="https://pdrcheats.com/ref/pedro00" readonly>
-      <button onclick="copiarLink()">📋 Copiar Link</button>
-    </div>
-  </div>
-
-  <div id="reclamacoes" class="tab-content">
-    <h2>⚠️ Reclamações</h2>
-    <div class="card">
-      <textarea placeholder="Descreva seu problema..."></textarea>
-      <button>📤 Enviar Reclamação</button>
-    </div>
-  </div>
 </div>
 
 <script>
 let creditos = 100;
-let keysGeradas = [];
 
-function showTab(tabName) {
-  // Esconder todas as abas
-  document.querySelectorAll('.tab-content').forEach(tab => {
-    tab.classList.remove('active');
-  });
-  document.querySelectorAll('.sidebar a').forEach(link => {
-    link.classList.remove('active');
-  });
-  
-  // Mostrar aba selecionada
-  document.getElementById(tabName).classList.add('active');
-  document.getElementById('tab-'+tabName).classList.add('active');
+function atualizar(){
+  document.getElementById("meusCreditos").innerText = creditos;
+  document.getElementById("dashCreditos").innerText = creditos;
+}
+
+function showTab(tab){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
+  document.getElementById(tab).classList.add('active');
+  document.getElementById("tab-"+tab).classList.add('active');
 }
 
 function calc(){
-  let validade = document.getElementById("validade").value;
-  let qtd = document.getElementById("qtd").value;
-  let dispositivo = document.getElementById("dispositivo").selectedIndex;
-  let custoBase = validade == 1 ? 1 : validade == 7 ? 5 : validade == 90 ? 25 : 10;
-  let custoDispositivo = dispositivo == 2 ? 5 : 0;
-  let total = (custoBase + custoDispositivo) * qtd;
-  document.getElementById("total").innerText = total;
+  let v = Number(validade.value);
+  let q = Number(qtd.value);
+  let custo = v==1?1:v==7?5:10;
+  total.innerText = custo*q;
 }
 
 function gerarKeys(){
   let total = Number(document.getElementById("total").innerText);
   if(creditos < total){
-    alert("💸 Créditos insuficientes!");
+    alert("Créditos insuficientes");
     return;
   }
-
   creditos -= total;
-  document.getElementById("meusCreditos").innerText = creditos;
+  atualizar();
 
-  let qtd = document.getElementById("qtd").value;
-  let resultado = document.getElementById("resultado-gerar");
-  let html = "";
-  
-  for(let i = 0; i < qtd; i++){
-    let key = "KEY-"+Math.random().toString(36).substring(2,12).toUpperCase();
-    keysGeradas.push(key);
-    html += `<div class="key-item">${key} ✅ Copiar</div>`;
+  let html="";
+  for(let i=0;i<qtd.value;i++){
+    let k = "KEY-"+Math.random().toString(36).substring(2,10).toUpperCase();
+    html += `<div class="key-item">${k}</div>`;
   }
   resultado.innerHTML = html;
 }
 
-function copiarAPI(){
-  navigator.clipboard.writeText('pdr_api_abc123def456ghi789jkl012');
-  alert('API Key copiada!');
+function comprar(){
+  let v = Number(pacote.value);
+  creditos += v;
+  atualizar();
+  alert("Créditos adicionados!");
 }
 
-function copiarLink(){
-  navigator.clipboard.writeText('https://pdrcheats.com/ref/pedro00');
-  alert('Link de afiliado copiado!');
+function transferir(){
+  let v = Number(valorTransferir.value);
+  if(v>creditos || v<=0){
+    alert("Valor inválido");
+    return;
+  }
+  creditos -= v;
+  atualizar();
+  alert("Transferido!");
 }
 
 function logout(){
-  if(confirm('Deseja realmente sair?')) {
-    alert('Logout realizado!');
-  }
+  alert("Logout simulado");
 }
 
-// Inicializar calculadora
 calc();
+atualizar();
 </script>
 
 </body>
-      </html>
+  </html>
