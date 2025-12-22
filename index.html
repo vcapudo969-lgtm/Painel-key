@@ -1,29 +1,63 @@
-<h2>Login com Key</h2>
-<input id="key" placeholder="Digite a key">
-<button onclick="login()">Entrar</button>
-<p id="msg"></p>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+  background:#020617;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  font-family:Arial;
+}
+.box{
+  background:#020617;
+  padding:25px;
+  border-radius:10px;
+  width:90%;
+  max-width:320px;
+  text-align:center;
+  box-shadow:0 0 15px black;
+}
+input,button{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border-radius:6px;
+  border:none;
+}
+button{
+  background:#22c55e;
+  font-weight:bold;
+}
+</style>
+</head>
+<body>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<div class="box">
+  <h2>🔐 Login com Key</h2>
+  <input id="key" placeholder="Digite sua key">
+  <button onclick="login()">Entrar</button>
+  <p id="msg"></p>
+</div>
 
-const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_AUTH_DOMAIN",
-  projectId: "SEU_PROJECT_ID"
-};
+<script>
+function login(){
+  let key = document.getElementById("key").value;
+  let keys = JSON.parse(localStorage.getItem("keys")) || {};
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+  if(keys[key] && keys[key].creditos > 0){
+    localStorage.setItem("logado", key);
+    window.location.href = "painel.html";
+  } else {
+    document.getElementById("msg").innerText = "Key inválida ou sem créditos";
+  }
+}
+</script>
 
-window.login = async () => {
-  const k = key.value.trim();
-  const snap = await getDoc(doc(db,"keys",k));
-
-  if(!snap.exists()) return msg.innerText="Key inválida";
-  if(snap.data().credits <= 0) return msg.innerText="Sem créditos";
-
-  localStorage.setItem("key",k);
-  location.href="painel.html";
-};
-    </script>
+</body>
+</html>
