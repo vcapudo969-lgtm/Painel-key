@@ -1,104 +1,152 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Login</title>
+  <meta charset="UTF-8">
+  <title>Login Painel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    body {
+      background: #020617;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-<style>
-body{
-  background:#0b0b15;
-  color:#fff;
-  font-family:Arial;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-}
-.box{
-  background:#111;
-  padding:25px;
-  border-radius:10px;
-  width:320px;
-}
-input,button{
-  width:100%;
-  padding:10px;
-  margin-top:10px;
-  border:none;
-  border-radius:6px;
-}
-button{font-weight:bold}
-.user{background:#22c55e}
-.admin{background:#ef4444}
-.link{
-  color:#22c55e;
-  text-align:center;
-  display:block;
-  margin-top:10px;
-}
-</style>
+    .card {
+      background: #020617;
+      border-radius: 10px;
+      padding: 20px;
+      width: 320px;
+      box-shadow: 0 0 18px rgba(0,0,0,0.8);
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 16px;
+      font-size: 20px;
+    }
+
+    input {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 8px 10px;
+      border-radius: 4px;
+      border: 1px solid #111827;
+      background: #e5e7eb;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 4px;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+      margin-bottom: 6px;
+    }
+
+    #btnLoginUser { background: #16a34a; color: #fff; }
+    #btnLoginAdmin { background: #dc2626; color: #fff; }
+    #btnLoginUser:hover { background: #15803d; }
+    #btnLoginAdmin:hover { background: #b91c1c; }
+
+    .link {
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .link a { color: #22c55e; text-decoration: none; }
+
+    .msg {
+      margin-top: 10px;
+      font-size: 13px;
+      min-height: 18px;
+    }
+    .msg.ok { color: #22c55e; }
+    .msg.error { color: #f97316; }
+  </style>
 </head>
 <body>
+  <div class="card">
+    <h2>Login</h2>
 
-<div class="box">
-  <h2>Login</h2>
+    <input id="email" type="email" placeholder="seuemail@exemplo.com">
+    <input id="senha" type="password" placeholder="Senha">
 
-  <input id="email" placeholder="Email">
-  <input id="senha" type="password" placeholder="Senha">
+    <button id="btnLoginUser">Entrar</button>
+    <button id="btnLoginAdmin">Entrar como ADM</button>
 
-  <button class="user" onclick="loginUser()">Entrar</button>
-  <button class="admin" onclick="loginAdmin()">Entrar como ADM</button>
+    <div class="link">
+      <a href="#" id="criarConta">Criar conta</a>
+    </div>
 
-  <a class="link" href="register.html">Criar conta</a>
-</div>
+    <div id="mensagem" class="msg"></div>
+  </div>
 
-<script>
-// 🔥 CONFIG FIREBASE (SUBSTITUA)
-const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_PROJETO.firebaseapp.com",
-  projectId: "SEU_PROJETO"
-};
+  <script>
+    // "Banco de dados" em memória (apenas para teste)
+    const usuarios = [
+      { email: "teste@teste.com", senha: "123456", tipo: "user" },
+      { email: "admin@site.com", senha: "admin123", tipo: "admin" }
+    ];
 
-firebase.initializeApp(firebaseConfig);
+    const emailInput = document.getElementById("email");
+    const senhaInput = document.getElementById("senha");
+    const msg = document.getElementById("mensagem");
 
-const auth = firebase.auth();
-const db = firebase.firestore();
+    function mostrarMensagem(texto, ok = false) {
+      msg.textContent = texto;
+      msg.className = "msg " + (ok ? "ok" : "error");
+    }
 
-// 👤 LOGIN USUÁRIO
-function loginUser(){
-  const email = email.value;
-  const senha = document.getElementById("senha").value;
+    function login(tipoEsperado) {
+      const email = emailInput.value.trim();
+      const senha = senhaInput.value;
 
-  auth.signInWithEmailAndPassword(email, senha)
-  .then(()=>location.href="painel.html")
-  .catch(()=>alert("Login inválido"));
-}
-
-// 👑 LOGIN ADM
-function loginAdmin(){
-  const email = email.value;
-  const senha = document.getElementById("senha").value;
-
-  auth.signInWithEmailAndPassword(email, senha)
-  .then(res=>{
-    db.collection("users").doc(res.user.uid).get()
-    .then(doc=>{
-      if(doc.exists && doc.data().role === "admin"){
-        location.href="admin.html";
-      }else{
-        alert("Você não é ADM");
-        auth.signOut();
+      if (!email || !senha) {
+        mostrarMensagem("Preencha email e senha.");
+        return;
       }
-    });
-  })
-  .catch(()=>alert("Login inválido"));
-}
-</script>
 
+      const user = usuarios.find(
+        u => u.email === email && u.senha === senha
+      );
+
+      if (!user) {
+        mostrarMensagem("Email ou senha incorretos.");
+        return;
+      }
+
+      if (tipoEsperado === "admin" && user.tipo !== "admin") {
+        mostrarMensagem("Você não tem permissão de administrador.");
+        return;
+      }
+
+      if (tipoEsperado === "user" && user.tipo !== "user") {
+        mostrarMensagem("Essa conta não é de usuário comum.");
+        return;
+      }
+
+      // Aqui você poderia redirecionar para o painel real:
+      // window.location.href = "painel.html";
+      mostrarMensagem("Login realizado como " + tipoEsperado.toUpperCase() + "!", true);
+    }
+
+    document.getElementById("btnLoginUser")
+      .addEventListener("click", () => login("user"));
+
+    document.getElementById("btnLoginAdmin")
+      .addEventListener("click", () => login("admin"));
+
+    document.getElementById("criarConta")
+      .addEventListener("click", (e) => {
+        e.preventDefault();
+        mostrarMensagem("Cadastro ainda não implementado (apenas demonstração).");
+      });
+  </script>
 </body>
 </html>
