@@ -1,230 +1,182 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>Login Painel</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+<meta charset="UTF-8">
+<title>Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    body {
-      background: #020617;
-      color: #fff;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+<style>
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:radial-gradient(circle at top,#0f172a,#020617);
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
 
-    .card {
-      background: #020617;
-      border-radius: 10px;
-      padding: 20px;
-      width: 320px;
-      box-shadow: 0 0 18px rgba(0,0,0,0.8);
-      text-align: center;
-    }
+.container{
+  width:100%;
+  max-width:380px;
+  padding:30px;
+}
 
-    h2 { margin-bottom: 16px; font-size: 20px; }
+.logo{
+  text-align:center;
+  margin-bottom:20px;
+}
+.logo img{
+  width:60px;
+}
 
-    input, select {
-      width: 100%;
-      margin-bottom: 10px;
-      padding: 8px 10px;
-      border-radius: 4px;
-      border: 1px solid #111827;
-      background: #e5e7eb;
-      font-size: 14px;
-    }
+h2{
+  text-align:center;
+  margin-bottom:5px;
+}
+p{
+  text-align:center;
+  color:#9ca3af;
+  font-size:14px;
+  margin-bottom:25px;
+}
 
-    button {
-      width: 100%;
-      padding: 8px 10px;
-      border-radius: 4px;
-      border: none;
-      font-size: 14px;
-      cursor: pointer;
-      margin-bottom: 6px;
-    }
+.discord{
+  background:#5865F2;
+  border:none;
+  color:white;
+  width:100%;
+  padding:14px;
+  border-radius:10px;
+  font-size:15px;
+  cursor:pointer;
+  margin-bottom:20px;
+}
 
-    #btnLoginUser { background: #16a34a; color: #fff; }
-    #btnLoginAdmin { background: #dc2626; color: #fff; }
-    #btnLoginUser:hover { background: #15803d; }
-    #btnLoginAdmin:hover { background: #b91c1c; }
+.divider{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:#6b7280;
+  font-size:12px;
+  margin-bottom:15px;
+}
+.divider::before,.divider::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:#1f2933;
+}
 
-    #btnCadastrar { background: #0ea5e9; color: #000; }
-    #btnCadastrar:hover { background: #0284c7; }
+label{
+  font-size:13px;
+  color:#9ca3af;
+}
 
-    .link {
-      margin-top: 8px;
-      font-size: 13px;
-    }
-    .link a { color: #22c55e; text-decoration: none; cursor: pointer; }
+input{
+  width:100%;
+  padding:14px;
+  margin-top:6px;
+  margin-bottom:15px;
+  border-radius:10px;
+  border:none;
+  background:#020617;
+  color:white;
+}
 
-    .msg {
-      margin-top: 10px;
-      font-size: 13px;
-      min-height: 18px;
-    }
-    .msg.ok { color: #22c55e; }
-    .msg.error { color: #f97316; }
+button.login{
+  width:100%;
+  padding:14px;
+  border-radius:10px;
+  border:none;
+  background:white;
+  color:black;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:10px;
+}
 
-    .hidden { display: none; }
-  </style>
+button.adm{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #22c55e;
+  background:transparent;
+  color:#22c55e;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:10px;
+}
+
+.footer{
+  text-align:center;
+  font-size:13px;
+  margin-top:20px;
+  color:#9ca3af;
+}
+.footer a{
+  color:#22c55e;
+  text-decoration:none;
+}
+</style>
 </head>
+
 <body>
-  <div class="card">
-    <!-- LOGIN -->
-    <div id="telaLogin">
-      <h2>Login</h2>
 
-      <input id="loginEmail" type="email" placeholder="seuemail@exemplo.com">
-      <input id="loginSenha" type="password" placeholder="Senha">
+<div class="container">
 
-      <button id="btnLoginUser">Entrar</button>
-      <button id="btnLoginAdmin">Entrar como ADM</button>
-
-      <div class="link">
-        <a id="linkCadastro">Criar conta</a>
-      </div>
-    </div>
-
-    <!-- CADASTRO -->
-    <div id="telaCadastro" class="hidden">
-      <h2>Criar conta</h2>
-
-      <input id="cadEmail" type="email" placeholder="seuemail@exemplo.com">
-      <input id="cadSenha" type="password" placeholder="Senha">
-      <select id="cadTipo">
-        <option value="user">Usuário comum</option>
-        <option value="admin">Administrador</option>
-      </select>
-
-      <button id="btnCadastrar">Cadastrar</button>
-
-      <div class="link">
-        <a id="linkVoltarLogin">Já tenho conta</a>
-      </div>
-    </div>
-
-    <div id="mensagem" class="msg"></div>
+  <div class="logo">
+    <img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png">
   </div>
 
-  <script>
-    // ----- UTILITÁRIOS -----
-    function getUsuarios() {
-      const dados = localStorage.getItem("usuariosPainel");
-      return dados ? JSON.parse(dados) : [];
-    }
+  <h2>Bem-vindo de volta</h2>
+  <p>Entre na sua conta para continuar</p>
 
-    function salvarUsuarios(lista) {
-      localStorage.setItem("usuariosPainel", JSON.stringify(lista));
-    }
+  <button class="discord">Entrar com Discord</button>
 
-    // Cria usuário padrão admin se não existir
-    (function criaAdminDefault() {
-      const lista = getUsuarios();
-      const jaTemAdmin = lista.some(u => u.email === "admin@site.com");
-      if (!jaTemAdmin) {
-        lista.push({ email: "admin@site.com", senha: "admin123", tipo: "admin" });
-        salvarUsuarios(lista);
-      }
-    })();
+  <div class="divider">ou</div>
 
-    const msg = document.getElementById("mensagem");
+  <label>Usuário ou Email</label>
+  <input id="email" placeholder="seu@email.com ou usuário">
 
-    function mostrarMensagem(texto, ok = false) {
-      msg.textContent = texto;
-      msg.className = "msg " + (ok ? "ok" : "error");
-    }
+  <label>Senha</label>
+  <input type="password" id="senha" placeholder="Digite sua senha">
 
-    function mostrarLogin() {
-      document.getElementById("telaLogin").classList.remove("hidden");
-      document.getElementById("telaCadastro").classList.add("hidden");
-      mostrarMensagem("");
-    }
+  <button class="login" onclick="login()">Acessar</button>
+  <button class="adm" onclick="loginADM()">Entrar como ADM</button>
 
-    function mostrarCadastro() {
-      document.getElementById("telaCadastro").classList.remove("hidden");
-      document.getElementById("telaLogin").classList.add("hidden");
-      mostrarMensagem("");
-    }
+  <div class="footer">
+    Não possui uma conta? <a href="#">Criar conta</a>
+  </div>
 
-    // ----- LOGIN -----
-    function login(tipoEsperado) {
-      const email = document.getElementById("loginEmail").value.trim();
-      const senha = document.getElementById("loginSenha").value;
+</div>
 
-      if (!email || !senha) {
-        mostrarMensagem("Preencha email e senha.");
-        return;
-      }
+<script>
+function login(){
+  const email = document.getElementById("email").value;
+  const senha = document.getElementById("senha").value;
 
-      const lista = getUsuarios();
-      const user = lista.find(u => u.email === email && u.senha === senha);
+  if(!email || !senha){
+    alert("Preencha todos os campos");
+    return;
+  }
 
-      if (!user) {
-        mostrarMensagem("Email ou senha incorretos.");
-        return;
-      }
+  // Login comum (simulado)
+  window.location.href = "painel.html";
+}
 
-      if (tipoEsperado === "admin" && user.tipo !== "admin") {
-        mostrarMensagem("Você não tem permissão de administrador.");
-        return;
-      }
+function loginADM(){
+  const email = document.getElementById("email").value;
+  const senha = document.getElementById("senha").value;
 
-      if (tipoEsperado === "user" && user.tipo !== "user") {
-        mostrarMensagem("Essa conta não é de usuário comum.");
-        return;
-      }
+  if(email === "admin@admin.com" && senha === "admin123"){
+    window.location.href = "admin.html";
+  }else{
+    alert("Credenciais ADM inválidas");
+  }
+}
+</script>
 
-      // Aqui você poderia redirecionar para o painel:
-      // window.location.href = "painel.html";
-      mostrarMensagem("Login realizado como " + tipoEsperado.toUpperCase() + "!", true);
-    }
-
-    document.getElementById("btnLoginUser")
-      .addEventListener("click", () => login("user"));
-
-    document.getElementById("btnLoginAdmin")
-      .addEventListener("click", () => login("admin"));
-
-    document.getElementById("linkCadastro")
-      .addEventListener("click", (e) => {
-        e.preventDefault();
-        mostrarCadastro();
-      });
-
-    document.getElementById("linkVoltarLogin")
-      .addEventListener("click", (e) => {
-        e.preventDefault();
-        mostrarLogin();
-      });
-
-    // ----- CADASTRO -----
-    document.getElementById("btnCadastrar")
-      .addEventListener("click", () => {
-        const email = document.getElementById("cadEmail").value.trim();
-        const senha = document.getElementById("cadSenha").value;
-        const tipo = document.getElementById("cadTipo").value;
-
-        if (!email || !senha) {
-          mostrarMensagem("Preencha email e senha para cadastrar.");
-          return;
-        }
-
-        const lista = getUsuarios();
-        if (lista.some(u => u.email === email)) {
-          mostrarMensagem("Já existe uma conta com esse email.");
-          return;
-        }
-
-        lista.push({ email, senha, tipo });
-        salvarUsuarios(lista);
-
-        mostrarMensagem("Conta criada com sucesso! Faça login.", true);
-        mostrarLogin();
-      });
-  </script>
 </body>
 </html>
