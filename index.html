@@ -3,365 +3,385 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Master Admin System 2025</title>
-    <link rel="stylesheet" href="cdnjs.cloudflare.com">
+    <title>KeyGen Pro v14 | Menu Sanduíche Integrado</title>
+    <script src="unpkg.com"></script>
+    <link href="fonts.googleapis.com" rel="stylesheet">
     <style>
         :root {
-            --bg: #080808;
-            --card: #121212;
-            --primary: #bc13fe;
-            --accent: #00f2ff;
-            --text: #ffffff;
-            --danger: #ff3b3b;
-            --success: #00ff88;
+            --bg: #000000; --card: #1a1a1a; --border: #333333;
+            --primary: #e62e2e; --secondary: #4ade80; --danger: #ef4444;
+            --warning: #f59e0b; --text: #f9fafb; --dim: #a0a0a0;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); }
-
-        /* Login */
-        #auth-screen { height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at center, #1a0b2e 0%, #080808 100%); }
-        .auth-card { background: var(--card); padding: 35px; border-radius: 20px; width: 380px; border: 1px solid #222; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
-        input, select, textarea { width: 100%; padding: 14px; margin: 10px 0; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 10px; resize: none; }
-        button { width: 100%; padding: 14px; border: none; border-radius: 10px; background: var(--primary); color: white; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        button:hover { filter: brightness(1.2); transform: translateY(-2px); }
-        .btn-action { width: auto; padding: 6px 12px; margin: 2px; font-size: 12px; display: inline-block; }
-
-        /* Dashboard Area */
-        #app-screen { display: none; padding: 30px; max-width: 1100px; margin: auto; }
-        .view-section { display: none; animation: fadeIn 0.4s ease; }
-        .active-view { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Tabela Ultra Gerenciável */
-        .table-wrapper { background: var(--card); border-radius: 15px; overflow: hidden; border: 1px solid #222; margin-top: 20px; }
-        .admin-table { width: 100%; border-collapse: collapse; text-align: left; }
-        .admin-table th { background: #1a1a1a; padding: 20px; color: var(--accent); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
-        .admin-table td { padding: 18px; border-bottom: 1px solid #222; font-size: 14px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; }
         
-        .badge { padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
-        .badge-adm { background: rgba(0, 242, 255, 0.1); color: var(--accent); border: 1px solid var(--accent); }
-        .badge-user { background: rgba(255, 255, 255, 0.05); color: #aaa; border: 1px solid #444; }
-        .badge-active { background: rgba(0, 255, 136, 0.1); color: var(--success); }
-        .badge-paused { background: rgba(255, 59, 59, 0.1); color: var(--danger); }
+        /* --- AUTH SYSTEM --- */
+        #auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+        .auth-card { background: var(--card); width: 90%; max-width: 400px; padding: 2rem; border-radius: 12px; border: 1px solid var(--border); }
+        .auth-tabs { display: flex; background: #000; padding: 5px; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid var(--border); }
+        .tab-btn { flex: 1; padding: 10px; border: none; background: none; color: var(--dim); cursor: pointer; font-weight: 700; border-radius: 6px; }
+        .tab-btn.active { background: var(--border); color: white; }
 
-        .btn-credit { background: var(--success); color: #000; }
-        .btn-del { background: var(--danger); }
-        .btn-warn { background: #ffc300; color: #000; }
+        /* --- UI ELEMENTS --- */
+        .field { margin-bottom: 1.2rem; }
+        label { display: block; font-size: 0.75rem; color: var(--dim); margin-bottom: 8px; font-weight: 800; text-transform: uppercase; }
+        input, select { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); border-radius: 6px; color: white; outline: none; }
+        input:focus { border-color: var(--primary); }
+        .btn { width: 100%; padding: 14px; border-radius: 6px; border: none; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-secondary { background: var(--secondary); color: white; }
 
-        /* Menu Inferior */
-        .menu-wrapper { position: fixed; bottom: 30px; right: 30px; z-index: 1000; }
-        .fab { width: 65px; height: 65px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; box-shadow: 0 8px 25px rgba(188, 19, 254, 0.5); transition: 0.4s; }
-        .fab.active { transform: rotate(135deg); background: var(--danger); }
-        .menu-items { position: absolute; bottom: 85px; right: 0; display: none; flex-direction: column; gap: 12px; min-width: 230px; }
-        .menu-item { background: #181818; padding: 16px; border-radius: 12px; border: 1px solid #333; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.3s; }
-        .menu-item:hover { border-color: var(--primary); background: #222; }
+        /* --- APP STRUCTURE --- */
+        #main-app { display: none; }
+        header { padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 100; }
+        .brand { font-weight: 800; color: var(--primary); }
+        .badge { padding: 5px 12px; border-radius: 100px; font-size: 0.7rem; font-weight: 800; border: 1px solid; }
 
-        /* Estilos da nova tela Personalizar Key */
-        .placeholder-btn { background: #3a0ca3; color: white; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin: 5px 5px 5px 0; display: inline-block; font-size: 14px; }
-        .example-box { background: #000; padding: 15px; border-radius: 8px; border: 1px solid #444; font-family: monospace; margin-top: 15px; font-size: 16px; }
-        .field-title { color: #aaa; font-size: 12px; margin-bottom: 5px; }
-        .stat-box { background: var(--card); padding: 25px; border-radius: 15px; border-left: 5px solid var(--primary); }
+        main { padding: 2rem; max-width: 900px; margin: 0 auto; padding-bottom: 100px; }
+        .view { display: none; }
+        .view.active { display: block; animation: fadeIn 0.4s ease; }
+        .card { background: var(--card); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 1.5rem; }
 
-        /* Botões ADM de Controle Global */
-        .admin-controls { display: flex; gap: 10px; margin-bottom: 20px; }
-        .admin-controls button { width: auto; margin: 0; padding: 10px 15px; font-size: 14px; }
+        /* --- TABLES --- */
+        .table-container { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); background: var(--card); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+        th { background: var(--bg); color: var(--dim); font-size: 0.7rem; text-transform: uppercase; }
+        .status-pill { padding: 3px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; }
+        .active-pill { color: var(--secondary); }
+        .paused-pill { color: var(--warning); }
+        .expired-pill { color: var(--danger); }
+        .key-mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* --- MENU SANDUÍCHE (FAB) --- */
+        .menu-wrapper { position: fixed; bottom: 30px; right: 30px; z-index: 1001; }
+        #fab { width: 60px; height: 60px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
+        .drawer { position: absolute; bottom: 75px; right: 0; width: 250px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px; display: none; box-shadow: 0 15px 30px rgba(0,0,0,0.6); }
+        .drawer.open { display: block; animation: fadeIn 0.3s ease; }
+        .nav-link { padding: 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; color: var(--dim); border-radius: 4px; transition: 0.2s; }
+        .nav-link:hover { background: var(--border); color: white; }
+        .nav-link.active-link { color: var(--primary); font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <!-- LOGIN -->
+    <!-- AUTH SCREEN -->
     <div id="auth-screen">
         <div class="auth-card">
-            <h2 style="text-align: center; margin-bottom: 25px; letter-spacing: 2px;">LOGIN PAINEL</h2>
-            <input type="text" id="user" placeholder="Usuário">
-            <input type="password" id="pass" placeholder="Senha">
-            <button onclick="login()">ACESSAR SISTEMA</button>
-            <p onclick="registrar()" style="text-align: center; font-size: 12px; margin-top: 20px; cursor: pointer; color: #666;">Registrar novo usuário</p>
+            <div class="auth-tabs">
+                <button class="tab-btn active" id="tab-member" onclick="toggleAuth('member')">MEMBRO</button>
+                <button class="tab-btn" id="tab-admin" onclick="toggleAuth('admin')">ADMIN</button>
+            </div>
+            <div id="auth-member">
+                <div class="field">
+                    <label>Nome do Usuário</label>
+                    <input type="text" id="reg-name" placeholder="Ex: Revenda_Pro">
+                </div>
+                <button class="btn btn-secondary" onclick="registerUser()">ENTRAR COMO MEMBRO</button>
+            </div>
+            <div id="auth-admin" style="display:none">
+                <div class="field">
+                    <label>Chave Mestra ADM</label>
+                    <input type="password" id="master-key" placeholder="••••••••">
+                </div>
+                <button class="btn btn-primary" onclick="loginAdmin()">ENTRAR COMO ADM</button>
+            </div>
         </div>
     </div>
 
-    <!-- APP PRINCIPAL -->
-    <div id="app-screen">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-            <h1 id="screen-title">Dashboard</h1>
-            <span id="user-info" style="color: var(--accent); font-weight: bold;"></span>
-        </div>
+    <!-- MAIN APP -->
+    <div id="main-app">
+        <header>
+            <div class="brand">4m Cheats</div>
+            <div id="user-role" class="badge">MEMBRO</div>
+        </header>
 
-        <!-- DASHBOARD VIEW (INÍCIO) -->
-        <div id="view-dash" class="view-section active-view">
-             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-                <div class="stat-box"><p style="color: #666; font-size: 12px;">MEUS CRÉDITOS</p><h2 id="my-credits">0</h2></div>
-                <div class="stat-box"><p style="color: #666; font-size: 12px;">KEYS NO SISTEMA</p><h2 id="keys-total">0</h2></div>
-                <div class="stat-box"><p style="color: #666; font-size: 12px;">TOTAL USUÁRIOS</p><h2 id="users-total">0</h2></div>
-                 <div class="stat-box">
-                    <p style="color: #666; font-size: 12px;">STATUS DO SISTEMA</p>
-                    <h2 id="system-status">ONLINE</h2>
-                    <!-- BOTAO MOVIDO PARA CA (AGORA VISIVEL) -->
-                    <button onclick="toggleSystemStatus()" class="btn-action btn-warn" style="margin-top: 10px; width: 100%;">
-                        <i class="fas fa-pause"></i> Pausar/Ativar Keys
-                    </button>
+        <main>
+            <!-- DASHBOARD -->
+            <div id="v-dash" class="view active">
+                <h1 style="margin-bottom: 20px;">Dashboard</h1>
+                <div class="card">
+                    <p style="color:var(--dim); font-size: 0.8rem;">Saldo Disponível</p>
+                    <h2 id="display-credits" style="color:var(--secondary); font-size: 2rem;">R$ 0,00</h2>
+                    <p style="color:var(--dim); font-size: 0.7rem; margin-top:5px;">Preço por key: R$ 5,00</p>
+                </div>
+                <div class="card">
+                    <p style="color:var(--dim); font-size: 0.8rem;">Total de Keys Ativas</p>
+                    <h2 id="display-keys" style="font-size: 2rem;">0</h2>
                 </div>
             </div>
-        </div>
 
-        <!-- GERENCIAR USUÁRIOS (SOMENTE ADM) -->
-        <div id="view-users" class="view-section">
-            <h3 style="margin-bottom: 10px;">Gerenciamento ADM Avançado</h3>
-
-            <!-- BOTOES ADM EXCLUSIVOS -->
-            <div class="admin-controls">
-                <!-- <button onclick="toggleSystemStatus()" style="background: #ffc300;"> TIRADO DAQUI </button> -->
-                <button onclick="resetAllKeys()" class="btn-del">
-                    <i class="fas fa-trash-alt"></i> Resetar Todas as Keys
-                </button>
-            </div>
-            
-            <div class="table-wrapper">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Usuário</th>
-                            <th>Cargo</th>
-                            <th>Saldo</th>
-                            <th>Gerenciar</th>
-                        </tr>
-                    </thead>
-                    <tbody id="user-list-body"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- GERAR KEYS -->
-        <div id="view-keys" class="view-section">
-            <div class="auth-card" style="width: 100%; max-width: 500px; margin: auto;">
-                <h3>Gerador Key 2025</h3>
-                <p>Formato atual: <strong id="current-key-format">PDR XITER-{codigo-aleatorio-obrigatorio}</strong></p>
-                 <p style="margin-bottom: 15px;">Status do sistema: <strong id="gen-status">ONLINE</strong></p>
-                <select id="key-days">
-                    <option value="1">24 Horas</option>
-                    <option value="7">7 Dias</option>
-                    <option value="30">30 Dias</option>
-                </select>
-                <button onclick="gerarKey()">Gerar Key Aleatória</button>
-                <div id="key-display" style="margin-top: 20px; color: var(--accent); font-family: monospace; text-align: center; font-size: 20px; border: 1px dashed #333; padding: 10px;"></div>
-            </div>
-        </div>
-
-        <!-- PERSONALIZAR KEYS -->
-        <div id="view-personalize" class="view-section">
-            <div class="auth-card" style="width: 100%; max-width: 600px; margin: auto;">
-                <h3>Personalizar Minhas Keys</h3>
-                <p style="color: #aaa; margin-bottom: 20px;">Configure o formato e prefixo das suas keys geradas.</p>
-                
-                <label class="field-title">Prefixo Gerador de Keys</label>
-                <input type="text" id="key-prefix" placeholder="PDR XITER">
-
-                <label class="field-title">Formato da Key</label>
-                <div style="margin-bottom: 10px;">
-                    <span class="placeholder-btn" onclick="addPlaceholder('{Produto}')">{Produto}</span>
-                    <span class="placeholder-btn" onclick="addPlaceholder('{Validade}')">{Validade}</span>
-                    <span class="placeholder-btn" onclick="addPlaceholder('{codigo-aleatorio-obrigatorio}')">{codigo-aleatorio-obrigatorio}</span>
+            <!-- PERSONALIZAR KEY -->
+            <div id="v-gen" class="view">
+                <h2>Gerar Nova Licença</h2>
+                <div class="card">
+                    <label>Prefixo</label>
+                    <input type="text" id="k-prefix" placeholder="Ex: VIP-">
+                    <label>Duração</label>
+                    <select id="k-time">
+                        <option value="1">24 Horas (R$ 5,00)</option>
+                        <option value="7">7 Dias (R$ 15,00)</option>
+                        <option value="30">30 Dias (R$ 40,00)</option>
+                    </select>
+                    <button id="gen-btn" class="btn btn-secondary" onclick="executeGeneration()">GERAR KEY</button>
+                    <div id="k-res-box" style="display:none; margin-top:15px; background:#000; padding:15px; border-radius:6px; border:1px dashed var(--dim); text-align:center;">
+                        <p style="font-size: 0.7rem; color:var(--dim); margin-bottom:5px;">KEY GERADA:</p>
+                        <code id="k-final" class="key-mono" style="color:var(--primary);"></code>
+                    </div>
                 </div>
-                <textarea id="key-format-textarea" rows="4" placeholder="Clique nos placeholders acima para adicionar..."></textarea>
-                
-                <label class="field-title">Exemplo de key gerada:</label>
-                <div class="example-box" id="key-example">PDR XITER-ABC12330D</div>
-
-                <button onclick="saveKeyConfig()">Salvar Configuração</button>
             </div>
-        </div>
 
+            <!-- GERENCIAR KEYS -->
+            <div id="v-list" class="view">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h2>Gerenciar Licenças</h2>
+                    <button id="adm-freeze-btn" class="btn btn-primary" style="display:none; padding:8px 12px; width:auto; font-size:0.7rem;" onclick="toggleFreeze()">CONGELAR TEMPO</button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>KEY</th><th>STATUS</th><th>RESTANTE</th><th>PROPRIETÁRIO</th></tr></thead>
+                        <tbody id="table-keys"></tbody>
+                    </table>
+                </div>
+            </div>
 
-        <!-- MENU SANDUÍCHE -->
+            <!-- GERENCIAR USUÁRIOS (ADM) -->
+            <div id="v-users" class="view">
+                <h2 style="color:var(--primary)">Gestão de Membros</h2>
+                <div class="card">
+                    <label>Injetar Créditos</label>
+                    <select id="adm-user-select"></select>
+                    <input type="number" id="adm-amount" placeholder="Valor R$">
+                    <button class="btn btn-primary" onclick="injectCredits()">INJETAR SALDO</button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>NOME</th><th>SALDO</th><th>AÇÕES</th></tr></thead>
+                        <tbody id="table-users"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- MENU SANDUÍCHE (FAB) -->
         <div class="menu-wrapper">
-            <div class="menu-items" id="main-menu">
-                <div class="menu-item" onclick="changeView('dash')"><i class="fas fa-home"></i> Início</div>
-                <div class="menu-item adm-only" onclick="changeView('users')"><i class="fas fa-user-shield"></i> Gerenciar Logins</div>
-                <div class="menu-item" onclick="changeView('keys')"><i class="fas fa-key"></i> Gerar Keys</div>
-                <div class="menu-item" onclick="changeView('personalize')"><i class="fas fa-cogs"></i> Personalizar Key</div>
-                <div class="menu-item" onclick="location.reload()" style="color: var(--danger);"><i class="fas fa-power-off"></i> Sair</div>
+            <div class="drawer" id="menu-drawer">
+                <!-- Nav Links here -->
+                <div class="nav-link" onclick="nav('dash', this)"><i data-lucide="layout" size="18"></i> Dashboard</div>
+                <div class="nav-link" onclick="nav('gen', this)"><i data-lucide="key" size="18"></i> Gerar Keys</div>
+                <div class="nav-link" onclick="nav('list', this)"><i data-lucide="list" size="18"></i> Gerenciar Keys</div>
+
+                <div id="adm-nav" style="display:none; border-top: 1px solid var(--border); margin-top:10px; padding-top:10px;">
+                    <div class="nav-link" onclick="nav('users', this)" style="color:var(--primary)"><i data-lucide="users" size="18"></i> Gerenciar Usuários</div>
+                    <div class="nav-link" onclick="nav('users', this)" style="color:var(--primary)"><i data-lucide="credit-card" size="18"></i> Add Créditos</div>
+                </div>
+
+                <div class="nav-link" onclick="location.reload()" style="color:var(--danger); margin-top:10px;"><i data-lucide="log-out" size="18"></i> Sair</div>
             </div>
-            <div class="fab" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+            <div id="fab" onclick="toggleDrawer()"><i data-lucide="menu" id="fab-icon" style="color:white"></i></div>
         </div>
     </div>
 
     <script>
-        // Banco de Dados Local
-        let db = JSON.parse(localStorage.getItem('sys_v5_data')) || {
-            users: [{ user: 'admin', pass: 'admin', role: 'ADM', credits: 9999 }],
-            keys: [],
-            config: {
-                prefix: 'PDR XITER',
-                format: '{codigo-aleatorio-obrigatorio}',
-                systemStatus: 'ONLINE' // Novo status global
-            }
-        };
+        const MASTER_PASS = "ADMIN2025";
+        let session = null;
+        let clockInterval;
 
-        let loggedIn = null;
+        const getDB = () => JSON.parse(localStorage.getItem('keygen_v14_data')) || { users: [], keys: [], frozen: false, freezeTime: null };
+        const saveDB = (db) => localStorage.setItem('keygen_v14_data', JSON.stringify(db));
 
-        function save() { localStorage.setItem('sys_v5_data', JSON.stringify(db)); }
-        function login() { /* ... function remains the same ... */ 
-            const u = document.getElementById('user').value.toLowerCase();
-            const p = document.getElementById('pass').value;
-            const found = db.users.find(x => x.user === u && x.pass === p);
+        function toggleAuth(type) {
+            document.getElementById('auth-member').style.display = (type === 'member' ? 'block' : 'none');
+            document.getElementById('auth-admin').style.display = (type === 'admin' ? 'block' : 'none');
+            document.getElementById('tab-member').classList.toggle('active', type === 'member');
+            document.getElementById('tab-admin').classList.toggle('active', type === 'admin');
+        }
 
-            if(found) {
-                loggedIn = found;
-                document.getElementById('auth-screen').style.display = 'none';
-                document.getElementById('app-screen').style.display = 'block';
-                document.getElementById('user-info').innerText = `Olá, ${loggedIn.user.toUpperCase()}`;
-                
-                if(loggedIn.role !== 'ADM') {
-                    document.querySelectorAll('.adm-only').forEach(el => el.style.display = 'none');
-                }
-                updateStats();
-                changeView('dash');
+        function registerUser() {
+            const name = document.getElementById('reg-name').value;
+            if(!name) return alert("Digite um nome!");
+            const db = getDB();
+            const user = { id: Date.now(), name, credits: 0, role: 'USER' };
+            db.users.push(user);
+            saveDB(db);
+            startSession(user);
+        }
+
+        function loginAdmin() {
+            if(document.getElementById('master-key').value === MASTER_PASS) {
+                startSession({ name: "Admin Master", role: 'ADM', credits: 999999 });
             } else {
-                alert("Login incorreto!");
+                alert("Senha Incorreta!");
             }
         }
-        function registrar() { /* ... function remains the same ... */ 
-            const u = document.getElementById('user').value.toLowerCase();
-            const p = document.getElementById('pass').value;
-            if(!u || !p) return alert("Preencha os campos!");
-            if(db.users.find(x => x.user === u)) return alert("Usuário já existe!");
 
-            db.users.push({ user: u, pass: p, role: 'USER', credits: 0 });
-            save();
-            alert("Conta criada! Agora clique em Acessar.");
+        function startSession(user) {
+            session = user;
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            
+            if(user.role === 'ADM') {
+                document.getElementById('user-role').innerText = "ADMIN MASTER";
+                document.getElementById('user-role').style.color = document.getElementById('user-role').style.borderColor = "var(--primary)";
+                document.getElementById('adm-nav').style.display = "block";
+                document.getElementById('adm-freeze-btn').style.display = "block";
+                document.getElementById('gen-btn').className = "btn btn-primary";
+                document.getElementById('fab').style.background = "var(--primary)";
+                refreshAdmLists();
+            } else {
+                document.getElementById('user-role').innerText = "MEMBRO VIP";
+                document.getElementById('user-role').style.color = document.getElementById('user-role').style.borderColor = "var(--secondary)";
+                document.getElementById('fab').style.background = "var(--secondary)";
+            }
+
+            if(clockInterval) clearInterval(clockInterval);
+            clockInterval = setInterval(updateAllClocks, 1000);
+            updateDashboard();
+            updateAllClocks();
+            lucide.createIcons();
         }
-        function renderUsers() { /* ... function remains the same ... */ 
-            const body = document.getElementById('user-list-body');
-            body.innerHTML = "";
-            db.users.forEach((u, index) => {
-                body.innerHTML += `
-                    <tr>
-                        <td><strong>${u.user}</strong></td>
-                        <td><span class="badge ${u.role === 'ADM' ? 'badge-adm' : 'badge-user'}">${u.role}</span></td>
-                        <td>$ ${u.credits}</td>
-                        <td>
-                            <button class="btn-action btn-credit" onclick="addCreditPrompt(${index})"><i class="fas fa-plus"></i> Crédito</button>
-                            ${u.role !== 'ADM' ? `<button class="btn-action btn-del" onclick="deleteUser(${index})"><i class="fas fa-trash"></i></button>` : ''}
-                        </td>
-                    </tr>
-                `;
+
+        function updateDashboard() {
+            const db = getDB();
+            if(session.role !== 'ADM') {
+                const me = db.users.find(u => u.id === session.id);
+                document.getElementById('display-credits').innerText = `R$ ${me.credits.toFixed(2)}`;
+                document.getElementById('display-keys').innerText = db.keys.filter(k => k.ownerId === session.id).length;
+            } else {
+                document.getElementById('display-credits').innerText = "INFINITO";
+                document.getElementById('display-keys').innerText = db.keys.length;
+            }
+        }
+
+        function executeGeneration() {
+            const days = parseInt(document.getElementById('k-time').value);
+            const cost = { 1: 5, 7: 15, 30: 40 }[days];
+            const pre = document.getElementById('k-prefix').value.toUpperCase() || "KEY";
+            let db = getDB();
+
+            if(session.role !== 'ADM') {
+                let user = db.users.find(u => u.id === session.id);
+                if(user.credits < cost) return alert("Saldo insuficiente!");
+                user.credits -= cost;
+            }
+
+            const newKey = {
+                code: `${pre}-${days}D-${Math.random().toString(36).substring(2,8).toUpperCase()}`,
+                expiry: Date.now() + (days * 24 * 60 * 60 * 1000),
+                ownerId: session.id,
+                ownerName: session.name
+            };
+
+            db.keys.push(newKey);
+            saveDB(db);
+            document.getElementById('k-final').innerText = newKey.code;
+            document.getElementById('k-res-box').style.display = "block";
+            updateDashboard();
+            updateAllClocks();
+            alert("Key Gerada!");
+        }
+
+        function toggleFreeze() {
+            let db = getDB();
+            const now = Date.now();
+            if(!db.frozen) { db.frozen = true; db.freezeTime = now; }
+            else { 
+                const dur = now - db.freezeTime;
+                db.keys = db.keys.map(k => ({ ...k, expiry: k.expiry + dur }));
+                db.frozen = false; db.freezeTime = null;
+            }
+            saveDB(db);
+            updateAllClocks();
+        }
+
+        function updateAllClocks() {
+            const db = getDB();
+            const tbody = document.getElementById('table-keys');
+            if(!tbody) return;
+            tbody.innerHTML = "";
+            const now = Date.now();
+            const list = session.role === 'ADM' ? db.keys : db.keys.filter(k => k.ownerId === session.id);
+
+            list.slice().reverse().forEach(k => {
+                let diff = k.expiry - (db.frozen ? db.freezeTime : now);
+                let status = "ATIVA", pill = "active-pill";
+
+                if(diff <= 0) { status = "EXPIRADA"; pill = "expired-pill"; diff = 0; }
+                else if(db.frozen) { status = "PAUSADA"; pill = "paused-pill"; }
+
+                const d = Math.floor(diff/(1000*60*60*24));
+                const h = Math.floor((diff/(1000*60*60))%24);
+                const m = Math.floor((diff/(1000*60))%60);
+
+                tbody.innerHTML += `<tr>
+                    <td>${k.code}</td>
+                    <td><span class="status-pill ${pill}">${status}</span></td>
+                    <td>${status === "EXPIRADA" ? "---" : d+"d "+h+"h "+m+"m"}</td>
+                    <td>${k.ownerName}</td>
+                </tr>`;
             });
-        }
-        function addCreditPrompt(index) { /* ... function remains the same ... */ 
-             const amount = prompt(`Quantos créditos deseja adicionar para ${db.users[index].user}?`);
-            if(amount && !isNaN(amount)) {
-                db.users[index].credits += parseInt(amount);
-                save();
-                renderUsers();
-                updateStats();
-                alert("Créditos adicionados!");
-            }
-        }
-        function deleteUser(index) { /* ... function remains the same ... */ 
-             if(confirm(`Excluir o login ${db.users[index].user} permanentemente?`)) {
-                db.users.splice(index, 1);
-                save();
-                renderUsers();
-                updateStats();
+
+            if(session.role === 'ADM') {
+                const btn = document.getElementById('adm-freeze-btn');
+                btn.innerText = db.frozen ? "RETOMAR" : "CONGELAR";
             }
         }
 
-        function updateStats() {
-            document.getElementById('my-credits').innerText = `$ ${loggedIn.credits}`;
-            document.getElementById('keys-total').innerText = db.keys.length;
-            document.getElementById('users-total').innerText = db.users.length;
-            document.getElementById('current-key-format').innerText = `${db.config.prefix}-${db.config.format}`;
+        function refreshAdmLists() {
+            const db = getDB();
+            const tbody = document.getElementById('table-users');
+            const select = document.getElementById('adm-user-select');
+            tbody.innerHTML = ""; select.innerHTML = "";
+            db.users.forEach(u => {
+                tbody.innerHTML += `<tr><td>${u.name}</td><td>R$ ${u.credits.toFixed(2)}</td><td><button onclick="deleteUser(${u.id})" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i data-lucide="trash-2" size="16"></i></button></td></tr>`;
+                select.innerHTML += `<option value="${u.id}">${u.name}</option>`;
+            });
+            lucide.createIcons();
+        }
+
+        function injectCredits() {
+            const id = document.getElementById('adm-user-select').value;
+            const val = parseFloat(document.getElementById('adm-amount').value);
+            if(!id || isNaN(val)) return;
+            let db = getDB();
+            db.users = db.users.map(u => u.id == id ? { ...u, credits: u.credits + val } : u);
+            saveDB(db);
+            refreshAdmLists();
+            alert("Sucesso!");
+        }
+
+        function deleteUser(id) {
+            if(!confirm("Remover usuário permanentemente?")) return;
+            let db = getDB();
+            db.users = db.users.filter(u => u.id !== id);
+            saveDB(db);
+            refreshAdmLists();
+        }
+
+        function toggleDrawer() { 
+            const drawer = document.getElementById('menu-drawer');
+            const icon = document.getElementById('fab-icon');
+            drawer.classList.toggle('open');
+            icon.setAttribute('data-lucide', drawer.classList.contains('open') ? 'x' : 'menu');
+            lucide.createIcons();
+        }
+
+        function nav(viewId, element) {
+            document.querySelectorAll('.view').forEach(e => e.classList.remove('active'));
+            document.getElementById('v-' + viewId).classList.add('active');
             
-            // Atualiza indicadores de status
-            const status = db.config.systemStatus;
-            document.getElementById('system-status').innerText = status;
-            document.getElementById('gen-status').innerText = status;
-            document.getElementById('system-status').className = status === 'ONLINE' ? 'badge-active' : 'badge-paused';
-            
-            // Atualiza o texto do botão de pausar
-            const pauseBtn = document.querySelector('.btn-warn');
-            if (pauseBtn) {
-                pauseBtn.innerHTML = status === 'ONLINE' 
-                    ? '<i class="fas fa-pause"></i> Pausar Keys' 
-                    : '<i class="fas fa-play"></i> Ativar Keys';
+            document.querySelectorAll('.nav-link').forEach(e => e.classList.remove('active-link'));
+            if (element) {
+                 element.classList.add('active-link');
             }
+            toggleDrawer(); // Fecha o menu sanduíche após a navegação
         }
 
-        function changeView(id) { /* ... function remains the same ... */ 
-            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
-            document.getElementById('view-' + id).classList.add('active-view');
-            document.getElementById('screen-title').innerText = id.toUpperCase();
-            if(id === 'users') renderUsers();
-            if(id === 'personalize') loadKeyConfig();
-            if(document.getElementById('main-menu').style.display === 'flex') toggleMenu();
-        }
-        function toggleMenu() { /* ... function remains the same ... */ 
-            const menu = document.getElementById('main-menu');
-            const fab = document.querySelector('.fab');
-            menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-            fab.classList.toggle('active');
-        }
-        function loadKeyConfig() { /* ... function remains the same ... */ 
-            document.getElementById('key-prefix').value = db.config.prefix;
-            document.getElementById('key-format-textarea').value = db.config.format;
-            updateExampleKey();
-        }
-        function addPlaceholder(placeholder) { /* ... function remains the same ... */ 
-             const textarea = document.getElementById('key-format-textarea');
-            textarea.value += placeholder;
-            updateExampleKey();
-        }
-        function updateExampleKey() { /* ... function remains the same ... */ 
-            const prefix = document.getElementById('key-prefix').value || db.config.prefix;
-            const format = document.getElementById('key-format-textarea').value || db.config.format;
-            let example = `${prefix}-${format}`;
-            
-            example = example.replace('{Produto}', 'PDRAPP');
-            example = example.replace('{Validade}', '30D');
-            example = example.replace('{codigo-aleatorio-obrigatorio}', 'ABC123XYZ');
-            
-            document.getElementById('key-example').innerText = example;
-        }
-        function saveKeyConfig() { /* ... function remains the same ... */ 
-             db.config.prefix = document.getElementById('key-prefix').value;
-            db.config.format = document.getElementById('key-format-textarea').value;
-            save();
-            updateStats();
-            alert("Configurações de Key salvas com sucesso!");
-        }
-        
-        function gerarKey() {
-             if (db.config.systemStatus !== 'ONLINE') return alert("O sistema de geração de keys está PAUSADO pelo ADM!");
-
-            const days = document.getElementById('key-days').value;
-            let finalKey = `${db.config.prefix}-${db.config.format}`;
-            
-            finalKey = finalKey.replace('{Produto}', 'ITEM');
-            finalKey = finalKey.replace('{Validade}', `${days}D`);
-            finalKey = finalKey.replace('{codigo-aleatorio-obrigatorio}', Math.random().toString(36).substr(2, 9).toUpperCase());
-
-            db.keys.push({ code: finalKey, days, status: 'Ativa' }); // Adiciona status inicial
-            save();
-            document.getElementById('key-display').innerText = finalKey;
-            updateStats();
-        }
-        
-        // FUNÇÕES ADM DE CONTROLE GLOBAL
-        function toggleSystemStatus() {
-            // A VERIFICACAO DE ADM AINDA ESTA AQUI PARA SEGURANCA
-            if (loggedIn.role !== 'ADM') return alert("Apenas ADMs podem controlar o sistema!");
-            
-            const newStatus = db.config.systemStatus === 'ONLINE' ? 'PAUSADO' : 'ONLINE';
-            db.config.systemStatus = newStatus;
-            save();
-            updateStats();
-            alert(`Sistema agora está ${newStatus}!`);
-        }
-
-        function resetAllKeys() {
-            if (loggedIn.role !== 'ADM') return alert("Apenas ADMs podem resetar o sistema!");
-            if (confirm("TEM CERTEZA? Isso APAGARÁ TODAS as keys geradas permanentemente!")) {
-                db.keys = [];
-                save();
-                
+        window.onload = () => lucide.createIcons();
+    </script>
+</body>
+                        </html>
+                                                                                                                      
