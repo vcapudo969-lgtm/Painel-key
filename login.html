@@ -1,1 +1,15 @@
+function login(){
+  const email = document.getElementById("email").value;
+  const senha = document.getElementById("senha").value;
 
+  const users = JSON.parse(localStorage.getItem("users")) || [];
+  const user = users.find(u => (u.email === email || u.user === email) && u.senha === senha);
+
+  if(!user){
+    alert("Login inválido");
+    return;
+  }
+
+  localStorage.setItem("logado", JSON.stringify(user));
+  window.location.href = "painel.html";
+}
