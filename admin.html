@@ -3,122 +3,96 @@
 <head>
 <meta charset="UTF-8">
 <title>Painel ADM</title>
-
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{
-  background:#0b0b0b;
-  color:#fff;
+  margin:0;
   font-family:Arial;
-  padding:20px;
+  background:#020617;
+  color:white;
 }
-h1{color:#22c55e}
-.card{
-  background:#111;
+header{
+  background:#020617;
   padding:15px;
-  margin-top:10px;
-  border-radius:10px;
+  text-align:center;
+  border-bottom:1px solid #1f2937;
 }
-input,button{
-  padding:8px;
-  margin-top:5px;
-  border:none;
-  border-radius:5px;
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+th,td{
+  padding:10px;
+  border-bottom:1px solid #1f2937;
+  text-align:center;
 }
 button{
-  background:#22c55e;
-  font-weight:bold;
+  padding:6px 10px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
 }
-.red{background:#ef4444}
+.add{background:#22c55e;}
+.remove{background:#ef4444;}
+.logout{background:#7f1d1d;color:white;margin:15px;}
 </style>
 </head>
 <body>
 
-<h1>Painel ADM</h1>
-<button onclick="logout()" class="red">Sair</button>
+<header>
+<h2>Painel ADM</h2>
+<button class="logout" onclick="logout()">Sair</button>
+</header>
 
-<div id="usuarios"></div>
+<table>
+<thead>
+<tr>
+<th>Usuário</th>
+<th>Email</th>
+<th>Créditos</th>
+<th>Ações</th>
+</tr>
+</thead>
+<tbody id="lista"></tbody>
+</table>
 
 <script>
-// 🔥 CONFIG FIREBASE (MESMA DO LOGIN)
-const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_PROJETO.firebaseapp.com",
-  projectId: "SEU_PROJETO"
-};
+const users = JSON.parse(localStorage.getItem("users")) || [];
+const lista = document.getElementById("lista");
 
-firebase.initializeApp(firebaseConfig);
+function render(){
+  lista.innerHTML = "";
+  users.forEach((u,i)=>{
+    lista.innerHTML += `
+    <tr>
+      <td>${u.user}</td>
+      <td>${u.email}</td>
+      <td>${u.creditos}</td>
+      <td>
+        <button class="add" onclick="add(${i})">+10</button>
+        <button class="remove" onclick="remove(${i})">-10</button>
+      </td>
+    </tr>`;
+  });
+}
+render();
 
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-// 🔒 PROTEÇÃO ADM
-auth.onAuthStateChanged(user=>{
-  if(!user){
-    location.href = "index.html";
-  }else{
-    db.collection("users").doc(user.uid).get().then(doc=>{
-      if(doc.data().role !== "admin"){
-        alert("Acesso negado");
-        location.href = "painel.html";
-      }else{
-        carregarUsuarios();
-      }
-    });
+function add(i){
+  users[i].creditos += 10;
+  save();
+}
+function remove(i){
+  if(users[i].creditos >= 10){
+    users[i].creditos -= 10;
+    save();
   }
-});
-
-// 📋 LISTAR USUÁRIOS
-function carregarUsuarios(){
-  db.collection("users").onSnapshot(snapshot=>{
-    let html = "";
-    snapshot.forEach(doc=>{
-      let u = doc.data();
-      html += `
-      <div class="card">
-        <b>${u.nome}</b><br>
-        Email: ${u.vcapudo969@gmail.com}<br>
-        Créditos: <b>${u.10000}</b><br>
-
-        <input type="number" id="c_${doc.id}" placeholder="Quantidade">
-        <br>
-        <button onclick="add('${doc.id}')">+ Créditos</button>
-        <button class="red" onclick="remove('${doc.id}')">- Créditos</button>
-      </div>
-      `;
-    });
-    document.getElementById("usuarios").innerHTML = html;
-  });
 }
-
-// ➕ ADICIONAR CRÉDITOS
-function add(id){
-  let qtd = Number(document.getElementById("c_"+id).value);
-  if(!qtd) return alert("100000");
-
-  db.collection("users").doc(id).update({
-    creditos: firebase.firestore.FieldValue.increment(qtd)
-  });
+function save(){
+  localStorage.setItem("users", JSON.stringify(users));
+  render();
 }
-
-// ➖ REMOVER CRÉDITOS
-function remove(id){
-  let qtd = Number(document.getElementById("c_"+id).value);
-  if(!qtd) return alert("Digite um valor");
-
-  db.collection("users").doc(id).update({
-    creditos: firebase.firestore.FieldValue.increment(-qtd)
-  });
-}
-
-// 🚪 LOGOUT
 function logout(){
-  auth.signOut().then(()=>{
-    location.href = "index.html";
-  });
+  window.location.href = "login.html";
 }
 </script>
 
