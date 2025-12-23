@@ -20,6 +20,19 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
 
+        /* --- LOGIN SCREEN (MODIFICADA) --- */
+        #login-screen { 
+            position: fixed; inset: 0; background: var(--bg); z-index: 2000; 
+            display: flex; align-items: center; justify-content: center;
+            background-image: radial-gradient(circle at center, #111 0%, #030303 100%);
+        }
+        .login-box {
+            background: var(--card); padding: 40px; border-radius: 30px; 
+            width: 90%; max-width: 380px; text-align: center; 
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
         /* --- MENU --- */
         .menu-btn {
             position: fixed; top: 20px; left: 20px; z-index: 1000;
@@ -37,21 +50,19 @@
             padding: 80px 20px 20px;
         }
         #sidebar.active { left: 0; }
-        .sidebar-item { padding: 14px; border-radius: 12px; margin-bottom: 8px; cursor: pointer; color: #555; display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 0.9rem; transition: 0.3s; }
+        .sidebar-item { padding: 14px; border-radius: 12px; margin-bottom: 8px; cursor: pointer; color: #555; display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 0.9rem; }
         .sidebar-item.active { background: rgba(0, 255, 136, 0.05); color: var(--primary); }
 
         .page { display: none; padding: 85px 20px 20px; height: 100vh; overflow-y: auto; animation: pageIn 0.4s ease; }
         .page.active { display: block; }
         @keyframes pageIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
-        /* --- CARDS --- */
-        .card-pro { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 25px; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .btn-action { width: 100%; padding: 18px; border-radius: 16px; border: none; background: var(--primary); color: #000; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 0.75rem; transition: 0.2s; }
-        .btn-action:active { transform: scale(0.96); }
-
-        /* --- MODAL DE SUCESSO DARK --- */
+        /* --- UI COMPONENTS --- */
+        .card-pro { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 25px; margin-bottom: 15px; }
+        .btn-action { width: 100%; padding: 18px; border-radius: 16px; border: none; background: var(--primary); color: #000; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 0.75rem; }
+        
         #success-modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
             z-index: 3000; display: none; align-items: center; justify-content: center;
             backdrop-filter: blur(10px);
         }
@@ -62,36 +73,31 @@
         }
         @keyframes modalPop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        .check-icon { width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: #000; font-size: 2rem; box-shadow: 0 0 20px rgba(0,255,136,0.3); }
-
-        /* --- TABELA DE PREÇOS --- */
-        .price-list { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 15px; }
-        .price-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.75rem; }
-        .price-row b { color: var(--gold); }
-
-        select, input { width: 100%; padding: 16px; background: #000; border: 1px solid var(--border); color: #fff; border-radius: 14px; margin-bottom: 15px; outline: none; }
-        #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+        select, input { width: 100%; padding: 16px; background: #000; border: 1px solid var(--border); color: #fff; border-radius: 14px; margin-bottom: 15px; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--primary); }
     </style>
 </head>
 <body>
 
-    <div id="success-modal">
-        <div class="modal-content">
-            <div class="check-icon">✓</div>
-            <h2 style="color: var(--primary); margin-bottom: 10px;">SUCESSO!</h2>
-            <p style="font-size: 0.75rem; color: #888; margin-bottom: 20px;">PEDRO CHEATS: Licença gerada e descontada com sucesso.</p>
-            <div id="key-display" style="background: #000; padding: 15px; border-radius: 12px; font-family: monospace; color: var(--gold); border: 1px dashed #333; margin-bottom: 20px; word-break: break-all;">---</div>
-            <button class="btn-action" onclick="closeModal()">OK, ENTENDIDO</button>
+    <div id="login-screen">
+        <div class="login-box">
+            <h1 style="font-weight: 800; letter-spacing: -1px; margin-bottom: 5px;">PEDRO <span style="color:var(--primary)">CHEATS</span></h1>
+            <p style="font-size: 0.6rem; color: #444; letter-spacing: 2px; font-weight: 800; margin-bottom: 30px;">PAINEL ADMINISTRATIVO</p>
+            
+            <input type="email" id="adm-mail" placeholder="Seu Gmail Master">
+            <input type="password" id="adm-pass" placeholder="Sua Senha">
+            
+            <button class="btn-action" onclick="validarLogin()">ACESSAR AGORA</button>
+            <p id="login-error" style="color: var(--danger); font-size: 0.7rem; margin-top: 15px; display: none; font-weight: 800;">DADOS INCORRETOS!</p>
         </div>
     </div>
 
-    <div id="login-screen">
-        <div style="background: var(--card); padding: 40px; border-radius: 30px; width: 90%; max-width: 380px; text-align: center; border: 1px solid var(--border);">
-            <h1 style="font-weight: 800; letter-spacing: -1px; margin-bottom: 5px;">PEDRO <span style="color:var(--primary)">CHEATS</span></h1>
-            <p style="font-size: 0.6rem; color: #444; letter-spacing: 2px; font-weight: 800; margin-bottom: 30px;">ESTAÇÃO DE TRABALHO</p>
-            <input type="email" id="adm-mail" placeholder="Usuário Admin">
-            <input type="password" id="adm-pass" placeholder="Senha">
-            <button class="btn-action" onclick="login()">ACESSAR SISTEMA</button>
+    <div id="success-modal">
+        <div class="modal-content">
+            <div style="width: 50px; height: 50px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; color: #000; font-weight: 800;">✓</div>
+            <h3 style="color: var(--primary); margin-bottom: 10px;">KEY GERADA!</h3>
+            <div id="key-display" style="background: #000; padding: 15px; border-radius: 12px; font-family: monospace; color: var(--gold); border: 1px dashed #333; margin-bottom: 20px;">---</div>
+            <button class="btn-action" onclick="document.getElementById('success-modal').style.display='none'">FECHAR</button>
         </div>
     </div>
 
@@ -104,7 +110,6 @@
         <div class="sidebar-item" onclick="showPage('gerar', this)">🚀 Gerar / Vender</div>
         <div class="sidebar-item" onclick="showPage('transferir', this)">💸 Transferir</div>
         <div class="sidebar-item" onclick="showPage('pausar', this)">⚙️ Gerir Keys</div>
-        <div class="sidebar-item" onclick="showPage('historico', this)">📜 Histórico</div>
         <div style="margin-top: 40px;" class="sidebar-item" onclick="location.reload()">🔴 Sair</div>
     </div>
 
@@ -113,19 +118,15 @@
             <span style="font-size: 0.7rem; color: #555; font-weight: 800;">LUCRO LÍQUIDO</span>
             <h1 id="money-txt" style="font-size: 2.8rem; color: var(--money);">R$ 0,00</h1>
         </div>
-
         <div class="card-pro">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <span style="font-size: 0.6rem; color: #555; font-weight: 800;">CRÉDITOS MASTER</span>
-                    <h2 id="saldo-txt" style="color: var(--gold); font-size: 1.8rem;">1.000.000</h2>
-                </div>
-            </div>
-            <div class="price-list">
-                <p style="font-size: 0.6rem; color: var(--primary); font-weight: 800; margin-bottom: 12px; letter-spacing: 1px;">TABELA DE CUSTOS</p>
-                <div class="price-row"><span>24 Horas</span> <b>1 CRD</b></div>
-                <div class="price-row"><span>07 Dias</span> <b>10 CRD</b></div>
-                <div class="price-row"><span>30 Dias</span> <b>50 CRD</b></div>
+            <span style="font-size: 0.6rem; color: #555; font-weight: 800;">SALDO DISPONÍVEL</span>
+            <h2 id="saldo-txt" style="color: var(--gold); font-size: 1.8rem;">1.000.000</h2>
+            
+            <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 15px;">
+                <p style="font-size: 0.6rem; color: var(--primary); font-weight: 800; margin-bottom: 10px;">TABELA DE CUSTOS</p>
+                <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:5px;"><span>24h</span> <b>1 CRD</b></div>
+                <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:5px;"><span>07d</span> <b>10 CRD</b></div>
+                <div style="display:flex; justify-content:space-between; font-size:0.75rem;"><span>30d</span> <b>50 CRD</b></div>
             </div>
         </div>
     </div>
@@ -133,39 +134,51 @@
     <div id="page-gerar" class="page">
         <div class="card-pro">
             <div style="text-align: center; margin-bottom: 25px;">
-                <h2 style="font-weight: 800; letter-spacing: -1px;">PEDRO <span style="color:var(--primary)">CHEATS</span></h2>
-                <p style="font-size: 0.6rem; color: #444; font-weight: 800;">EMISSOR DE KEYS</p>
+                <h2 style="font-weight: 800;">PEDRO <span style="color:var(--primary)">CHEATS</span></h2>
+                <p style="font-size: 0.6rem; color: #444; font-weight: 800;">GERADOR DE ACESSOS</p>
             </div>
             <select id="sel-time">
-                <option value="1">Plano 24 Horas (1 Crd)</option>
-                <option value="7">Plano 7 Dias (10 Crd)</option>
-                <option value="30">Plano 30 Dias (50 Crd)</option>
+                <option value="1">24 Horas (1 Crd)</option>
+                <option value="7">7 Dias (10 Crd)</option>
+                <option value="30">30 Dias (50 Crd)</option>
             </select>
             <input type="number" id="sel-qty" value="1">
-            <button class="btn-action" onclick="processGen()">GERAR LICENÇA</button>
+            <button class="btn-action" onclick="processGen()">EMITIR LICENÇA</button>
         </div>
     </div>
 
     <div id="page-pausar" class="page"><div id="list-management"></div></div>
     <div id="page-transferir" class="page">
-        <div class="card-pro">
-            <h3>Transferência</h3>
-            <input type="email" id="t-mail" placeholder="E-mail receptor">
-            <input type="number" id="t-amt" placeholder="Quantidade">
-            <button class="btn-action" style="background:var(--gold)" onclick="doTransfer()">ENVIAR AGORA</button>
-        </div>
+        <div class="card-pro"><h3>Transferir</h3><input type="email" placeholder="Gmail Receptor"><input type="number" placeholder="Qtd"><button class="btn-action" style="background:var(--gold)" onclick="alert('Enviado!')">TRANSFERIR</button></div>
     </div>
-    <div id="page-historico" class="page"><div id="hist-list"></div></div>
 
     <script>
+        // CONFIGURAÇÕES DE ACESSO
+        const GMAIL_MESTRE = "admin@gmail.com";
+        const SENHA_MESTRA = "PEDRO2025";
+
         let saldo = 1000000;
         let lucro = 0;
         let db = [];
         const CUSTOS = { "1": 1, "7": 10, "30": 50 };
         const VALORES = { "1": 5, "7": 20, "30": 50 };
 
-        function login() { document.getElementById('login-screen').style.display='none'; }
+        function validarLogin() {
+            const mail = document.getElementById('adm-mail').value;
+            const pass = document.getElementById('adm-pass').value;
+            const errorMsg = document.getElementById('login-error');
+
+            if(mail === GMAIL_MESTRE && pass === SENHA_MESTRA) {
+                document.getElementById('login-screen').style.display = 'none';
+            } else {
+                errorMsg.style.display = 'block';
+                document.getElementById('adm-pass').value = "";
+                setTimeout(() => { errorMsg.style.display = 'none'; }, 3000);
+            }
+        }
+
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+        
         function showPage(p, e) {
             document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
             document.querySelectorAll('.sidebar-item').forEach(x => x.classList.remove('active'));
@@ -175,8 +188,6 @@
             updateUI();
         }
 
-        function closeModal() { document.getElementById('success-modal').style.display = 'none'; }
-
         function processGen() {
             const t = document.getElementById('sel-time').value;
             const q = parseInt(document.getElementById('sel-qty').value);
@@ -185,16 +196,11 @@
             if(saldo >= custo) {
                 saldo -= custo;
                 lucro += VALORES[t] * q;
-                let lastKey = "";
-                for(let i=0; i<q; i++) {
-                    lastKey = "PEDRO-"+Math.random().toString(36).substring(2,7).toUpperCase();
-                    db.unshift({ id: lastKey, status: 'Ativo', tipo: t, data: new Date().toLocaleString() });
-                }
+                let lastKey = "PEDRO-"+Math.random().toString(36).substring(2,7).toUpperCase();
+                db.unshift({ id: lastKey, status: 'Ativo', tipo: t, data: new Date().toLocaleString() });
                 
-                // Exibe o Modal Animado
-                document.getElementById('key-display').innerText = q > 1 ? `${q} CHAVES GERADAS` : lastKey;
+                document.getElementById('key-display').innerText = q > 1 ? `${q} CHAVES EMITIDAS` : lastKey;
                 document.getElementById('success-modal').style.display = 'flex';
-                
                 updateUI();
             } else { alert("Saldo Insuficiente!"); }
         }
@@ -205,19 +211,13 @@
             const mList = document.getElementById('list-management');
             mList.innerHTML = db.map((item, idx) => `
                 <div class="card-pro" style="padding:15px; border-radius:18px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <b style="color:var(--primary)">${item.id}</b>
-                        <span style="font-size:0.6rem; color:var(--gold)">${item.tipo} DIAS</span>
-                    </div>
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
+                    <b style="color:var(--primary)">${item.id}</b> | ${item.tipo} DIAS
+                    <div style="display:flex; gap:10px; margin-top:10px;">
                         <button class="btn-action" style="padding:10px; font-size:0.6rem; background:#222; color:#fff;" onclick="db.splice(${idx},1); updateUI();">EXCLUIR</button>
                         <button class="btn-action" style="padding:10px; font-size:0.6rem;" onclick="alert('Resetado!')">RESETAR</button>
                     </div>
                 </div>
             `).join('');
-            
-            const hList = document.getElementById('hist-list');
-            hList.innerHTML = db.map(item => `<div class="card-pro" style="font-size:0.7rem;"><b>${item.id}</b> | ${item.data}</div>`).join('');
         }
     </script>
 </body>
