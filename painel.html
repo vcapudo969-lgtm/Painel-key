@@ -2,146 +2,174 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Painel - Gerar Keys</title>
+  <title>Painel - FFH4X</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    /* Estilos permanecem os mesmos para manter o visual do seu painel */
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-    body { background: #050608; color: #fff; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding-top: 20px; }
-    .content { flex: 1; display: flex; justify-content: center; padding: 22px; }
-    .card { background: #0b0d10; border-radius: 16px; padding: 22px; width: 100%; max-width: 480px; border: 1px solid #1c1f25; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background: #050608; color: #fff; min-height: 100vh; overflow-x: hidden; }
+
+    /* --- MENU LATERAL (SIDEBAR) --- */
+    .sidebar { position: fixed; left: -250px; top: 0; width: 250px; height: 100%; background: #0b0d10; border-right: 1px solid #1c1f25; transition: 0.3s; z-index: 1000; padding-top: 60px; }
+    .sidebar.active { left: 0; }
+    .sidebar-item { padding: 15px 25px; color: #d1d5db; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
+    .sidebar-item:hover { background: #1c1f25; color: #22c55e; }
+    .sidebar-item.active { background: #1c1f25; color: #22c55e; border-left: 4px solid #22c55e; }
+
+    /* --- BOTÃO HAMBÚRGUER --- */
+    .menu-btn { position: fixed; top: 15px; left: 15px; z-index: 1100; cursor: pointer; background: #0b0d10; padding: 8px; border-radius: 8px; border: 1px solid #1c1f25; display: flex; flex-direction: column; gap: 4px; }
+    .menu-btn div { width: 20px; height: 2px; background: #fff; transition: 0.3s; }
+
+    /* --- CONTEÚDO --- */
+    .main-container { padding: 80px 20px 20px 20px; display: flex; justify-content: center; }
+    .page { display: none; width: 100%; max-width: 480px; }
+    .page.active { display: block; }
+
+    .card { background: #0b0d10; border-radius: 16px; padding: 22px; width: 100%; border: 1px solid #1c1f25; }
     h1 { font-size: 22px; margin-bottom: 4px; }
     p.sub { font-size: 12px; color: #a0a0a0; margin-bottom: 20px; }
-    .label { font-size: 12px; margin-bottom: 6px; display: block; color: #d1d5db; }
-    .field { margin-bottom: 16px; }
+    
+    /* Formulário */
+    .label { font-size: 12px; margin-bottom: 6px; display: block; color: #d1d5db; margin-top: 15px; }
     select, input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #1c1f25; background: #050608; color: #fff; font-size: 14px; outline: none; }
     select:focus, input:focus { border-color: #6366f1; }
-    .credits-info { font-size: 11px; color: #9ca3af; margin-top: 4px; }
-    .summary { margin-top: 10px; font-size: 13px; line-height: 1.6; }
-    .summary span.green { color: #22c55e; font-weight: bold; }
-    .summary span.yellow { color: #eab308; font-weight: bold; }
+
+    .summary { margin-top: 15px; font-size: 13px; background: #1c1f2544; padding: 10px; border-radius: 10px; }
+    .green { color: #22c55e; font-weight: bold; }
+    .yellow { color: #eab308; font-weight: bold; }
+
     .btn { margin-top: 18px; width: 100%; padding: 14px; border-radius: 999px; border: none; background: #22c55e; color: #000; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.3s; }
     .btn:hover { background: #16a34a; transform: scale(1.02); }
-    .result { margin-top: 18px; background: #000; border-radius: 10px; padding: 12px; font-size: 13px; white-space: pre-wrap; word-break: break-all; border: 1px dashed #333; color: #22c55e; display: none; }
+
+    /* Lista de Keys na Tela "Ver Keys" */
+    .keys-list { margin-top: 15px; }
+    .key-item { background: #050608; border: 1px solid #1c1f25; padding: 10px; border-radius: 8px; margin-bottom: 8px; font-size: 12px; color: #22c55e; display: flex; justify-content: space-between; align-items: center; }
+    .empty-msg { text-align: center; color: #666; font-size: 14px; margin-top: 20px; }
   </style>
 </head>
 <body>
 
-  <div class="content">
-    <div class="card">
-      <h1>Gerar Keys</h1>
-      <p class="sub">Crie novas keys para seus clientes de forma rápida e eficiente.</p>
+  <div class="menu-btn" onclick="toggleSidebar()">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
 
-      <div class="field">
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-item active" onclick="showPage('gerar')">➕ Gerar Key</div>
+    <div class="sidebar-item" onclick="showPage('ver')">📋 Ver Keys Geradas</div>
+  </div>
+
+  <div class="main-container">
+    
+    <div id="page-gerar" class="page active">
+      <div class="card">
+        <h1>Gerar Keys</h1>
+        <p class="sub">Painel administrativo FFH4X-ANDROID</p>
+
         <label class="label">Versão de Login *</label>
         <select id="versaoLogin">
-          <option value="">Selecione uma versão de login</option>
           <option value="mobile-v1">Mobile v1</option>
           <option value="pc-v2">PC v2</option>
         </select>
-      </div>
 
-      <div class="field">
-        <label class="label">Dias/Horas de Validade *</label>
+        <label class="label">Validade *</label>
         <select id="validade">
-          <option value="">Selecione uma validade</option>
           <option value="1">1 Dia</option>
           <option value="7">7 Dias</option>
           <option value="30">30 Dias</option>
-          <option value="100">100 Dias</option>
         </select>
-      </div>
 
-      <div class="field">
-        <label class="label">Créditos por Key *</label>
-        <input id="creditos" type="number" min="1" value="1" />
-        <div class="credits-info">Descontado automaticamente conforme a chave.</div>
-      </div>
-
-      <div class="field">
-        <label class="label">Quantidade de Keys *</label>
+        <label class="label">Quantidade *</label>
         <input id="quantidade" type="number" min="1" value="1" />
+
+        <div class="summary">
+          <div>Custo: <span class="yellow" id="totalNec">0</span> créditos</div>
+          <div>Saldo: <span class="green" id="meusCred">989.759</span></div>
+        </div>
+
+        <button class="btn" onclick="processarGeracao()">+ Gerar Agora</button>
       </div>
-
-      <div class="summary">
-        <div>Total de Créditos Necessários: <span class="yellow" id="totalNec">0</span></div>
-        <div>Seus Créditos: <span class="green" id="meusCred">989.759</span></div>
-      </div>
-
-      <button class="btn" id="btnGerar">+ Gerar Keys</button>
-
-      <div class="result" id="resultado"></div>
     </div>
+
+    <div id="page-ver" class="page">
+      <div class="card">
+        <h1>Keys Geradas</h1>
+        <p class="sub">Histórico de chaves criadas nesta sessão.</p>
+        <div id="listaHistorico" class="keys-list">
+          <p class="empty-msg">Nenhuma key gerada ainda.</p>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script>
-    const creditosInput = document.getElementById("creditos");
-    const quantidadeInput = document.getElementById("quantidade");
-    const totalNec = document.getElementById("totalNec");
-    const meusCredEl = document.getElementById("meusCred");
-    const btnGerar = document.getElementById("btnGerar");
-    const resultado = document.getElementById("resultado");
+    // Banco de dados temporário das keys
+    let historicoKeys = [];
+    let saldoAtual = 989759;
 
-    let saldoAtual = parseFloat(meusCredEl.textContent.replace(/\./g, '').replace(',', '.'));
-
-    function atualizarTotal() {
-      const c = Number(creditosInput.value) || 0;
-      const q = Number(quantidadeInput.value) || 0;
-      totalNec.textContent = (c * q).toLocaleString('pt-BR');
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('active');
     }
 
-    creditosInput.addEventListener("input", atualizarTotal);
-    quantidadeInput.addEventListener("input", atualizarTotal);
-    atualizarTotal();
+    function showPage(pageId) {
+      // Alternar páginas
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + pageId).classList.add('active');
+      
+      // Atualizar menu lateral
+      document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      
+      toggleSidebar(); // Fecha o menu ao clicar
+      if(pageId === 'ver') atualizarListaHistorico();
+    }
 
-    // NOVA FUNÇÃO COM O PREFIXO FFH4X-ANDROID
-    function gerarKeyPersonalizada() {
+    function gerarChaveAleatoria() {
       const prefixo = "FFH4X-ANDROID";
       const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-      let randomPart = "";
-      
-      // Gera 12 caracteres aleatórios
+      let random = "";
       for (let i = 0; i < 12; i++) {
-        randomPart += chars.charAt(Math.floor(Math.random() * chars.length));
+        random += chars.charAt(Math.floor(Math.random() * chars.length));
       }
-      
-      // Formata os caracteres aleatórios em grupos de 4 (Ex: XXXX-XXXX-XXXX)
-      const formatada = randomPart.match(/.{1,4}/g).join("-");
-      
-      // Retorna o Prefixo + a parte aleatória
-      return `${prefixo}-${formatada}`;
+      return `${prefixo}-${random.match(/.{1,4}/g).join("-")}`;
     }
 
-    btnGerar.addEventListener("click", () => {
-      const versao = document.getElementById("versaoLogin").value;
-      const validade = document.getElementById("validade").value;
-      const qtd = Number(quantidadeInput.value) || 0;
-      const valorPorKey = Number(creditosInput.value) || 0;
-      const totalGasto = valorPorKey * qtd;
+    function processarGeracao() {
+      const qtd = parseInt(document.getElementById('quantidade').value);
+      if (qtd <= 0) return alert("Quantidade inválida");
 
-      if (!versao || !validade || qtd <= 0) {
-        alert("Preencha todos os campos corretamente.");
-        return;
-      }
+      if (saldoAtual < qtd) return alert("Saldo insuficiente");
 
-      if (totalGasto > saldoAtual) {
-        alert("Créditos insuficientes!");
-        return;
-      }
+      saldoAtual -= qtd;
+      document.getElementById('meusCred').textContent = saldoAtual.toLocaleString('pt-BR');
 
-      saldoAtual -= totalGasto;
-      meusCredEl.textContent = saldoAtual.toLocaleString('pt-BR');
-
-      const keys = [];
       for (let i = 0; i < qtd; i++) {
-        keys.push(gerarKeyPersonalizada());
+        historicoKeys.unshift(gerarChaveAleatoria()); // Adiciona no topo da lista
       }
 
-      resultado.style.display = "block";
-      resultado.textContent = "LISTA DE KEYS GERADAS:\n\n" + keys.join("\n");
-      
-      atualizarTotal();
-    });
+      alert(`${qtd} Key(s) gerada(s) com sucesso! Vá em 'Ver Keys' para copiar.`);
+    }
+
+    function atualizarListaHistorico() {
+      const container = document.getElementById('listaHistorico');
+      if (historicoKeys.length === 0) {
+        container.innerHTML = '<p class="empty-msg">Nenhuma key gerada ainda.</p>';
+        return;
+      }
+
+      container.innerHTML = historicoKeys.map(key => `
+        <div class="key-item">
+          <span>${key}</span>
+          <button onclick="copyKey('${key}')" style="background:transparent; border:none; color:#22c55e; cursor:pointer; font-size:10px; font-weight:bold;">COPIAR</button>
+        </div>
+      `).join('');
+    }
+
+    function copyKey(text) {
+      navigator.clipboard.writeText(text);
+      alert("Key copiada!");
+    }
   </script>
 </body>
 </html>
