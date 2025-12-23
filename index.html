@@ -3,385 +3,315 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KeyGen Pro v14 | Menu Sanduíche Integrado</title>
-    <script src="unpkg.com"></script>
-    <link href="fonts.googleapis.com" rel="stylesheet">
+    <title>KeyMaster Pro - Premium Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root {
-            --bg: #000000; --card: #1a1a1a; --border: #333333;
-            --primary: #e62e2e; --secondary: #4ade80; --danger: #ef4444;
-            --warning: #f59e0b; --text: #f9fafb; --dim: #a0a0a0;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: var(--text); min-height: 100vh; }
-        
-        /* --- AUTH SYSTEM --- */
-        #auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; align-items: center; justify-content: center; }
-        .auth-card { background: var(--card); width: 90%; max-width: 400px; padding: 2rem; border-radius: 12px; border: 1px solid var(--border); }
-        .auth-tabs { display: flex; background: #000; padding: 5px; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid var(--border); }
-        .tab-btn { flex: 1; padding: 10px; border: none; background: none; color: var(--dim); cursor: pointer; font-weight: 700; border-radius: 6px; }
-        .tab-btn.active { background: var(--border); color: white; }
-
-        /* --- UI ELEMENTS --- */
-        .field { margin-bottom: 1.2rem; }
-        label { display: block; font-size: 0.75rem; color: var(--dim); margin-bottom: 8px; font-weight: 800; text-transform: uppercase; }
-        input, select { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); border-radius: 6px; color: white; outline: none; }
-        input:focus { border-color: var(--primary); }
-        .btn { width: 100%; padding: 14px; border-radius: 6px; border: none; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-secondary { background: var(--secondary); color: white; }
-
-        /* --- APP STRUCTURE --- */
-        #main-app { display: none; }
-        header { padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 100; }
-        .brand { font-weight: 800; color: var(--primary); }
-        .badge { padding: 5px 12px; border-radius: 100px; font-size: 0.7rem; font-weight: 800; border: 1px solid; }
-
-        main { padding: 2rem; max-width: 900px; margin: 0 auto; padding-bottom: 100px; }
-        .view { display: none; }
-        .view.active { display: block; animation: fadeIn 0.4s ease; }
-        .card { background: var(--card); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 1.5rem; }
-
-        /* --- TABLES --- */
-        .table-container { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); background: var(--card); }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
-        th { background: var(--bg); color: var(--dim); font-size: 0.7rem; text-transform: uppercase; }
-        .status-pill { padding: 3px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; }
-        .active-pill { color: var(--secondary); }
-        .paused-pill { color: var(--warning); }
-        .expired-pill { color: var(--danger); }
-        .key-mono { font-family: 'JetBrains Mono', monospace; }
-
-        /* --- MENU SANDUÍCHE (FAB) --- */
-        .menu-wrapper { position: fixed; bottom: 30px; right: 30px; z-index: 1001; }
-        #fab { width: 60px; height: 60px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
-        .drawer { position: absolute; bottom: 75px; right: 0; width: 250px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px; display: none; box-shadow: 0 15px 30px rgba(0,0,0,0.6); }
-        .drawer.open { display: block; animation: fadeIn 0.3s ease; }
-        .nav-link { padding: 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; color: var(--dim); border-radius: 4px; transition: 0.2s; }
-        .nav-link:hover { background: var(--border); color: white; }
-        .nav-link.active-link { color: var(--primary); font-weight: bold; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-content { display: none; animation: fadeIn 0.4s ease-out forwards; }
+        .tab-content.active { display: block; }
+        body { background: #0b0f1a; color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .glass { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
+        .status-badge { font-size: 9px; padding: 2px 10px; border-radius: 99px; font-weight: 800; text-transform: uppercase; }
+        #fab-menu { transform: scale(0); transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); transform-origin: bottom right; }
+        #fab-menu.show { transform: scale(1); }
+        .fab-btn { width: 60px; height: 60px; transition: all 0.3s; z-index: 50; }
+        .fab-btn.open { transform: rotate(45deg); background: #ef4444; }
     </style>
 </head>
-<body>
+<body class="p-4 md:p-6 pb-24">
 
-    <!-- AUTH SCREEN -->
-    <div id="auth-screen">
-        <div class="auth-card">
-            <div class="auth-tabs">
-                <button class="tab-btn active" id="tab-member" onclick="toggleAuth('member')">MEMBRO</button>
-                <button class="tab-btn" id="tab-admin" onclick="toggleAuth('admin')">ADMIN</button>
+    <div class="max-w-5xl mx-auto">
+        <div class="flex justify-between items-center mb-6 glass p-5 rounded-3xl border-b-2 border-blue-500/30">
+            <div>
+                <h1 class="text-xl font-black italic text-blue-500 tracking-tighter">KEYMASTER <span class="text-white font-light text-xs not-italic">V4.0</span></h1>
             </div>
-            <div id="auth-member">
-                <div class="field">
-                    <label>Nome do Usuário</label>
-                    <input type="text" id="reg-name" placeholder="Ex: Revenda_Pro">
-                </div>
-                <button class="btn btn-secondary" onclick="registerUser()">ENTRAR COMO MEMBRO</button>
-            </div>
-            <div id="auth-admin" style="display:none">
-                <div class="field">
-                    <label>Chave Mestra ADM</label>
-                    <input type="password" id="master-key" placeholder="••••••••">
-                </div>
-                <button class="btn btn-primary" onclick="loginAdmin()">ENTRAR COMO ADM</button>
+            <div class="text-right">
+                <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Saldo Disponível</p>
+                <p id="balance-display" class="text-green-400 font-mono text-xl font-bold">R$ 1.250,00</p>
             </div>
         </div>
-    </div>
 
-    <!-- MAIN APP -->
-    <div id="main-app">
-        <header>
-            <div class="brand">4m Cheats</div>
-            <div id="user-role" class="badge">MEMBRO</div>
-        </header>
-
-        <main>
-            <!-- DASHBOARD -->
-            <div id="v-dash" class="view active">
-                <h1 style="margin-bottom: 20px;">Dashboard</h1>
-                <div class="card">
-                    <p style="color:var(--dim); font-size: 0.8rem;">Saldo Disponível</p>
-                    <h2 id="display-credits" style="color:var(--secondary); font-size: 2rem;">R$ 0,00</h2>
-                    <p style="color:var(--dim); font-size: 0.7rem; margin-top:5px;">Preço por key: R$ 5,00</p>
+        <div id="tab-dashboard" class="tab-content active space-y-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="glass p-4 rounded-2xl border-l-4 border-blue-500">
+                    <p class="text-[10px] text-gray-400 uppercase font-bold">Total Keys</p>
+                    <p id="stat-total" class="text-2xl font-black">0</p>
                 </div>
-                <div class="card">
-                    <p style="color:var(--dim); font-size: 0.8rem;">Total de Keys Ativas</p>
-                    <h2 id="display-keys" style="font-size: 2rem;">0</h2>
+                <div class="glass p-4 rounded-2xl border-l-4 border-green-500">
+                    <p class="text-[10px] text-gray-400 uppercase font-bold">Ativas</p>
+                    <p id="stat-ativas" class="text-2xl font-black text-green-400">0</p>
+                </div>
+                <div class="glass p-4 rounded-2xl border-l-4 border-yellow-500">
+                    <p class="text-[10px] text-gray-400 uppercase font-bold">Pausadas</p>
+                    <p id="stat-pausadas" class="text-2xl font-black text-yellow-400">0</p>
+                </div>
+                <div class="glass p-4 rounded-2xl border-l-4 border-red-500">
+                    <p class="text-[10px] text-gray-400 uppercase font-bold">Bloqueadas</p>
+                    <p id="stat-bloqueadas" class="text-2xl font-black text-red-500">0</p>
                 </div>
             </div>
 
-            <!-- PERSONALIZAR KEY -->
-            <div id="v-gen" class="view">
-                <h2>Gerar Nova Licença</h2>
-                <div class="card">
-                    <label>Prefixo</label>
-                    <input type="text" id="k-prefix" placeholder="Ex: VIP-">
-                    <label>Duração</label>
-                    <select id="k-time">
-                        <option value="1">24 Horas (R$ 5,00)</option>
-                        <option value="7">7 Dias (R$ 15,00)</option>
-                        <option value="30">30 Dias (R$ 40,00)</option>
-                    </select>
-                    <button id="gen-btn" class="btn btn-secondary" onclick="executeGeneration()">GERAR KEY</button>
-                    <div id="k-res-box" style="display:none; margin-top:15px; background:#000; padding:15px; border-radius:6px; border:1px dashed var(--dim); text-align:center;">
-                        <p style="font-size: 0.7rem; color:var(--dim); margin-bottom:5px;">KEY GERADA:</p>
-                        <code id="k-final" class="key-mono" style="color:var(--primary);"></code>
+            <div class="glass p-6 rounded-3xl">
+                <h3 class="text-sm font-black text-blue-500 uppercase tracking-widest mb-4"><i class="fas fa-tags mr-2"></i>Tabela de Preços</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex justify-between items-center bg-slate-900/60 p-4 rounded-2xl border border-white/5">
+                        <span class="font-bold">01 Dia</span>
+                        <span class="text-green-400 font-mono font-bold">R$ 5,00</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-slate-900/60 p-4 rounded-2xl border border-white/5">
+                        <span class="font-bold">07 Dias</span>
+                        <span class="text-green-400 font-mono font-bold">R$ 10,00</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-slate-900/60 p-4 rounded-2xl border border-white/5">
+                        <span class="font-bold">15 Dias</span>
+                        <span class="text-green-400 font-mono font-bold">R$ 20,00</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-slate-900/60 p-4 rounded-2xl border border-white/5">
+                        <span class="font-bold">30 Dias</span>
+                        <span class="text-green-400 font-mono font-bold">R$ 50,00</span>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- GERENCIAR KEYS -->
-            <div id="v-list" class="view">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <h2>Gerenciar Licenças</h2>
-                    <button id="adm-freeze-btn" class="btn btn-primary" style="display:none; padding:8px 12px; width:auto; font-size:0.7rem;" onclick="toggleFreeze()">CONGELAR TEMPO</button>
-                </div>
-                <div class="table-container">
-                    <table>
-                        <thead><tr><th>KEY</th><th>STATUS</th><th>RESTANTE</th><th>PROPRIETÁRIO</th></tr></thead>
-                        <tbody id="table-keys"></tbody>
-                    </table>
+        <div id="tab-gerador" class="tab-content">
+            <div class="glass p-8 rounded-3xl max-w-lg mx-auto border-t-4 border-blue-600">
+                <h2 class="text-xl font-bold mb-6 text-center">Criar Nova Credencial</h2>
+                <select id="keyDuration" class="w-full bg-slate-900 border-2 border-gray-800 p-4 rounded-2xl mb-4 text-white focus:border-blue-500 outline-none">
+                    <option value="24">01 Dia - R$ 5,00</option>
+                    <option value="168">07 Dias - R$ 10,00</option>
+                    <option value="360">15 Dias - R$ 20,00</option>
+                    <option value="720">30 Dias - R$ 50,00</option>
+                </select>
+                <button onclick="generateNewKey()" class="w-full bg-blue-600 hover:bg-blue-500 p-4 rounded-2xl font-bold uppercase tracking-widest text-sm transition-all shadow-lg shadow-blue-900/40">Gerar Agora</button>
+            </div>
+        </div>
+
+        <div id="tab-usuarios" class="tab-content">
+            <div class="glass p-6 rounded-3xl">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2 text-blue-400"><i class="fas fa-users"></i> Usuários no Gerador</h2>
+                <div id="usersList" class="space-y-4">
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-blue-500/30 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center font-bold">01</div>
+                            <div>
+                                <p class="font-bold">Você (Administrador)</p>
+                                <p class="text-[10px] text-green-400 uppercase font-bold">Online Agora</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-circle text-green-500 text-[8px] animate-pulse"></i>
+                    </div>
+                    <div id="otherUsers"></div>
                 </div>
             </div>
+        </div>
 
-            <!-- GERENCIAR USUÁRIOS (ADM) -->
-            <div id="v-users" class="view">
-                <h2 style="color:var(--primary)">Gestão de Membros</h2>
-                <div class="card">
-                    <label>Injetar Créditos</label>
-                    <select id="adm-user-select"></select>
-                    <input type="number" id="adm-amount" placeholder="Valor R$">
-                    <button class="btn btn-primary" onclick="injectCredits()">INJETAR SALDO</button>
-                </div>
-                <div class="table-container">
-                    <table>
-                        <thead><tr><th>NOME</th><th>SALDO</th><th>AÇÕES</th></tr></thead>
-                        <tbody id="table-users"></tbody>
-                    </table>
+        <div id="tab-ativas" class="tab-content">
+            <div class="glass p-6 rounded-3xl">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i class="fas fa-bolt text-yellow-400"></i> Monitor em Tempo Real</h2>
+                <div id="activeKeysBody" class="space-y-4">
+                    <p class="text-center text-gray-500 py-10 italic">Nenhuma key em execução.</p>
                 </div>
             </div>
-        </main>
+        </div>
 
-        <!-- MENU SANDUÍCHE (FAB) -->
-        <div class="menu-wrapper">
-            <div class="drawer" id="menu-drawer">
-                <!-- Nav Links here -->
-                <div class="nav-link" onclick="nav('dash', this)"><i data-lucide="layout" size="18"></i> Dashboard</div>
-                <div class="nav-link" onclick="nav('gen', this)"><i data-lucide="key" size="18"></i> Gerar Keys</div>
-                <div class="nav-link" onclick="nav('list', this)"><i data-lucide="list" size="18"></i> Gerenciar Keys</div>
-
-                <div id="adm-nav" style="display:none; border-top: 1px solid var(--border); margin-top:10px; padding-top:10px;">
-                    <div class="nav-link" onclick="nav('users', this)" style="color:var(--primary)"><i data-lucide="users" size="18"></i> Gerenciar Usuários</div>
-                    <div class="nav-link" onclick="nav('users', this)" style="color:var(--primary)"><i data-lucide="credit-card" size="18"></i> Add Créditos</div>
-                </div>
-
-                <div class="nav-link" onclick="location.reload()" style="color:var(--danger); margin-top:10px;"><i data-lucide="log-out" size="18"></i> Sair</div>
+        <div id="tab-historico" class="tab-content">
+            <div class="glass p-6 rounded-3xl">
+                <h2 class="text-xl font-bold mb-6 text-gray-400 uppercase tracking-widest text-xs">Administração de Keys</h2>
+                <div id="historyLog" class="space-y-4"></div>
             </div>
-            <div id="fab" onclick="toggleDrawer()"><i data-lucide="menu" id="fab-icon" style="color:white"></i></div>
         </div>
     </div>
 
+    <div class="fixed bottom-6 right-6 flex flex-col items-end gap-4 z-50">
+        <div id="fab-menu" class="flex flex-col gap-3 mb-2">
+            <button onclick="changeTab('tab-dashboard')" class="flex items-center gap-3 bg-slate-800 p-3 pr-5 rounded-full border border-gray-700 hover:bg-blue-600 transition-all">
+                <span class="text-[10px] font-bold uppercase">Dashboard</span>
+                <div class="bg-blue-500 p-2 rounded-full w-10 h-10 flex items-center justify-center"><i class="fas fa-home"></i></div>
+            </button>
+            <button onclick="changeTab('tab-gerador')" class="flex items-center gap-3 bg-slate-800 p-3 pr-5 rounded-full border border-gray-700 hover:bg-blue-600 transition-all">
+                <span class="text-[10px] font-bold uppercase">Gerador</span>
+                <div class="bg-purple-500 p-2 rounded-full w-10 h-10 flex items-center justify-center"><i class="fas fa-plus"></i></div>
+            </button>
+            <button onclick="changeTab('tab-usuarios')" class="flex items-center gap-3 bg-slate-800 p-3 pr-5 rounded-full border border-gray-700 hover:bg-blue-600 transition-all">
+                <span class="text-[10px] font-bold uppercase">Usuários</span>
+                <div class="bg-cyan-500 p-2 rounded-full w-10 h-10 flex items-center justify-center"><i class="fas fa-users"></i></div>
+            </button>
+            <button onclick="changeTab('tab-ativas')" class="flex items-center gap-3 bg-slate-800 p-3 pr-5 rounded-full border border-gray-700 hover:bg-blue-600 transition-all">
+                <span class="text-[10px] font-bold uppercase">Ativas</span>
+                <div class="bg-green-500 p-2 rounded-full w-10 h-10 flex items-center justify-center"><i class="fas fa-bolt"></i></div>
+            </button>
+            <button onclick="changeTab('tab-historico')" class="flex items-center gap-3 bg-slate-800 p-3 pr-5 rounded-full border border-gray-700 hover:bg-blue-600 transition-all">
+                <span class="text-[10px] font-bold uppercase">Gestão</span>
+                <div class="bg-orange-500 p-2 rounded-full w-10 h-10 flex items-center justify-center"><i class="fas fa-tools"></i></div>
+            </button>
+        </div>
+        <button onclick="toggleFab()" id="main-fab" class="fab-btn bg-blue-600 rounded-full shadow-2xl flex items-center justify-center text-xl border-4 border-white/10 ring-8 ring-blue-600/10">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
     <script>
-        const MASTER_PASS = "ADMIN2025";
-        let session = null;
-        let clockInterval;
+        // Dados persistentes
+        let keys = JSON.parse(localStorage.getItem('kmp_keys')) || [];
+        let balance = parseFloat(localStorage.getItem('kmp_balance')) || 1250.00;
 
-        const getDB = () => JSON.parse(localStorage.getItem('keygen_v14_data')) || { users: [], keys: [], frozen: false, freezeTime: null };
-        const saveDB = (db) => localStorage.setItem('keygen_v14_data', JSON.stringify(db));
-
-        function toggleAuth(type) {
-            document.getElementById('auth-member').style.display = (type === 'member' ? 'block' : 'none');
-            document.getElementById('auth-admin').style.display = (type === 'admin' ? 'block' : 'none');
-            document.getElementById('tab-member').classList.toggle('active', type === 'member');
-            document.getElementById('tab-admin').classList.toggle('active', type === 'admin');
+        function saveData() {
+            localStorage.setItem('kmp_keys', JSON.stringify(keys));
+            localStorage.setItem('kmp_balance', balance.toString());
         }
 
-        function registerUser() {
-            const name = document.getElementById('reg-name').value;
-            if(!name) return alert("Digite um nome!");
-            const db = getDB();
-            const user = { id: Date.now(), name, credits: 0, role: 'USER' };
-            db.users.push(user);
-            saveDB(db);
-            startSession(user);
+        function toggleFab() {
+            const menu = document.getElementById('fab-menu');
+            const btn = document.getElementById('main-fab');
+            menu.classList.toggle('show');
+            btn.classList.toggle('open');
+            btn.querySelector('i').classList.toggle('fa-bars');
+            btn.querySelector('i').classList.toggle('fa-times');
         }
 
-        function loginAdmin() {
-            if(document.getElementById('master-key').value === MASTER_PASS) {
-                startSession({ name: "Admin Master", role: 'ADM', credits: 999999 });
-            } else {
-                alert("Senha Incorreta!");
+        function changeTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            if(document.getElementById('fab-menu').classList.contains('show')) toggleFab();
+        }
+
+        function generateNewKey() {
+            const sel = document.getElementById('keyDuration');
+            const h = parseInt(sel.value);
+            let price = h === 24 ? 5 : h === 168 ? 10 : h === 360 ? 20 : 50;
+
+            if(balance < price) {
+                alert("Saldo insuficiente!");
+                return;
             }
-        }
 
-        function startSession(user) {
-            session = user;
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('main-app').style.display = 'block';
+            const label = sel.options[sel.selectedIndex].text.split(' - ')[0];
+            const code = 'KMP-' + Math.random().toString(36).substring(2, 10).toUpperCase();
             
-            if(user.role === 'ADM') {
-                document.getElementById('user-role').innerText = "ADMIN MASTER";
-                document.getElementById('user-role').style.color = document.getElementById('user-role').style.borderColor = "var(--primary)";
-                document.getElementById('adm-nav').style.display = "block";
-                document.getElementById('adm-freeze-btn').style.display = "block";
-                document.getElementById('gen-btn').className = "btn btn-primary";
-                document.getElementById('fab').style.background = "var(--primary)";
-                refreshAdmLists();
-            } else {
-                document.getElementById('user-role').innerText = "MEMBRO VIP";
-                document.getElementById('user-role').style.color = document.getElementById('user-role').style.borderColor = "var(--secondary)";
-                document.getElementById('fab').style.background = "var(--secondary)";
-            }
-
-            if(clockInterval) clearInterval(clockInterval);
-            clockInterval = setInterval(updateAllClocks, 1000);
-            updateDashboard();
-            updateAllClocks();
-            lucide.createIcons();
-        }
-
-        function updateDashboard() {
-            const db = getDB();
-            if(session.role !== 'ADM') {
-                const me = db.users.find(u => u.id === session.id);
-                document.getElementById('display-credits').innerText = `R$ ${me.credits.toFixed(2)}`;
-                document.getElementById('display-keys').innerText = db.keys.filter(k => k.ownerId === session.id).length;
-            } else {
-                document.getElementById('display-credits').innerText = "INFINITO";
-                document.getElementById('display-keys').innerText = db.keys.length;
-            }
-        }
-
-        function executeGeneration() {
-            const days = parseInt(document.getElementById('k-time').value);
-            const cost = { 1: 5, 7: 15, 30: 40 }[days];
-            const pre = document.getElementById('k-prefix').value.toUpperCase() || "KEY";
-            let db = getDB();
-
-            if(session.role !== 'ADM') {
-                let user = db.users.find(u => u.id === session.id);
-                if(user.credits < cost) return alert("Saldo insuficiente!");
-                user.credits -= cost;
-            }
-
             const newKey = {
-                code: `${pre}-${days}D-${Math.random().toString(36).substring(2,8).toUpperCase()}`,
-                expiry: Date.now() + (days * 24 * 60 * 60 * 1000),
-                ownerId: session.id,
-                ownerName: session.name
+                id: Date.now(),
+                code: code,
+                durationMs: h * 60 * 60 * 1000,
+                remainingMs: h * 60 * 60 * 1000,
+                lastUpdate: Date.now(),
+                status: 'ativa',
+                label: label
             };
 
-            db.keys.push(newKey);
-            saveDB(db);
-            document.getElementById('k-final').innerText = newKey.code;
-            document.getElementById('k-res-box').style.display = "block";
-            updateDashboard();
-            updateAllClocks();
-            alert("Key Gerada!");
+            balance -= price;
+            keys.unshift(newKey);
+            saveData();
+            updateUI();
+            changeTab('tab-dashboard');
         }
 
-        function toggleFreeze() {
-            let db = getDB();
-            const now = Date.now();
-            if(!db.frozen) { db.frozen = true; db.freezeTime = now; }
-            else { 
-                const dur = now - db.freezeTime;
-                db.keys = db.keys.map(k => ({ ...k, expiry: k.expiry + dur }));
-                db.frozen = false; db.freezeTime = null;
-            }
-            saveDB(db);
-            updateAllClocks();
+        function togglePause(id) {
+            const k = keys.find(x => x.id === id);
+            if(k.status === 'bloqueada') return;
+            k.status = k.status === 'ativa' ? 'pausada' : 'ativa';
+            k.lastUpdate = Date.now();
+            saveData();
+            updateUI();
         }
 
-        function updateAllClocks() {
-            const db = getDB();
-            const tbody = document.getElementById('table-keys');
-            if(!tbody) return;
-            tbody.innerHTML = "";
-            const now = Date.now();
-            const list = session.role === 'ADM' ? db.keys : db.keys.filter(k => k.ownerId === session.id);
-
-            list.slice().reverse().forEach(k => {
-                let diff = k.expiry - (db.frozen ? db.freezeTime : now);
-                let status = "ATIVA", pill = "active-pill";
-
-                if(diff <= 0) { status = "EXPIRADA"; pill = "expired-pill"; diff = 0; }
-                else if(db.frozen) { status = "PAUSADA"; pill = "paused-pill"; }
-
-                const d = Math.floor(diff/(1000*60*60*24));
-                const h = Math.floor((diff/(1000*60*60))%24);
-                const m = Math.floor((diff/(1000*60))%60);
-
-                tbody.innerHTML += `<tr>
-                    <td>${k.code}</td>
-                    <td><span class="status-pill ${pill}">${status}</span></td>
-                    <td>${status === "EXPIRADA" ? "---" : d+"d "+h+"h "+m+"m"}</td>
-                    <td>${k.ownerName}</td>
-                </tr>`;
-            });
-
-            if(session.role === 'ADM') {
-                const btn = document.getElementById('adm-freeze-btn');
-                btn.innerText = db.frozen ? "RETOMAR" : "CONGELAR";
-            }
+        function blockKey(id) {
+            const k = keys.find(x => x.id === id);
+            k.status = k.status === 'bloqueada' ? 'ativa' : 'bloqueada';
+            k.lastUpdate = Date.now();
+            saveData();
+            updateUI();
         }
 
-        function refreshAdmLists() {
-            const db = getDB();
-            const tbody = document.getElementById('table-users');
-            const select = document.getElementById('adm-user-select');
-            tbody.innerHTML = ""; select.innerHTML = "";
-            db.users.forEach(u => {
-                tbody.innerHTML += `<tr><td>${u.name}</td><td>R$ ${u.credits.toFixed(2)}</td><td><button onclick="deleteUser(${u.id})" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i data-lucide="trash-2" size="16"></i></button></td></tr>`;
-                select.innerHTML += `<option value="${u.id}">${u.name}</option>`;
-            });
-            lucide.createIcons();
+        function resetKey(id) {
+            const k = keys.find(x => x.id === id);
+            k.remainingMs = k.durationMs;
+            k.lastUpdate = Date.now();
+            saveData();
+            updateUI();
         }
 
-        function injectCredits() {
-            const id = document.getElementById('adm-user-select').value;
-            const val = parseFloat(document.getElementById('adm-amount').value);
-            if(!id || isNaN(val)) return;
-            let db = getDB();
-            db.users = db.users.map(u => u.id == id ? { ...u, credits: u.credits + val } : u);
-            saveDB(db);
-            refreshAdmLists();
-            alert("Sucesso!");
-        }
+        function updateUI() {
+            document.getElementById('balance-display').innerText = `R$ ${balance.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('stat-total').innerText = keys.length;
+            document.getElementById('stat-ativas').innerText = keys.filter(k => k.status === 'ativa').length;
+            document.getElementById('stat-pausadas').innerText = keys.filter(k => k.status === 'pausada').length;
+            document.getElementById('stat-bloqueadas').innerText = keys.filter(k => k.status === 'bloqueada').length;
 
-        function deleteUser(id) {
-            if(!confirm("Remover usuário permanentemente?")) return;
-            let db = getDB();
-            db.users = db.users.filter(u => u.id !== id);
-            saveDB(db);
-            refreshAdmLists();
-        }
-
-        function toggleDrawer() { 
-            const drawer = document.getElementById('menu-drawer');
-            const icon = document.getElementById('fab-icon');
-            drawer.classList.toggle('open');
-            icon.setAttribute('data-lucide', drawer.classList.contains('open') ? 'x' : 'menu');
-            lucide.createIcons();
-        }
-
-        function nav(viewId, element) {
-            document.querySelectorAll('.view').forEach(e => e.classList.remove('active'));
-            document.getElementById('v-' + viewId).classList.add('active');
+            const activeDiv = document.getElementById('activeKeysBody');
+            const historyDiv = document.getElementById('historyLog');
             
-            document.querySelectorAll('.nav-link').forEach(e => e.classList.remove('active-link'));
-            if (element) {
-                 element.classList.add('active-link');
-            }
-            toggleDrawer(); // Fecha o menu sanduíche após a navegação
+            activeDiv.innerHTML = keys.filter(k => k.status !== 'bloqueada').length === 0 ? '<p class="text-center text-gray-500 py-10 italic">Nenhuma key em execução.</p>' : '';
+            historyDiv.innerHTML = '';
+
+            keys.forEach(k => {
+                const badgeClass = k.status === 'ativa' ? 'bg-green-500/20 text-green-400' : k.status === 'pausada' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-red-500/20 text-red-400';
+                
+                if(k.status !== 'bloqueada') {
+                    activeDiv.innerHTML += `
+                        <div class="bg-slate-900/80 p-5 rounded-3xl border border-gray-800 flex justify-between items-center animate-fade">
+                            <div>
+                                <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest">${k.label}</p>
+                                <p class="font-mono text-lg font-bold">${k.code}</p>
+                            </div>
+                            <div class="text-right">
+                                <p id="timer-${k.id}" class="font-mono ${k.status === 'ativa' ? 'text-green-400' : 'text-yellow-400'} font-bold text-lg">--:--:--</p>
+                                <span class="status-badge ${badgeClass}">${k.status}</span>
+                            </div>
+                        </div>`;
+                }
+
+                historyDiv.innerHTML += `
+                    <div class="bg-slate-900/40 p-5 rounded-3xl border border-white/5 space-y-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-bold text-white font-mono">${k.code}</p>
+                                <p class="text-[10px] text-gray-500 uppercase">${k.label}</p>
+                            </div>
+                            <span class="status-badge ${badgeClass}">${k.status}</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="togglePause(${k.id})" class="bg-slate-800 hover:bg-yellow-600/20 text-gray-400 hover:text-yellow-500 p-2 rounded-xl text-[10px] font-bold transition-all border border-white/5">
+                                <i class="fas ${k.status === 'pausada' ? 'fa-play' : 'fa-pause'} mb-1 block"></i> STATUS
+                            </button>
+                            <button onclick="blockKey(${k.id})" class="bg-slate-800 hover:bg-red-600/20 text-gray-400 hover:text-red-500 p-2 rounded-xl text-[10px] font-bold transition-all border border-white/5">
+                                <i class="fas fa-ban mb-1 block"></i> BANIR
+                            </button>
+                            <button onclick="resetKey(${k.id})" class="bg-slate-800 hover:bg-blue-600/20 text-gray-400 hover:text-blue-500 p-2 rounded-xl text-[10px] font-bold transition-all border border-white/5">
+                                <i class="fas fa-sync-alt mb-1 block"></i> RESET
+                            </button>
+                        </div>
+                    </div>`;
+            });
         }
 
-        window.onload = () => lucide.createIcons();
+        setInterval(() => {
+            let changed = false;
+            keys.forEach(k => {
+                if (k.status === 'ativa' && k.remainingMs > 0) {
+                    const now = Date.now();
+                    k.remainingMs -= (now - k.lastUpdate);
+                    k.lastUpdate = now;
+                    changed = true;
+                } else if (k.status === 'ativa') {
+                    k.lastUpdate = Date.now();
+                }
+                if(k.remainingMs < 0) k.remainingMs = 0;
+                const display = document.getElementById(`timer-${k.id}`);
+                if (display) {
+                    const diff = k.remainingMs;
+                    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const s = Math.floor((diff % (1000 * 60)) / 1000);
+                    display.innerText = `${d > 0 ? d+'d ' : ''}${h.toString().padStart(2,'0')}h ${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
+                }
+            });
+            if(changed) saveData();
+        }, 1000);
+
+        updateUI();
     </script>
 </body>
-                        </html>
-                                                                                                                      
+</html>
