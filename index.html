@@ -22,9 +22,10 @@
         /* Login */
         #auth-screen { height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at center, #1a0b2e 0%, #080808 100%); }
         .auth-card { background: var(--card); padding: 35px; border-radius: 20px; width: 380px; border: 1px solid #222; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
-        input, select { width: 100%; padding: 14px; margin: 10px 0; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 10px; }
+        input, select, textarea { width: 100%; padding: 14px; margin: 10px 0; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 10px; resize: none; }
         button { width: 100%; padding: 14px; border: none; border-radius: 10px; background: var(--primary); color: white; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
         button:hover { filter: brightness(1.2); transform: translateY(-2px); }
+        .btn-action { width: auto; padding: 6px 12px; margin: 2px; font-size: 12px; display: inline-block; }
 
         /* Dashboard Area */
         #app-screen { display: none; padding: 30px; max-width: 1100px; margin: auto; }
@@ -42,7 +43,6 @@
         .badge-adm { background: rgba(0, 242, 255, 0.1); color: var(--accent); border: 1px solid var(--accent); }
         .badge-user { background: rgba(255, 255, 255, 0.05); color: #aaa; border: 1px solid #444; }
 
-        .btn-action { width: auto; padding: 6px 12px; margin: 2px; font-size: 12px; display: inline-block; }
         .btn-credit { background: var(--success); color: #000; }
         .btn-del { background: var(--danger); }
 
@@ -54,7 +54,20 @@
         .menu-item { background: #181818; padding: 16px; border-radius: 12px; border: 1px solid #333; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.3s; }
         .menu-item:hover { border-color: var(--primary); background: #222; }
 
+        /* Estilos da nova tela Personalizar Key */
+        .config-input { background: #222; border: 1px solid #444; padding: 10px; border-radius: 8px; margin-bottom: 20px; }
+        .placeholder-btn {
+            background: #3a0ca3; color: white; padding: 8px 12px; border-radius: 5px; cursor: pointer;
+            margin: 5px 5px 5px 0; display: inline-block; font-size: 14px;
+        }
+        .example-box {
+            background: #000; padding: 15px; border-radius: 8px; border: 1px solid #444;
+            font-family: monospace; margin-top: 15px; font-size: 16px;
+        }
+        .field-title { color: #aaa; font-size: 12px; margin-bottom: 5px; }
         .stat-box { background: var(--card); padding: 25px; border-radius: 15px; border-left: 5px solid var(--primary); }
+
+
     </style>
 </head>
 <body>
@@ -77,9 +90,9 @@
             <span id="user-info" style="color: var(--accent); font-weight: bold;"></span>
         </div>
 
-        <!-- DASHBOARD VIEW -->
+        <!-- DASHBOARD VIEW (INÍCIO) -->
         <div id="view-dash" class="view-section active-view">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
                 <div class="stat-box"><p style="color: #666; font-size: 12px;">MEUS CRÉDITOS</p><h2 id="my-credits">0</h2></div>
                 <div class="stat-box"><p style="color: #666; font-size: 12px;">KEYS NO SISTEMA</p><h2 id="keys-total">0</h2></div>
                 <div class="stat-box"><p style="color: #666; font-size: 12px;">TOTAL USUÁRIOS</p><h2 id="users-total">0</h2></div>
@@ -108,6 +121,7 @@
         <div id="view-keys" class="view-section">
             <div class="auth-card" style="width: 100%; max-width: 500px; margin: auto;">
                 <h3>Gerador Key 2025</h3>
+                <p>Formato atual: <strong id="current-key-format">PDR XITER-{codigo-aleatorio-obrigatorio}</strong></p>
                 <select id="key-days">
                     <option value="1">24 Horas</option>
                     <option value="7">7 Dias</option>
@@ -118,12 +132,40 @@
             </div>
         </div>
 
+        <!-- PERSONALIZAR KEYS (AGORA PARA TODOS) -->
+        <div id="view-personalize" class="view-section">
+            <div class="auth-card" style="width: 100%; max-width: 600px; margin: auto;">
+                <h3>Personalizar Minhas Keys</h3>
+                <p style="color: #aaa; margin-bottom: 20px;">Configure o formato e prefixo das suas keys geradas.</p>
+                
+                <label class="field-title">Prefixo Gerador de Keys</label>
+                <input type="text" id="key-prefix" placeholder="PDR XITER">
+
+                <label class="field-title">Formato da Key</label>
+                <div style="margin-bottom: 10px;">
+                    <span class="placeholder-btn" onclick="addPlaceholder('{Produto}')">{Produto}</span>
+                    <span class="placeholder-btn" onclick="addPlaceholder('{Validade}')">{Validade}</span>
+                    <span class="placeholder-btn" onclick="addPlaceholder('{codigo-aleatorio-obrigatorio}')">{codigo-aleatorio-obrigatorio}</span>
+                </div>
+                <textarea id="key-format-textarea" rows="4" placeholder="Clique nos placeholders acima para adicionar..."></textarea>
+                
+                <label class="field-title">Exemplo de key gerada:</label>
+                <div class="example-box" id="key-example">PDR XITER-ABC12330D</div>
+
+                <button onclick="saveKeyConfig()">Salvar Configuração</button>
+            </div>
+        </div>
+
+
         <!-- MENU SANDUÍCHE -->
         <div class="menu-wrapper">
             <div class="menu-items" id="main-menu">
                 <div class="menu-item" onclick="changeView('dash')"><i class="fas fa-home"></i> Início</div>
                 <div class="menu-item adm-only" onclick="changeView('users')"><i class="fas fa-user-shield"></i> Gerenciar Logins</div>
                 <div class="menu-item" onclick="changeView('keys')"><i class="fas fa-key"></i> Gerar Keys</div>
+                 <!-- BOTAO AGORA SEM adm-only -->
+                <div class="menu-item" onclick="changeView('personalize')"><i class="fas fa-cogs"></i> Personalizar Key</div>
+
                 <div class="menu-item" onclick="location.reload()" style="color: var(--danger);"><i class="fas fa-power-off"></i> Sair</div>
             </div>
             <div class="fab" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
@@ -132,14 +174,18 @@
 
     <script>
         // Banco de Dados Local
-        let db = JSON.parse(localStorage.getItem('sys_v3_data')) || {
+        let db = JSON.parse(localStorage.getItem('sys_v4_data')) || {
             users: [{ user: 'admin', pass: 'admin', role: 'ADM', credits: 9999 }],
-            keys: []
+            keys: [],
+            config: {
+                prefix: 'PDR XITER',
+                format: '{codigo-aleatorio-obrigatorio}'
+            }
         };
 
         let loggedIn = null;
 
-        function save() { localStorage.setItem('sys_v3_data', JSON.stringify(db)); }
+        function save() { localStorage.setItem('sys_v4_data', JSON.stringify(db)); }
 
         function login() {
             const u = document.getElementById('user').value.toLowerCase();
@@ -165,12 +211,12 @@
         function registrar() {
             const u = document.getElementById('user').value.toLowerCase();
             const p = document.getElementById('pass').value;
-            if(!u || !p) return alert("Preencha tudo!");
-            if(db.users.find(x => x.user === u)) return alert("Já existe!");
+            if(!u || !p) return alert("Preencha os campos!");
+            if(db.users.find(x => x.user === u)) return alert("Usuário já existe!");
 
             db.users.push({ user: u, pass: p, role: 'USER', credits: 0 });
             save();
-            alert("Cadastro realizado! Clique em Acessar.");
+            alert("Conta criada! Agora clique em Acessar.");
         }
 
         function renderUsers() {
@@ -215,6 +261,7 @@
             document.getElementById('my-credits').innerText = `$ ${loggedIn.credits}`;
             document.getElementById('keys-total').innerText = db.keys.length;
             document.getElementById('users-total').innerText = db.users.length;
+            document.getElementById('current-key-format').innerText = `${db.config.prefix}-${db.config.format}`;
         }
 
         function changeView(id) {
@@ -222,6 +269,7 @@
             document.getElementById('view-' + id).classList.add('active-view');
             document.getElementById('screen-title').innerText = id.toUpperCase();
             if(id === 'users') renderUsers();
+            if(id === 'personalize') loadKeyConfig();
             if(document.getElementById('main-menu').style.display === 'flex') toggleMenu();
         }
 
@@ -232,12 +280,49 @@
             fab.classList.toggle('active');
         }
 
+        function loadKeyConfig() {
+            document.getElementById('key-prefix').value = db.config.prefix;
+            document.getElementById('key-format-textarea').value = db.config.format;
+            updateExampleKey();
+        }
+
+        function addPlaceholder(placeholder) {
+            const textarea = document.getElementById('key-format-textarea');
+            textarea.value += placeholder;
+            updateExampleKey();
+        }
+
+        function updateExampleKey() {
+            const prefix = document.getElementById('key-prefix').value || db.config.prefix;
+            const format = document.getElementById('key-format-textarea').value || db.config.format;
+            let example = `${prefix}-${format}`;
+            
+            example = example.replace('{Produto}', 'PDRAPP');
+            example = example.replace('{Validade}', '30D');
+            example = example.replace('{codigo-aleatorio-obrigatorio}', 'ABC123XYZ');
+            
+            document.getElementById('key-example').innerText = example;
+        }
+
+        function saveKeyConfig() {
+            db.config.prefix = document.getElementById('key-prefix').value;
+            db.config.format = document.getElementById('key-format-textarea').value;
+            save();
+            updateStats();
+            alert("Configurações de Key salvas com sucesso!");
+        }
+
         function gerarKey() {
             const days = document.getElementById('key-days').value;
-            const code = "PRO-" + Math.random().toString(36).substr(2, 9).toUpperCase();
-            db.keys.push({ code, days });
+            let finalKey = `${db.config.prefix}-${db.config.format}`;
+            
+            finalKey = finalKey.replace('{Produto}', 'ITEM');
+            finalKey = finalKey.replace('{Validade}', `${days}D`);
+            finalKey = finalKey.replace('{codigo-aleatorio-obrigatorio}', Math.random().toString(36).substr(2, 9).toUpperCase());
+
+            db.keys.push({ code: finalKey, days });
             save();
-            document.getElementById('key-display').innerText = code;
+            document.getElementById('key-display').innerText = finalKey;
             updateStats();
         }
     </script>
