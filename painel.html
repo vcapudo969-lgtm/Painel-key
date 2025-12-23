@@ -1,122 +1,278 @@
-l<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>Painel - Gerar Keys</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-    body { background: #050608; color: #fff; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding-top: 20px; }
-    .content { flex: 1; display: flex; justify-content: center; padding: 22px; }
-    .card { background: #0b0d10; border-radius: 16px; padding: 22px; width: 100%; max-width: 480px; border: 1px solid #1c1f25; }
-    h1 { font-size: 22px; margin-bottom: 4px; }
-    p.sub { font-size: 12px; color: #a0a0a0; margin-bottom: 20px; }
-    .label { font-size: 12px; margin-bottom: 6px; display: block; color: #d1d5db; }
-    .field { margin-bottom: 16px; }
-    select, input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #1c1f25; background: #050608; color: #fff; font-size: 14px; outline: none; }
-    select:focus, input:focus { border-color: #6366f1; }
-    .credits-info { font-size: 11px; color: #9ca3af; margin-top: 4px; }
-    .summary { margin-top: 10px; font-size: 13px; line-height: 1.6; }
-    .summary span.green { color: #22c55e; font-weight: bold; }
-    .summary span.yellow { color: #eab308; font-weight: bold; }
-    .btn { margin-top: 18px; width: 100%; padding: 14px; border-radius: 999px; border: none; background: #22c55e; color: #000; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.3s; }
-    .btn:hover { background: #16a34a; transform: scale(1.02); }
-    .result { margin-top: 18px; background: #000; border-radius: 10px; padding: 12px; font-size: 13px; white-space: pre-wrap; word-break: break-all; border: 1px dashed #333; color: #22c55e; display: none; }
-  </style>
+<meta charset="UTF-8">
+<title>Painel - Gerar Keys</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: Arial, sans-serif;
+}
+
+body{
+  background:#050608;
+  color:#fff;
+  display:flex;
+  min-height:100vh;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar{
+  width:260px;
+  background:#0b0d10;
+  border-right:1px solid #1c1f25;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:bold;
+  margin-bottom:25px;
+}
+
+.menu-title{
+  font-size:11px;
+  color:#777;
+  margin:20px 0 10px;
+  text-transform:uppercase;
+}
+
+.menu a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px;
+  border-radius:8px;
+  text-decoration:none;
+  color:#ccc;
+  font-size:14px;
+  transition:.2s;
+}
+
+.menu a:hover,
+.menu a.active{
+  background:#151922;
+  color:#fff;
+}
+
+.footer{
+  margin-top:auto;
+}
+
+.user-box{
+  background:#050608;
+  border:1px solid #1c1f25;
+  padding:10px;
+  border-radius:10px;
+  font-size:13px;
+}
+
+.logout{
+  margin-top:10px;
+  background:#7f1d1d;
+  color:#fff;
+  border:none;
+  padding:10px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+/* ===== CONTENT ===== */
+.content{
+  flex:1;
+  padding:30px;
+  display:flex;
+  justify-content:center;
+}
+
+.card{
+  background:#0b0d10;
+  border:1px solid #1c1f25;
+  border-radius:16px;
+  padding:22px;
+  width:100%;
+  max-width:480px;
+}
+
+h1{
+  font-size:22px;
+  margin-bottom:4px;
+}
+
+.sub{
+  font-size:12px;
+  color:#a0a0a0;
+  margin-bottom:20px;
+}
+
+.label{
+  font-size:12px;
+  color:#d1d5db;
+  margin-bottom:6px;
+  display:block;
+}
+
+.field{
+  margin-bottom:16px;
+}
+
+select,input{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #1c1f25;
+  background:#050608;
+  color:#fff;
+}
+
+.summary{
+  font-size:13px;
+  margin-top:10px;
+}
+
+.green{color:#22c55e;font-weight:bold;}
+.yellow{color:#eab308;font-weight:bold;}
+
+.btn{
+  margin-top:18px;
+  width:100%;
+  padding:14px;
+  border-radius:999px;
+  border:none;
+  background:#22c55e;
+  color:#000;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.result{
+  margin-top:18px;
+  background:#000;
+  border:1px dashed #333;
+  border-radius:10px;
+  padding:12px;
+  font-size:13px;
+  white-space:pre-wrap;
+  display:none;
+  color:#22c55e;
+}
+</style>
 </head>
+
 <body>
 
-  <div class="content">
-    <div class="card">
-      <h1>Gerar Keys</h1>
-      <p class="sub">Crie novas keys para seus clientes de forma rápida e eficiente.</p>
-
-      <div class="field">
-        <label class="label">Versão de Login *</label>
-        <select id="versaoLogin">
-          <option value="">Selecione uma versão de login</option>
-          <option value="mobile-v1">Mobile v1</option>
-          <option value="pc-v2">PC v2</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label class="label">Dias/Horas de Validade *</label>
-        <select id="validade">
-          <option value="">Selecione uma validade</option>
-          <option value="1">1 Dia</option>
-          <option value="7">7 Dias</option>
-          <option value="30">30 Dias</option>
-          <option value="100">100 Dias</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label class="label">Créditos por Key *</label>
-        <input id="creditos" type="number" min="1" value="1" />
-        <div class="credits-info">Descontado automaticamente conforme a chave.</div>
-      </div>
-
-      <div class="field">
-        <label class="label">Quantidade de Keys *</label>
-        <input id="quantidade" type="number" min="1" value="1" />
-      </div>
-
-      <div class="summary">
-        <div>Total de Créditos Necessários: <span class="yellow" id="totalNec">0</span></div>
-        <div>Seus Créditos: <span class="green" id="meusCred">989.759</span></div>
-      </div>
-
-      <button class="btn" id="btnGerar">+ Gerar Keys</button>
-
-      <div class="result" id="resultado"></div>
-    </div>
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="logo">
+    🟣 <span>4m Cheats</span>
   </div>
 
-  <script>
-    const creditosInput = document.getElementById("creditos");
-    const quantidadeInput = document.getElementById("quantidade");
-    const totalNec = document.getElementById("totalNec");
-    const btnGerar = document.getElementById("btnGerar");
-    const resultado = document.getElementById("resultado");
+  <div class="menu">
+    <div class="menu-title">Principal</div>
+    <a href="#">Dashboard</a>
 
-    function atualizarTotal() {
-      const c = Number(creditosInput.value) || 0;
-      const q = Number(quantidadeInput.value) || 0;
-      totalNec.textContent = (c * q).toLocaleString();
-    }
+    <div class="menu-title">Keys</div>
+    <a class="active" href="#">➕ Gerar Keys</a>
+    <a href="#">Gerenciar Keys</a>
 
-    creditosInput.addEventListener("input", atualizarTotal);
-    quantidadeInput.addEventListener("input", atualizarTotal);
-    atualizarTotal();
+    <div class="menu-title">Carteira</div>
+    <a href="#">Comprar Crédito</a>
+    <a href="#">Transferir Créditos</a>
 
-    function gerarKey(tamanho = 20) {
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-      let key = "";
-      for (let i = 0; i < tamanho; i++) {
-        key += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      return key.match(/.{1,4}/g).join("-");
-    }
+    <div class="menu-title">Perfil</div>
+    <a href="#">Meu Perfil</a>
+  </div>
 
-    btnGerar.addEventListener("click", () => {
-      const versao = document.getElementById("versaoLogin").value;
-      const validade = document.getElementById("validade").value;
-      const qtd = Number(quantidadeInput.value) || 0;
+  <div class="footer">
+    <div class="user-box">
+      <b>pedro00</b><br>
+      💰 $ 989.759,00
+    </div>
+    <button class="logout">Sair</button>
+  </div>
+</div>
 
-      if (!versao || !validade || qtd <= 0) {
-        alert("Preencha todos os campos corretamente.");
-        return;
-      }
+<!-- CONTENT -->
+<div class="content">
+  <div class="card">
+    <h1>Gerar Keys</h1>
+    <p class="sub">Crie novas keys para seus clientes de forma rápida.</p>
 
-      const keys = [];
-      for (let i = 0; i < qtd; i++) {
-        keys.push(gerarKey(20));
-      }
+    <div class="field">
+      <label class="label">Versão de Login *</label>
+      <select id="versaoLogin">
+        <option value="">Selecione</option>
+        <option value="mobile">Mobile</option>
+        <option value="pc">PC</option>
+      </select>
+    </div>
 
-      resultado.style.display = "block";
-      resultado.textContent = "LISTA DE KEYS GERADAS:\n\n" + keys.join("\n");
-    });
-  </script>
+    <div class="field">
+      <label class="label">Validade *</label>
+      <select id="validade">
+        <option value="">Selecione</option>
+        <option value="1">1 Dia</option>
+        <option value="7">7 Dias</option>
+        <option value="30">30 Dias</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label class="label">Créditos por Key *</label>
+      <input id="creditos" type="number" value="1">
+    </div>
+
+    <div class="field">
+      <label class="label">Quantidade *</label>
+      <input id="quantidade" type="number" value="1">
+    </div>
+
+    <div class="summary">
+      Total Necessário: <span class="yellow" id="totalNec">0</span><br>
+      Seus Créditos: <span class="green">989.759</span>
+    </div>
+
+    <button class="btn" id="btnGerar">+ Gerar Keys</button>
+
+    <div class="result" id="resultado"></div>
+  </div>
+</div>
+
+<script>
+const creditos=document.getElementById("creditos");
+const quantidade=document.getElementById("quantidade");
+const totalNec=document.getElementById("totalNec");
+const resultado=document.getElementById("resultado");
+
+function atualizar(){
+  totalNec.innerText=(creditos.value*quantidade.value).toLocaleString();
+}
+creditos.oninput=atualizar;
+quantidade.oninput=atualizar;
+atualizar();
+
+function gerarKey(){
+  return Math.random().toString(36).substring(2,6).toUpperCase()+"-"+
+         Math.random().toString(36).substring(2,6).toUpperCase()+"-"+
+         Math.random().toString(36).substring(2,6).toUpperCase();
+}
+
+document.getElementById("btnGerar").onclick=()=>{
+  const q=quantidade.value;
+  let keys=[];
+  for(let i=0;i<q;i++) keys.push(gerarKey());
+  resultado.style.display="block";
+  resultado.innerText="KEYS GERADAS:\n\n"+keys.join("\n");
+}
+</script>
+
 </body>
 </html>
