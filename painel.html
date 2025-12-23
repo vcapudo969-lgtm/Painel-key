@@ -2,173 +2,216 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Painel - FFH4X</title>
+  <title>Painel FFH4X - Real Time</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
     body { background: #050608; color: #fff; min-height: 100vh; overflow-x: hidden; }
 
-    /* --- MENU LATERAL (SIDEBAR) --- */
-    .sidebar { position: fixed; left: -250px; top: 0; width: 250px; height: 100%; background: #0b0d10; border-right: 1px solid #1c1f25; transition: 0.3s; z-index: 1000; padding-top: 60px; }
+    /* --- SIDEBAR --- */
+    .sidebar { position: fixed; left: -260px; top: 0; width: 260px; height: 100%; background: #0b0d10; border-right: 1px solid #1c1f25; transition: 0.3s; z-index: 1000; padding-top: 70px; }
     .sidebar.active { left: 0; }
-    .sidebar-item { padding: 15px 25px; color: #d1d5db; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
+    .sidebar-item { padding: 15px 25px; color: #d1d5db; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 12px; font-size: 14px; }
     .sidebar-item:hover { background: #1c1f25; color: #22c55e; }
     .sidebar-item.active { background: #1c1f25; color: #22c55e; border-left: 4px solid #22c55e; }
 
-    /* --- BOTÃO HAMBÚRGUER --- */
-    .menu-btn { position: fixed; top: 15px; left: 15px; z-index: 1100; cursor: pointer; background: #0b0d10; padding: 8px; border-radius: 8px; border: 1px solid #1c1f25; display: flex; flex-direction: column; gap: 4px; }
-    .menu-btn div { width: 20px; height: 2px; background: #fff; transition: 0.3s; }
+    /* --- MENU BTN --- */
+    .menu-btn { position: fixed; top: 15px; left: 15px; z-index: 1100; cursor: pointer; background: #0b0d10; padding: 10px; border-radius: 8px; border: 1px solid #1c1f25; }
+    .menu-btn div { width: 22px; height: 2px; background: #22c55e; margin: 4px 0; }
 
-    /* --- CONTEÚDO --- */
-    .main-container { padding: 80px 20px 20px 20px; display: flex; justify-content: center; }
-    .page { display: none; width: 100%; max-width: 480px; }
+    /* --- LAYOUT --- */
+    .main-container { padding: 90px 20px 40px 20px; display: flex; justify-content: center; }
+    .page { display: none; width: 100%; max-width: 550px; }
     .page.active { display: block; }
 
-    .card { background: #0b0d10; border-radius: 16px; padding: 22px; width: 100%; border: 1px solid #1c1f25; }
-    h1 { font-size: 22px; margin-bottom: 4px; }
-    p.sub { font-size: 12px; color: #a0a0a0; margin-bottom: 20px; }
+    .card { background: #0b0d10; border-radius: 20px; padding: 25px; border: 1px solid #1c1f25; }
+    h1 { font-size: 22px; color: #fff; margin-bottom: 5px; }
+    .sub { font-size: 11px; color: #22c55e; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* FORM */
+    .label { font-size: 11px; color: #9ca3af; margin-top: 15px; display: block; }
+    select, input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #1c1f25; background: #050608; color: #fff; outline: none; margin-top: 5px; }
     
-    /* Formulário */
-    .label { font-size: 12px; margin-bottom: 6px; display: block; color: #d1d5db; margin-top: 15px; }
-    select, input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #1c1f25; background: #050608; color: #fff; font-size: 14px; outline: none; }
-    select:focus, input:focus { border-color: #6366f1; }
+    .btn-gerar { margin-top: 30px; width: 100%; padding: 16px; border-radius: 14px; border: none; background: #22c55e; color: #000; font-weight: 800; cursor: pointer; transition: 0.3s; }
+    .btn-gerar:hover { background: #16a34a; }
 
-    .summary { margin-top: 15px; font-size: 13px; background: #1c1f2544; padding: 10px; border-radius: 10px; }
-    .green { color: #22c55e; font-weight: bold; }
-    .yellow { color: #eab308; font-weight: bold; }
+    /* --- SISTEMA DE CRÉDITOS --- */
+    .creditos-container { margin-top: 15px; text-align: center; background: rgba(34, 197, 94, 0.05); padding: 10px; border-radius: 10px; border: 1px solid rgba(28, 31, 37, 0.5); }
+    .creditos-label { font-size: 10px; color: #9ca3af; text-transform: uppercase; }
+    .creditos-valor { font-size: 18px; color: #22c55e; font-weight: bold; font-family: monospace; display: block; }
 
-    .btn { margin-top: 18px; width: 100%; padding: 14px; border-radius: 999px; border: none; background: #22c55e; color: #000; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.3s; }
-    .btn:hover { background: #16a34a; transform: scale(1.02); }
+    /* LISTA DE KEYS */
+    .simple-key { background: #050608; border: 1px solid #1c1f25; padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; color: #22c55e; font-family: monospace; }
+    .copy-btn { cursor: pointer; background: #1c1f25; padding: 5px 10px; border-radius: 8px; font-size: 11px; color: #fff; }
 
-    /* Lista de Keys na Tela "Ver Keys" */
-    .keys-list { margin-top: 15px; }
-    .key-item { background: #050608; border: 1px solid #1c1f25; padding: 10px; border-radius: 8px; margin-bottom: 8px; font-size: 12px; color: #22c55e; display: flex; justify-content: space-between; align-items: center; }
-    .empty-msg { text-align: center; color: #666; font-size: 14px; margin-top: 20px; }
+    /* ABA DE VALIDADE */
+    .detail-box { background: #050608; border: 1px solid #1c1f25; border-left: 4px solid #22c55e; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+    .info-val { display: block; color: #fff; font-size: 13px; font-weight: bold; margin-top: 4px; }
+    .countdown { color: #eab308 !important; font-family: monospace; font-size: 16px !important; }
   </style>
 </head>
 <body>
 
   <div class="menu-btn" onclick="toggleSidebar()">
-    <div></div>
-    <div></div>
-    <div></div>
+    <div></div><div></div><div></div>
   </div>
 
   <div class="sidebar" id="sidebar">
-    <div class="sidebar-item active" onclick="showPage('gerar')">➕ Gerar Key</div>
-    <div class="sidebar-item" onclick="showPage('ver')">📋 Ver Keys Geradas</div>
+    <div class="sidebar-item active" onclick="showPage('gerar')">🚀 Gerar Chaves</div>
+    <div class="sidebar-item" onclick="showPage('lista')">🔑 Somente Keys</div>
+    <div class="sidebar-item" onclick="showPage('validade')">⏱️ Tempo Real (Live)</div>
   </div>
 
   <div class="main-container">
     
     <div id="page-gerar" class="page active">
       <div class="card">
-        <h1>Gerar Keys</h1>
-        <p class="sub">Painel administrativo FFH4X-ANDROID</p>
+        <h1>Gerador FFH4X</h1>
+        <p class="sub">Sistema de Licenciamento</p>
 
-        <label class="label">Versão de Login *</label>
-        <select id="versaoLogin">
-          <option value="mobile-v1">Mobile v1</option>
-          <option value="pc-v2">PC v2</option>
-        </select>
+        <label class="label">Tempo de Acesso</label>
+        <select id="val_select">
+          <option value="1">1 dia</option>
+          <option value="7">7 dias</option>
+          <option value="15">15 dias</option>
+          <option value="30">30 dias</option>
+</select>
 
-        <label class="label">Validade *</label>
-        <select id="validade">
-          <option value="1">1 Dia</option>
-          <option value="7">7 Dias</option>
-          <option value="30">30 Dias</option>
-        </select>
+        <label class="label">Quantidade</label>
+        <input id="qtd_input" type="number" min="1" value="1" />
 
-        <label class="label">Quantidade *</label>
-        <input id="quantidade" type="number" min="1" value="1" />
+        <button class="btn-gerar" onclick="executarGeracao()">GERAR AGORA</button>
 
-        <div class="summary">
-          <div>Custo: <span class="yellow" id="totalNec">0</span> créditos</div>
-          <div>Saldo: <span class="green" id="meusCred">989.759</span></div>
+        <div class="creditos-container">
+          <span class="creditos-label">Seus Créditos Disponíveis</span>
+          <span class="creditos-valor" id="meu_saldo">1.000.000</span>
         </div>
-
-        <button class="btn" onclick="processarGeracao()">+ Gerar Agora</button>
       </div>
     </div>
 
-    <div id="page-ver" class="page">
+    <div id="page-lista" class="page">
       <div class="card">
-        <h1>Keys Geradas</h1>
-        <p class="sub">Histórico de chaves criadas nesta sessão.</p>
-        <div id="listaHistorico" class="keys-list">
-          <p class="empty-msg">Nenhuma key gerada ainda.</p>
-        </div>
+        <h1>Chaves Ativas</h1>
+        <p class="sub">Cópia Rápida</p>
+        <div id="container-lista"></div>
+      </div>
+    </div>
+
+    <div id="page-validade" class="page">
+      <div class="card">
+        <h1>Monitoramento Live</h1>
+        <p class="sub">Expiração em Tempo Real</p>
+        <div id="container-validade"></div>
       </div>
     </div>
 
   </div>
 
   <script>
-    // Banco de dados temporário das keys
-    let historicoKeys = [];
-    let saldoAtual = 989759;
+    let chavesDB = [];
+    let saldoAtual = 1000000;
 
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('active');
     }
 
-    function showPage(pageId) {
-      // Alternar páginas
+    function showPage(id) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('page-' + pageId).classList.add('active');
-      
-      // Atualizar menu lateral
-      document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+      document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+      document.getElementById('page-' + id).classList.add('active');
       event.currentTarget.classList.add('active');
+      toggleSidebar();
       
-      toggleSidebar(); // Fecha o menu ao clicar
-      if(pageId === 'ver') atualizarListaHistorico();
+      if(id === 'lista') renderLista();
+      if(id === 'validade') renderValidade();
     }
 
-    function gerarChaveAleatoria() {
-      const prefixo = "FFH4X-ANDROID";
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-      let random = "";
-      for (let i = 0; i < 12; i++) {
-        random += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      return `${prefixo}-${random.match(/.{1,4}/g).join("-")}`;
+    function formatarSaldo(valor) {
+      return valor.toLocaleString('pt-BR');
     }
 
-    function processarGeracao() {
-      const qtd = parseInt(document.getElementById('quantidade').value);
-      if (qtd <= 0) return alert("Quantidade inválida");
+    function executarGeracao() {
+      const dias = parseInt(document.getElementById('val_select').value);
+      const qtd = parseInt(document.getElementById('qtd_input').value);
+      const agora = new Date();
 
-      if (saldoAtual < qtd) return alert("Saldo insuficiente");
-
-      saldoAtual -= qtd;
-      document.getElementById('meusCred').textContent = saldoAtual.toLocaleString('pt-BR');
-
-      for (let i = 0; i < qtd; i++) {
-        historicoKeys.unshift(gerarChaveAleatoria()); // Adiciona no topo da lista
-      }
-
-      alert(`${qtd} Key(s) gerada(s) com sucesso! Vá em 'Ver Keys' para copiar.`);
-    }
-
-    function atualizarListaHistorico() {
-      const container = document.getElementById('listaHistorico');
-      if (historicoKeys.length === 0) {
-        container.innerHTML = '<p class="empty-msg">Nenhuma key gerada ainda.</p>';
+      if (qtd > saldoAtual) {
+        alert("Saldo de créditos insuficiente!");
         return;
       }
 
-      container.innerHTML = historicoKeys.map(key => `
-        <div class="key-item">
-          <span>${key}</span>
-          <button onclick="copyKey('${key}')" style="background:transparent; border:none; color:#22c55e; cursor:pointer; font-size:10px; font-weight:bold;">COPIAR</button>
-        </div>
-      `).join('');
+      // Descontar saldo
+      saldoAtual -= qtd;
+      document.getElementById('meu_saldo').textContent = formatarSaldo(saldoAtual);
+
+      for(let i=0; i<qtd; i++) {
+        const expiraEm = new Date(agora.getTime() + dias * 24 * 60 * 60 * 1000);
+        const key = "FFH4X-ANDROID-" + Math.random().toString(36).substring(2, 10).toUpperCase();
+        
+        chavesDB.unshift({
+          key: key,
+          criada: agora,
+          expira: expiraEm,
+          plano: dias + " Dia(s)"
+        });
+      }
+      alert(qtd + " Key(s) Gerada(s)!");
     }
 
-    function copyKey(text) {
-      navigator.clipboard.writeText(text);
-      alert("Key copiada!");
+    function renderLista() {
+      const box = document.getElementById('container-lista');
+      box.innerHTML = chavesDB.length ? chavesDB.map(item => `
+        <div class="simple-key">
+          <span>${item.key}</span>
+          <div class="copy-btn" onclick="copy('${item.key}')">COPIAR</div>
+        </div>
+      `).join('') : '<p style="text-align:center;color:#444">Nenhuma key gerada</p>';
+    }
+
+    function renderValidade() {
+        updateTimers(); 
+    }
+
+    function updateTimers() {
+      const box = document.getElementById('container-validade');
+      if(chavesDB.length === 0) {
+          box.innerHTML = '<p style="text-align:center;color:#444">Nenhum registro</p>';
+          return;
+      }
+
+      box.innerHTML = chavesDB.map(item => {
+        const agora = new Date().getTime();
+        const distancia = item.expira.getTime() - agora;
+
+        const d = Math.floor(distancia / (1000 * 60 * 60 * 24));
+        const h = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((distancia % (1000 * 60)) / 1000);
+
+        const tempoRestante = distancia > 0 ? `${d}d ${h}h ${m}m ${s}s` : "EXPIRADA";
+
+        return `
+          <div class="detail-box">
+            <div style="font-size:12px; color:#22c55e; font-weight:bold; margin-bottom:10px;">${item.key}</div>
+            <div class="detail-grid">
+              <div><span style="font-size:10px; color:#666">CRIADA EM</span><span class="info-val">${item.criada.toLocaleTimeString()}</span></div>
+              <div><span style="font-size:10px; color:#666">RESTANTE (LIVE)</span><span class="info-val countdown">${tempoRestante}</span></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    setInterval(() => {
+        if(document.getElementById('page-validade').classList.contains('active')) {
+            updateTimers();
+        }
+    }, 1000);
+
+    function copy(t) {
+      navigator.clipboard.writeText(t);
+      alert("Copiado!");
     }
   </script>
 </body>
