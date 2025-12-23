@@ -1,218 +1,298 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <title>Painel FFH4X - Real Time</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-    body { background: #050608; color: #fff; min-height: 100vh; overflow-x: hidden; }
-
-    /* --- SIDEBAR --- */
-    .sidebar { position: fixed; left: -260px; top: 0; width: 260px; height: 100%; background: #0b0d10; border-right: 1px solid #1c1f25; transition: 0.3s; z-index: 1000; padding-top: 70px; }
-    .sidebar.active { left: 0; }
-    .sidebar-item { padding: 15px 25px; color: #d1d5db; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 12px; font-size: 14px; }
-    .sidebar-item:hover { background: #1c1f25; color: #22c55e; }
-    .sidebar-item.active { background: #1c1f25; color: #22c55e; border-left: 4px solid #22c55e; }
-
-    /* --- MENU BTN --- */
-    .menu-btn { position: fixed; top: 15px; left: 15px; z-index: 1100; cursor: pointer; background: #0b0d10; padding: 10px; border-radius: 8px; border: 1px solid #1c1f25; }
-    .menu-btn div { width: 22px; height: 2px; background: #22c55e; margin: 4px 0; }
-
-    /* --- LAYOUT --- */
-    .main-container { padding: 90px 20px 40px 20px; display: flex; justify-content: center; }
-    .page { display: none; width: 100%; max-width: 550px; }
-    .page.active { display: block; }
-
-    .card { background: #0b0d10; border-radius: 20px; padding: 25px; border: 1px solid #1c1f25; }
-    h1 { font-size: 22px; color: #fff; margin-bottom: 5px; }
-    .sub { font-size: 11px; color: #22c55e; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
-
-    /* FORM */
-    .label { font-size: 11px; color: #9ca3af; margin-top: 15px; display: block; }
-    select, input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #1c1f25; background: #050608; color: #fff; outline: none; margin-top: 5px; }
-    
-    .btn-gerar { margin-top: 30px; width: 100%; padding: 16px; border-radius: 14px; border: none; background: #22c55e; color: #000; font-weight: 800; cursor: pointer; transition: 0.3s; }
-    .btn-gerar:hover { background: #16a34a; }
-
-    /* --- SISTEMA DE CRÉDITOS --- */
-    .creditos-container { margin-top: 15px; text-align: center; background: rgba(34, 197, 94, 0.05); padding: 10px; border-radius: 10px; border: 1px solid rgba(28, 31, 37, 0.5); }
-    .creditos-label { font-size: 10px; color: #9ca3af; text-transform: uppercase; }
-    .creditos-valor { font-size: 18px; color: #22c55e; font-weight: bold; font-family: monospace; display: block; }
-
-    /* LISTA DE KEYS */
-    .simple-key { background: #050608; border: 1px solid #1c1f25; padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; color: #22c55e; font-family: monospace; }
-    .copy-btn { cursor: pointer; background: #1c1f25; padding: 5px 10px; border-radius: 8px; font-size: 11px; color: #fff; }
-
-    /* ABA DE VALIDADE */
-    .detail-box { background: #050608; border: 1px solid #1c1f25; border-left: 4px solid #22c55e; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
-    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
-    .info-val { display: block; color: #fff; font-size: 13px; font-weight: bold; margin-top: 4px; }
-    .countdown { color: #eab308 !important; font-family: monospace; font-size: 16px !important; }
-  </style>
-</head>
-<body>
-
-  <div class="menu-btn" onclick="toggleSidebar()">
-    <div></div><div></div><div></div>
-  </div>
-
-  <div class="sidebar" id="sidebar">
-    <div class="sidebar-item active" onclick="showPage('gerar')"> Gerar Chaves</div>
-    <div class="sidebar-item" onclick="showPage('lista')"> Somente Keys</div>
-    <div class="sidebar-item" onclick="showPage('validade')"> Tempo Real (Live)</div>
-  </div>
-
-  <div class="main-container">
-    
-    <div id="page-gerar" class="page active">
-      <div class="card">
-        <h1>Gerador FFH4X</h1>
-        <p class="sub">Sistema de Licenciamento</p>
-
-        <label class="label">Tempo de Acesso</label>
-        <select id="val_select">
-          <option value="1">1 dia</option>
-          <option value="7">7 dias</option>
-          <option value="15">15 dias</option>
-          <option value="30">30 dias</option>
-</select>
-
-        <label class="label">Quantidade</label>
-        <input id="qtd_input" type="number" min="1" value="1" />
-
-        <button class="btn-gerar" onclick="executarGeracao()">GERAR AGORA</button>
-
-        <div class="creditos-container">
-          <span class="creditos-label">Seus Créditos Disponíveis</span>
-          <span class="creditos-valor" id="meu_saldo">1.000.000</span>
-        </div>
-      </div>
-    </div>
-
-    <div id="page-lista" class="page">
-      <div class="card">
-        <h1>Chaves Ativas</h1>
-        <p class="sub">Cópia Rápida</p>
-        <div id="container-lista"></div>
-      </div>
-    </div>
-
-    <div id="page-validade" class="page">
-      <div class="card">
-        <h1>Monitoramento Live</h1>
-        <p class="sub">Expiração em Tempo Real</p>
-        <div id="container-validade"></div>
-      </div>
-    </div>
-
-  </div>
-
-  <script>
-    let chavesDB = [];
-    let saldoAtual = 1000000;
-
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('active');
-    }
-
-    function showPage(id) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-      document.getElementById('page-' + id).classList.add('active');
-      event.currentTarget.classList.add('active');
-      toggleSidebar();
-      
-      if(id === 'lista') renderLista();
-      if(id === 'validade') renderValidade();
-    }
-
-    function formatarSaldo(valor) {
-      return valor.toLocaleString('pt-BR');
-    }
-
-    function executarGeracao() {
-      const dias = parseInt(document.getElementById('val_select').value);
-      const qtd = parseInt(document.getElementById('qtd_input').value);
-      const agora = new Date();
-
-      if (qtd > saldoAtual) {
-        alert("Saldo de créditos insuficiente!");
-        return;
-      }
-
-      // Descontar saldo
-      saldoAtual -= qtd;
-      document.getElementById('meu_saldo').textContent = formatarSaldo(saldoAtual);
-
-      for(let i=0; i<qtd; i++) {
-        const expiraEm = new Date(agora.getTime() + dias * 24 * 60 * 60 * 1000);
-        const key = "FFH4X-ANDROID-" + Math.random().toString(36).substring(2, 10).toUpperCase();
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pdr cheats| Painel Administrativo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { background-color: #050505; color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; }
         
-        chavesDB.unshift({
-          key: key,
-          criada: agora,
-          expira: expiraEm,
-          plano: dias + " Dia(s)"
-        });
-      }
-      alert(qtd + " Key(s) Gerada(s)!");
-    }
+        .sidebar { background-color: #080808; border-right: 1px solid #111; transition: 0.3s; }
+        .card-dark { background-color: #0a0a0a; border: 1px solid #151515; border-radius: 12px; }
+        .input-dark { background-color: #0d0d0d; border: 1px solid #1a1a1a; color: #fff; outline: none; border-radius: 8px; transition: 0.2s; }
+        .input-dark:focus { border-color: #22c55e; }
+        
+        .nav-item { color: #71717a; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; border-radius: 8px; }
+        .nav-item:hover, .nav-active { color: #fff; background: #111; }
+        
+        .tab-content { display: none; height: 100vh; overflow-y: auto; padding: 2rem; }
+        .tab-content.active { display: block; }
 
-    function renderLista() {
-      const box = document.getElementById('container-lista');
-      box.innerHTML = chavesDB.length ? chavesDB.map(item => `
-        <div class="simple-key">
-          <span>${item.key}</span>
-          <div class="copy-btn" onclick="copy('${item.key}')">COPIAR</div>
-        </div>
-      `).join('') : '<p style="text-align:center;color:#444">Nenhuma key gerada</p>';
-    }
-
-    function renderValidade() {
-        updateTimers(); 
-    }
-
-    function updateTimers() {
-      const box = document.getElementById('container-validade');
-      if(chavesDB.length === 0) {
-          box.innerHTML = '<p style="text-align:center;color:#444">Nenhum registro</p>';
-          return;
-      }
-
-      box.innerHTML = chavesDB.map(item => {
-        const agora = new Date().getTime();
-        const distancia = item.expira.getTime() - agora;
-
-        const d = Math.floor(distancia / (1000 * 60 * 60 * 24));
-        const h = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const m = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
-        const s = Math.floor((distancia % (1000 * 60)) / 1000);
-
-        const tempoRestante = distancia > 0 ? `${d}d ${h}h ${m}m ${s}s` : "EXPIRADA";
-
-        return `
-          <div class="detail-box">
-            <div style="font-size:12px; color:#22c55e; font-weight:bold; margin-bottom:10px;">${item.key}</div>
-            <div class="detail-grid">
-              <div><span style="font-size:10px; color:#666">CRIADA EM</span><span class="info-val">${item.criada.toLocaleTimeString()}</span></div>
-              <div><span style="font-size:10px; color:#666">RESTANTE (LIVE)</span><span class="info-val countdown">${tempoRestante}</span></div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    setInterval(() => {
-        if(document.getElementById('page-validade').classList.contains('active')) {
-            updateTimers();
+        /* Dropdown de Ações */
+        .actions-menu {
+            display: none;
+            position: absolute;
+            right: 40px;
+            background: #0d0d0d;
+            border: 1px solid #1a1a1a;
+            border-radius: 8px;
+            z-index: 100;
+            width: 170px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
-    }, 1000);
+        .actions-menu.active { display: block; }
+        .action-item { padding: 10px 15px; font-size: 12px; color: #888; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .action-item:hover { background: #151515; color: #fff; }
+        .action-item.delete:hover { color: #ef4444; }
 
-    function copy(t) {
-      navigator.clipboard.writeText(t);
-      alert("Copiado!");
-    }
-  </script>
+        @media (max-width: 768px) { .sidebar { transform: translateX(-100%); z-index: 1000; } .sidebar.open { transform: translateX(0); } }
+    </style>
+</head>
+<body class="flex">
+
+    <button onclick="toggleSidebar()" class="md:hidden fixed top-4 right-4 z-[1100] bg-zinc-900 p-2 rounded-lg border border-zinc-800">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-72 sidebar flex flex-col p-6 h-screen">
+        <div class="flex items-center gap-2 mb-10 px-2">
+            <img src="https://emoji.discourse-cdn.com/twitter/pepe.png?v=12" class="w-7 h-7">
+            <span class="font-bold text-xl tracking-tight">Pdr cheats</span>
+        </div>
+
+        <nav class="flex-1 space-y-1 overflow-y-auto">
+            <p class="text-[10px] uppercase font-bold text-zinc-600 mb-2 px-3 tracking-widest italic">Principal</p>
+            <div onclick="showTab('dashboard')" id="btn-dashboard" class="nav-item p-3 flex items-center gap-3"><i class="fas fa-chart-line w-5"></i> Dashboard</div>
+            
+            <p class="text-[10px] uppercase font-bold text-zinc-600 mt-6 mb-2 px-3 tracking-widest italic">Keys</p>
+            <div onclick="showTab('gerar')" id="btn-gerar" class="nav-item nav-active p-3 flex items-center gap-3"><i class="fas fa-plus w-5"></i> Gerar Keys</div>
+            <div onclick="showTab('gerenciar')" id="btn-gerenciar" class="nav-item p-3 flex items-center gap-3"><i class="fas fa-list w-5"></i> Gerenciar Keys</div>
+            
+            <p class="text-[10px] uppercase font-bold text-zinc-600 mt-6 mb-2 px-3 tracking-widest italic">Personalização</p>
+            <div class="nav-item p-3 flex items-center gap-3"><i class="fas fa-magic w-5"></i> Customizar Key</div>
+        </nav>
+
+        <div class="pt-5 border-t border-zinc-900 mt-auto">
+            <div class="flex items-center gap-3 px-2 mb-4">
+                <div class="w-10 h-10 bg-zinc-800 rounded-full border border-green-500 overflow-hidden">
+                    <img src="https://ui-avatars.com/api/?name=P&background=111&color=fff">
+                </div>
+                <div>
+                    <p class="text-sm font-bold">pedro00</p>
+                    <p class="text-xs text-green-500 font-mono italic">$ <span id="saldo-txt">989.759,00</span></p>
+                </div>
+            </div>
+            <button class="w-full bg-[#1a0505] text-red-500 py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 hover:bg-red-900/20 transition">
+                <i class="fas fa-sign-out-alt"></i> Sair
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 md:ml-72 bg-black min-h-screen">
+        
+        <section id="tab-dashboard" class="tab-content">
+            <h1 class="text-3xl font-bold mb-1">Visão Geral</h1>
+            <p class="text-zinc-500 text-sm mb-8">Estatísticas do seu painel</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card-dark p-6">
+                    <p class="text-zinc-500 text-xs uppercase font-bold">Total Gerado</p>
+                    <h2 class="text-3xl font-bold mt-2" id="stats-total">0</h2>
+                </div>
+                <div class="card-dark p-6">
+                    <p class="text-zinc-500 text-xs uppercase font-bold">Keys Ativas</p>
+                    <h2 class="text-3xl font-bold mt-2 text-green-500" id="stats-ativas">0</h2>
+                </div>
+                <div class="card-dark p-6">
+                    <p class="text-zinc-500 text-xs uppercase font-bold">Créditos Gastos</p>
+                    <h2 class="text-3xl font-bold mt-2 text-blue-500" id="stats-gastos">$ 0,00</h2>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-gerar" class="tab-content active">
+            <h1 class="text-3xl font-bold mb-1">Gerar Keys</h1>
+            <p class="text-zinc-500 text-sm mb-10">Crie novas chaves conforme sua necessidade</p>
+
+            <div class="card-dark p-8 max-w-2xl mx-auto space-y-6">
+                <div>
+                    <label class="text-[10px] uppercase font-bold text-zinc-500 mb-2 block italic">Versão *</label>
+                    <select id="versao" class="w-full input-dark p-4 appearance-none">
+                        <option value="v1">FFH4X v1.0</option>
+                        <option value="v2">AUXÍLIO v2.4</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[10px] uppercase font-bold text-zinc-500 mb-2 block italic">Validade *</label>
+                    <select id="validade" onchange="calc()" class="w-full input-dark p-4">
+                        <option value="1">24 Horas — $ 1,00</option>
+                        <option value="5">7 Dias — $ 5,00</option>
+                        <option value="15">30 Dias — $ 15,00</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] uppercase font-bold text-zinc-500 mb-2 block italic">Quantidade *</label>
+                        <input type="number" id="qtd" value="1" min="1" oninput="calc()" class="w-full input-dark p-4">
+                    </div>
+                    <div>
+                        <label class="text-[10px] uppercase font-bold text-zinc-500 mb-2 block italic">Prefixo (Opcional)</label>
+                        <input type="text" id="prefixo" placeholder="Ex: VIP-" class="w-full input-dark p-4 uppercase">
+                    </div>
+                </div>
+
+                <div class="bg-zinc-900/30 border border-zinc-900 p-6 rounded-2xl flex justify-between items-center">
+                    <div>
+                        <p class="text-[10px] text-zinc-500 font-bold uppercase italic tracking-widest">Total Créditos:</p>
+                        <p class="text-2xl font-bold" id="total-req">1</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] text-green-500 font-bold uppercase italic tracking-widest">Seu Saldo:</p>
+                        <p class="text-2xl font-black text-green-500" id="saldo-main">989.759</p>
+                    </div>
+                </div>
+
+                <button onclick="gerarKeys()" class="w-full bg-white text-black font-bold py-4 rounded-xl hover:bg-zinc-200 transition">
+                    + Gerar Keys
+                </button>
+            </div>
+        </section>
+
+        <section id="tab-gerenciar" class="tab-content">
+            <h1 class="text-3xl font-bold mb-8">Gerenciar Keys</h1>
+            <div class="card-dark overflow-visible">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-zinc-900/50 text-zinc-500 uppercase text-[10px] tracking-widest">
+                        <tr>
+                            <th class="p-5">Key</th>
+                            <th class="p-5">Plano/Versão</th>
+                            <th class="p-5">Status</th>
+                            <th class="p-5 text-right">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-keys" class="divide-y divide-zinc-900">
+                        </tbody>
+                </table>
+                <div id="no-keys" class="p-20 text-center text-zinc-600">Nenhuma key encontrada.</div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        let saldo = 989759.00;
+        let gastos = 0;
+        let keys = [];
+
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('nav-active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.getElementById('btn-' + tab).classList.add('nav-active');
+            if(tab === 'gerenciar') renderKeys();
+            if(tab === 'dashboard') updateStats();
+        }
+
+        function calc() {
+            const v = parseFloat(document.getElementById('validade').value);
+            const q = parseInt(document.getElementById('qtd').value) || 0;
+            document.getElementById('total-req').innerText = (v * q).toLocaleString('pt-BR');
+        }
+
+        function gerarKeys() {
+            const v = parseFloat(document.getElementById('validade').value);
+            const q = parseInt(document.getElementById('qtd').value) || 1;
+            const prefixo = document.getElementById('prefixo').value.toUpperCase() || "4M-";
+            const custo = v * q;
+
+            if (saldo < custo) return alert("❌ Saldo insuficiente!");
+
+            saldo -= custo;
+            gastos += custo;
+            
+            for(let i=0; i<q; i++) {
+                const k = prefixo + Math.random().toString(36).substring(2, 10).toUpperCase();
+                keys.unshift({
+                    id: Date.now() + i,
+                    code: k,
+                    plano: document.getElementById('validade').options[document.getElementById('validade').selectedIndex].text.split(' — ')[0],
+                    versao: document.getElementById('versao').options[document.getElementById('versao').selectedIndex].text,
+                    status: 'Ativa',
+                    data: new Date().toLocaleDateString('pt-BR')
+                });
+            }
+
+            document.getElementById('prefixo').value = '';
+            atualizarUI();
+            alert("✅ " + q + " Keys geradas!");
+        }
+
+        function renderKeys() {
+            const lista = document.getElementById('lista-keys');
+            const placeholder = document.getElementById('no-keys');
+            
+            if(keys.length === 0) {
+                placeholder.classList.remove('hidden');
+                lista.innerHTML = '';
+                return;
+            }
+
+            placeholder.classList.add('hidden');
+            lista.innerHTML = keys.map((k, index) => `
+                <tr class="hover:bg-white/[0.02] transition">
+                    <td class="p-5 font-mono ${k.status === 'Ativa' ? 'text-green-400' : 'text-zinc-600'} font-bold">${k.code}</td>
+                    <td class="p-5">
+                        <div class="text-white text-xs">${k.plano}</div>
+                        <div class="text-zinc-500 text-[10px]">${k.versao}</div>
+                    </td>
+                    <td class="p-5">
+                        <span class="${k.status === 'Ativa' ? 'bg-green-500/10 text-green-500' : 'bg-yellow-500/10 text-yellow-500'} px-2 py-1 rounded text-[9px] font-black tracking-tighter">
+                            ${k.status.toUpperCase()}
+                        </span>
+                    </td>
+                    <td class="p-5 text-right relative">
+                        <button onclick="toggleMenu(${k.id})" class="w-8 h-8 hover:bg-zinc-800 rounded-full">
+                            <i class="fas fa-ellipsis-v text-zinc-500"></i>
+                        </button>
+                        <div id="menu-${k.id}" class="actions-menu">
+                            <div class="action-item" onclick="toggleStatus(${index})"><i class="fas fa-pause"></i> ${k.status === 'Ativa' ? 'Pausar Key' : 'Ativar Key'}</div>
+                            <div class="action-item" onclick="resetKey(${index})"><i class="fas fa-sync-alt"></i> Resetar HWID</div>
+                            <div class="action-item delete" onclick="deleteKey(${index})"><i class="fas fa-trash-alt"></i> Excluir Key</div>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function toggleMenu(id) {
+            document.querySelectorAll('.actions-menu').forEach(m => {
+                if(m.id !== 'menu-'+id) m.classList.remove('active');
+            });
+            document.getElementById('menu-'+id).classList.toggle('active');
+        }
+
+        function toggleStatus(idx) {
+            keys[idx].status = keys[idx].status === 'Ativa' ? 'Pausada' : 'Ativa';
+            renderKeys();
+        }
+
+        function resetKey(idx) { alert("HWID Resetado para: " + keys[idx].code); renderKeys(); }
+
+        function deleteKey(idx) {
+            if(confirm("Deseja excluir esta key?")) {
+                keys.splice(idx, 1);
+                renderKeys();
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stats-total').innerText = keys.length;
+            document.getElementById('stats-ativas').innerText = keys.filter(k => k.status === 'Ativa').length;
+            document.getElementById('stats-gastos').innerText = "$ " + gastos.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+        }
+
+        function atualizarUI() {
+            document.getElementById('saldo-txt').innerText = saldo.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+            document.getElementById('saldo-main').innerText = Math.floor(saldo).toLocaleString('pt-BR');
+            calc();
+        }
+
+        atualizarUI();
+    </script>
 </body>
 </html>
+
