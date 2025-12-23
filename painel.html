@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+l<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
@@ -6,173 +6,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-
-    body {
-      background: #050608;
-      color: #fff;
-      min-height: 100vh;
-      display: flex;
-    }
-
-    /* Sidebar */
-    .sidebar {
-      width: 250px;
-      background: #050608;
-      border-right: 1px solid #151820;
-      padding: 16px 12px;
-    }
-    .logo {
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
-      font-weight: bold;
-      font-size: 18px;
-    }
-    .logo span {
-      margin-left: 8px;
-    }
-    .menu-title {
-      font-size: 11px;
-      text-transform: uppercase;
-      color: #6b7280;
-      margin: 14px 0 6px;
-    }
-    .menu-item {
-      padding: 7px 10px;
-      border-radius: 8px;
-      font-size: 13px;
-      color: #d1d5db;
-      cursor: pointer;
-    }
-    .menu-item.active {
-      background: #111827;
-      color: #fff;
-    }
-    .menu-item:hover {
-      background: #0b1120;
-    }
-    .user-area {
-      position: absolute;
-      bottom: 16px;
-      left: 12px;
-      right: 12px;
-      font-size: 12px;
-    }
-    .user-name {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-    .logout {
-      margin-top: 6px;
-      background: #7f1d1d;
-      text-align: center;
-      padding: 6px;
-      border-radius: 999px;
-      cursor: pointer;
-    }
-    .logout:hover { background: #991b1b; }
-
-    /* Conteúdo principal */
-    .content {
-      flex: 1;
-      padding: 22px;
-      overflow-y: auto;
-    }
-
-    .card {
-      background: #0b0d10;
-      border-radius: 16px;
-      padding: 22px;
-      max-width: 480px;
-    }
-
-    h1 {
-      font-size: 22px;
-      margin-bottom: 4px;
-    }
-    p.sub {
-      font-size: 12px;
-      color: #a0a0a0;
-      margin-bottom: 20px;
-    }
-
-    .label {
-      font-size: 12px;
-      margin-bottom: 6px;
-      display: block;
-    }
-
-    .field {
-      margin-bottom: 16px;
-    }
-
-    select, input {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid #1c1f25;
-      background: #050608;
-      color: #fff;
-      font-size: 14px;
-      outline: none;
-    }
+    body { background: #050608; color: #fff; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding-top: 20px; }
+    .content { flex: 1; display: flex; justify-content: center; padding: 22px; }
+    .card { background: #0b0d10; border-radius: 16px; padding: 22px; width: 100%; max-width: 480px; border: 1px solid #1c1f25; }
+    h1 { font-size: 22px; margin-bottom: 4px; }
+    p.sub { font-size: 12px; color: #a0a0a0; margin-bottom: 20px; }
+    .label { font-size: 12px; margin-bottom: 6px; display: block; color: #d1d5db; }
+    .field { margin-bottom: 16px; }
+    select, input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #1c1f25; background: #050608; color: #fff; font-size: 14px; outline: none; }
     select:focus, input:focus { border-color: #6366f1; }
-
-    .credits-info {
-      font-size: 11px;
-      color: #9ca3af;
-      margin-top: 4px;
-    }
-
-    .summary {
-      margin-top: 10px;
-      font-size: 13px;
-    }
-    .summary span.green { color: #22c55e; }
-    .summary span.yellow { color: #eab308; }
-
-    .btn {
-      margin-top: 18px;
-      width: 100%;
-      padding: 12px;
-      border-radius: 999px;
-      border: none;
-      background: #22c55e;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .btn:hover { background: #16a34a; }
-
-    .result {
-      margin-top: 18px;
-      background: #050608;
-      border-radius: 10px;
-      padding: 10px;
-      font-size: 12px;
-      white-space: pre-wrap;
-      word-break: break-all;
-    }
-
-    @media (max-width: 768px) {
-      body { flex-direction: column; }
-      .sidebar {
-        width: 100%;
-        height: auto;
-        border-right: none;
-        border-bottom: 1px solid #151820;
-        position: relative;
-      }
-      .user-area { position: static; margin-top: 16px; }
-    }
+    .credits-info { font-size: 11px; color: #9ca3af; margin-top: 4px; }
+    .summary { margin-top: 10px; font-size: 13px; line-height: 1.6; }
+    .summary span.green { color: #22c55e; font-weight: bold; }
+    .summary span.yellow { color: #eab308; font-weight: bold; }
+    .btn { margin-top: 18px; width: 100%; padding: 14px; border-radius: 999px; border: none; background: #22c55e; color: #000; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.3s; }
+    .btn:hover { background: #16a34a; transform: scale(1.02); }
+    .result { margin-top: 18px; background: #000; border-radius: 10px; padding: 12px; font-size: 13px; white-space: pre-wrap; word-break: break-all; border: 1px dashed #333; color: #22c55e; display: none; }
   </style>
 </head>
-<body<
+<body>
 
-!-- Conteúdo principal -->
   <div class="content">
     <div class="card">
       <h1>Gerar Keys</h1>
@@ -190,34 +43,23 @@
       <div class="field">
         <label class="label">Dias/Horas de Validade *</label>
         <select id="validade">
-          <option value="">Selecione uma versão primeiro</option>
+          <option value="">Selecione uma validade</option>
           <option value="1">1 Dia</option>
           <option value="7">7 Dias</option>
           <option value="30">30 Dias</option>
-          <option valeu="100">100 Dias</option>
+          <option value="100">100 Dias</option>
         </select>
       </div>
 
       <div class="field">
-        <label class="label">Créditos *</label>
+        <label class="label">Créditos por Key *</label>
         <input id="creditos" type="number" min="1" value="1" />
-        <div class="credits-info">
-          Descontado automaticamente conforme a sua chave selecionada.
-        </div>
+        <div class="credits-info">Descontado automaticamente conforme a chave.</div>
       </div>
 
       <div class="field">
-        <label class="label">Quantidade *</label>
+        <label class="label">Quantidade de Keys *</label>
         <input id="quantidade" type="number" min="1" value="1" />
-      </div>
-
-      <div class="field">
-        <label class="label">Dispositivo *</label>
-        <select id="dispositivo">
-          <option value="1">1 Dispositivo</option>
-          <option value="2">2 Dispositivos</option>
-          <option value="3">3 Dispositivos</option>
-        </select>
       </div>
 
       <div class="summary">
@@ -241,29 +83,29 @@
     function atualizarTotal() {
       const c = Number(creditosInput.value) || 0;
       const q = Number(quantidadeInput.value) || 0;
-      totalNec.textContent = c * q;
+      totalNec.textContent = (c * q).toLocaleString();
     }
+
     creditosInput.addEventListener("input", atualizarTotal);
     quantidadeInput.addEventListener("input", atualizarTotal);
     atualizarTotal();
 
-    function gerarKey(tamanho = 24) {
+    function gerarKey(tamanho = 20) {
       const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
       let key = "";
       for (let i = 0; i < tamanho; i++) {
-        const r = Math.floor(Math.random() * chars.length);
-        key += chars[r];
+        key += chars.charAt(Math.floor(Math.random() * chars.length));
       }
       return key.match(/.{1,4}/g).join("-");
-    } // padrão de formatação visto em exemplos JS para license key.[web:23]
+    }
 
     btnGerar.addEventListener("click", () => {
       const versao = document.getElementById("versaoLogin").value;
       const validade = document.getElementById("validade").value;
       const qtd = Number(quantidadeInput.value) || 0;
 
-      if (!versao || !validade || !qtd) {
-        alert("Preencha todos os campos obrigatórios.");
+      if (!versao || !validade || qtd <= 0) {
+        alert("Preencha todos os campos corretamente.");
         return;
       }
 
@@ -272,12 +114,9 @@
         keys.push(gerarKey(20));
       }
 
-      resultado.textContent =
-        "Keys geradas (" + qtd + "):
-
-" + keys.join("
-");
+      resultado.style.display = "block";
+      resultado.textContent = "LISTA DE KEYS GERADAS:\n\n" + keys.join("\n");
     });
   </script>
 </body>
-  </html> 
+</html>
