@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LORD CHEATS | MASTER PANEL</title>
+    <title>LORD CHEATS | UNIFIED SYSTEM</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -29,12 +29,11 @@
         }
         .login-box {
             background: var(--card); padding: 40px; border-radius: 30px; 
-            width: 90%; max-width: 380px; text-align: center; 
-            border: 1px solid var(--border);
+            width: 90%; max-width: 380px; text-align: center; border: 1px solid var(--border);
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
-        /* --- MENU NAVEGAÇÃO --- */
+        /* --- NAVEGAÇÃO --- */
         .menu-btn {
             position: fixed; top: 20px; left: 20px; z-index: 1000;
             cursor: pointer; background: var(--card); padding: 12px;
@@ -46,8 +45,7 @@
         #sidebar {
             position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
             background: var(--card); border-right: 1px solid var(--border); z-index: 999;
-            transition: 0.4s cubic-bezier(0.8, 0, 0.2, 1);
-            padding: 80px 20px 20px;
+            transition: 0.4s cubic-bezier(0.8, 0, 0.2, 1); padding: 80px 20px 20px;
         }
         #sidebar.active { left: 0; }
         .sidebar-item { padding: 14px; border-radius: 12px; margin-bottom: 8px; cursor: pointer; color: #555; display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 0.9rem; transition: 0.2s; }
@@ -57,26 +55,22 @@
         .page.active { display: block; }
         @keyframes pageIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- UI COMPONENTS --- */
+        /* --- COMPONENTES --- */
         .card-pro { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 25px; margin-bottom: 15px; }
         .btn-action { width: 100%; padding: 18px; border-radius: 16px; border: none; background: var(--primary); color: #000; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 0.75rem; transition: 0.2s; }
         .btn-action:active { transform: scale(0.96); }
         
-        /* --- MODAL DE SUCESSO --- */
         #success-modal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.95);
-            z-index: 3000; display: none; align-items: center; justify-content: center;
-            backdrop-filter: blur(10px);
+            z-index: 3000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px);
         }
         .modal-content {
             background: #0f0f12; border: 1px solid var(--primary); width: 85%; max-width: 320px;
-            padding: 30px; border-radius: 28px; text-align: center;
-            animation: modalPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding: 30px; border-radius: 28px; text-align: center; animation: modalPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        @keyframes modalPop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         select, input { width: 100%; padding: 16px; background: #000; border: 1px solid var(--border); color: #fff; border-radius: 14px; margin-bottom: 15px; outline: none; font-size: 14px; }
-        select:focus, input:focus { border-color: var(--primary); }
+        .master-only { display: none; } /* Escondido para clientes */
     </style>
 </head>
 <body>
@@ -84,22 +78,18 @@
     <div id="login-screen">
         <div class="login-box">
             <h1 style="font-weight: 800; letter-spacing: -1px; margin-bottom: 5px;">LORD <span style="color:var(--primary)">CHEATS</span></h1>
-            <p style="font-size: 0.6rem; color: #444; letter-spacing: 2px; font-weight: 800; margin-bottom: 30px;">ESTAÇÃO MASTER</p>
-            
-            <input type="email" id="adm-mail" placeholder="E-mail Administrativo">
-            <input type="password" id="adm-pass" placeholder="Senha Master">
-            
-            <button class="btn-action" onclick="validarLogin()">ACESSAR PAINEL</button>
-            <p id="login-error" style="color: var(--danger); font-size: 0.7rem; margin-top: 15px; display: none; font-weight: 800;">ACESSO NEGADO!</p>
+            <p id="panel-tag" style="font-size: 0.6rem; color: #444; letter-spacing: 2px; font-weight: 800; margin-bottom: 30px;">SISTEMA UNIFICADO</p>
+            <input type="email" id="u-mail" placeholder="E-mail de Acesso">
+            <input type="password" id="u-pass" placeholder="Senha">
+            <button class="btn-action" onclick="autenticar()">ACESSAR PAINEL</button>
         </div>
     </div>
 
     <div id="success-modal">
         <div class="modal-content">
             <div style="width: 50px; height: 50px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; color: #000; font-weight: 800;">✓</div>
-            <h3 style="color: var(--primary); margin-bottom: 10px;">KEY GERADA!</h3>
-            <p style="font-size: 0.65rem; color: #555; margin-bottom: 15px;">LORD CHEATS SYSTEM</p>
-            <div id="key-display" style="background: #000; padding: 15px; border-radius: 12px; font-family: monospace; color: var(--gold); border: 1px dashed #333; margin-bottom: 20px; font-size: 1.1rem; overflow: hidden; text-overflow: ellipsis;">---</div>
+            <h3 style="color: var(--primary); margin-bottom: 10px;">LICENÇA GERADA!</h3>
+            <div id="key-display" style="background: #000; padding: 15px; border-radius: 12px; font-family: monospace; color: var(--gold); border: 1px dashed #333; margin-bottom: 20px; font-size: 1.1rem;">---</div>
             <button class="btn-action" onclick="document.getElementById('success-modal').style.display='none'">CONCLUIR</button>
         </div>
     </div>
@@ -111,44 +101,33 @@
     <div id="sidebar">
         <div class="sidebar-item active" onclick="showPage('dashboard', this)">📊 Dashboard</div>
         <div class="sidebar-item" onclick="showPage('gerar', this)">🚀 Gerar / Vender</div>
-        <div class="sidebar-item" onclick="showPage('transferir', this)">💸 Transferir</div>
+        <div class="sidebar-item master-only" onclick="showPage('transferir', this)">💸 Transferir</div>
         <div class="sidebar-item" onclick="showPage('pausar', this)">⚙️ Gerir Keys</div>
-        <div style="margin-top: 40px;" class="sidebar-item" onclick="location.reload()">🔴 Sair</div>
+        <div style="margin-top: 40px;" class="sidebar-item" onclick="logout()">🔴 Sair</div>
     </div>
 
     <div id="page-dashboard" class="page active">
-        <div class="card-pro">
+        <div class="card-pro master-only">
             <span style="font-size: 0.7rem; color: #555; font-weight: 800;">LUCRO TOTAL</span>
             <h1 id="money-txt" style="font-size: 2.8rem; color: var(--money);">R$ 0,00</h1>
         </div>
         <div class="card-pro">
-            <span style="font-size: 0.6rem; color: #555; font-weight: 800;">SALDO EM CRÉDITOS</span>
-            <h2 id="saldo-txt" style="color: var(--gold); font-size: 1.8rem;">1.000.000</h2>
-            
-            <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 15px;">
-                <p style="font-size: 0.6rem; color: var(--primary); font-weight: 800; margin-bottom: 10px; letter-spacing: 1px;">TABELA DE CUSTOS LORD</p>
-                <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:5px;"><span>Plano 24h</span> <b>1 CRD</b></div>
-                <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:5px;"><span>Plano 07d</span> <b>10 CRD</b></div>
-                <div style="display:flex; justify-content:space-between; font-size:0.75rem;"><span>Plano 30d</span> <b>50 CRD</b></div>
-            </div>
+            <span style="font-size: 0.6rem; color: #555; font-weight: 800;">SALDO DISPONÍVEL</span>
+            <h2 id="saldo-txt" style="color: var(--gold); font-size: 1.8rem;">0</h2>
+            <p style="font-size: 0.6rem; color: var(--primary); margin-top: 10px; font-weight: 800;">CRÉDITOS LORD</p>
         </div>
     </div>
 
     <div id="page-gerar" class="page">
         <div class="card-pro">
-            <div style="text-align: center; margin-bottom: 25px;">
-                <h2 style="font-weight: 800; letter-spacing: -1px;">LORD <span style="color:var(--primary)">CHEATS</span></h2>
-                <p style="font-size: 0.6rem; color: #444; font-weight: 800;">SISTEMA DE LICENCIAMENTO</p>
-            </div>
-            <label style="font-size: 0.6rem; color: #555; font-weight: 800; margin-bottom: 5px; display: block;">ESCOLHA O TEMPO</label>
+            <h2 style="margin-bottom: 20px; text-align: center;">Gerador <span style="color:var(--primary)">H4X</span></h2>
             <select id="sel-time">
-                <option value="1">24 Horas (1 Crédito)</option>
-                <option value="7">7 Dias (10 Créditos)</option>
-                <option value="30">30 Dias (50 Créditos)</option>
+                <option value="1">24 Horas (1 CRD)</option>
+                <option value="7">7 Dias (10 CRD)</option>
+                <option value="30">30 Dias (50 CRD)</option>
             </select>
-            <label style="font-size: 0.6rem; color: #555; font-weight: 800; margin-bottom: 5px; display: block;">QUANTIDADE</label>
             <input type="number" id="sel-qty" value="1" min="1">
-            <button class="btn-action" onclick="processGen()">GERAR LICENÇA AGORA</button>
+            <button class="btn-action" onclick="gerarKey()">EMITIR LICENÇAS</button>
         </div>
     </div>
 
@@ -158,86 +137,81 @@
 
     <div id="page-transferir" class="page">
         <div class="card-pro">
-            <h3>Transferência de Créditos</h3>
-            <input type="email" id="trans-mail" placeholder="Gmail do Revendedor">
+            <h3>Enviar Créditos</h3>
+            <input type="email" id="trans-mail" placeholder="E-mail do Destinatário">
             <input type="number" id="trans-qty" placeholder="Quantidade">
-            <button class="btn-action" style="background:var(--gold)" onclick="doTransfer()">ENVIAR SALDO</button>
+            <button class="btn-action" style="background:var(--gold)" onclick="transferir()">TRANSFERIR AGORA</button>
         </div>
     </div>
 
     <script>
-        // CONFIG MASTER
-        const GMAIL_MASTER = "admin@gmail.com";
-        const SENHA_MASTER = "LORD2025";
+        const ADMIN_MAIL = "admin@gmail.com";
+        const ADMIN_PASS = "LORD2025";
 
-        // PERSISTÊNCIA (LOAD DATA)
+        let userLogado = localStorage.getItem('user_sessao') || null;
         let saldo = parseFloat(localStorage.getItem('lord_saldo')) || 1000000;
         let lucro = parseFloat(localStorage.getItem('lord_lucro')) || 0;
         let db = JSON.parse(localStorage.getItem('lord_db')) || [];
 
         const CUSTOS = { "1": 1, "7": 10, "30": 50 };
-        const REVENDA = { "1": 5, "7": 20, "30": 50 };
 
-        // INICIALIZAÇÃO
-        updateUI();
-        setInterval(updateTimers, 1000); // Loop de tempo real
-
-        function validarLogin() {
-            const m = document.getElementById('adm-mail').value;
-            const p = document.getElementById('adm-pass').value;
-            if(m === GMAIL_MASTER && p === SENHA_MASTER) {
+        // Ao carregar, verifica se já está logado
+        window.onload = () => {
+            if(userLogado) {
                 document.getElementById('login-screen').style.display = 'none';
-            } else {
-                const err = document.getElementById('login-error');
-                err.style.display = 'block';
-                setTimeout(() => err.style.display = 'none', 2500);
+                checkPermissions();
+                updateUI();
             }
+        };
+
+        function autenticar() {
+            const m = document.getElementById('u-mail').value;
+            const p = document.getElementById('u-pass').value;
+
+            if((m === ADMIN_MAIL && p === ADMIN_PASS) || (m === "cliente@gmail.com" && p === "123")) {
+                userLogado = m;
+                localStorage.setItem('user_sessao', m);
+                document.getElementById('login-screen').style.display = 'none';
+                checkPermissions();
+                updateUI();
+            } else { alert("Acesso Negado!"); }
+        }
+
+        function checkPermissions() {
+            const items = document.querySelectorAll('.master-only');
+            items.forEach(el => el.style.display = (userLogado === ADMIN_MAIL) ? 'block' : 'none');
         }
 
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
-        
+
         function showPage(p, e) {
             document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
             document.querySelectorAll('.sidebar-item').forEach(x => x.classList.remove('active'));
             document.getElementById('page-'+p).classList.add('active');
             if(e) e.classList.add('active');
-            if(window.innerWidth < 768 && document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
-            updateUI();
+            if(window.innerWidth < 768) toggleSidebar();
         }
 
-        function processGen() {
+        function gerarKey() {
             const t = document.getElementById('sel-time').value;
             const q = parseInt(document.getElementById('sel-qty').value) || 1;
-            const totalCusto = CUSTOS[t] * q;
+            const total = CUSTOS[t] * q;
 
-            if(saldo >= totalCusto) {
-                saldo -= totalCusto;
-                lucro += REVENDA[t] * q;
-                
+            if(saldo >= total) {
+                saldo -= total;
                 const agora = Date.now();
-                const tempoMs = parseInt(t) * 24 * 60 * 60 * 1000;
-
-                let ultimaKey = "";
-                for(let i=0; i<q; i++) {
-                    ultimaKey = "LORD-"+Math.random().toString(36).substring(2,7).toUpperCase();
-                    db.unshift({ 
-                        id: ultimaKey, 
-                        tipo: t, 
-                        expiraEm: agora + tempoMs 
-                    });
-                }
+                const exp = parseInt(t) * 24 * 60 * 60 * 1000;
                 
-                document.getElementById('key-display').innerText = q > 1 ? `${q} KEYS GERADAS` : ultimaKey;
-                document.getElementById('success-modal').style.display = 'flex';
-                saveAndRefresh();
-            } else { alert("Saldo Insuficiente!"); }
-        }
+                let ultima = "";
+                for(let i=0; i<q; i++) {
+                    ultima = (userLogado === ADMIN_MAIL ? "MASTER-" : "RESSEL-") + Math.random().toString(36).substring(2,7).toUpperCase();
+                    db.unshift({ id: ultima, tipo: t, expiraEm: agora + exp, dono: userLogado });
+                }
 
-        function saveAndRefresh() {
-            localStorage.setItem('lord_db', JSON.stringify(db));
-            localStorage.setItem('lord_saldo', saldo);
-            localStorage.setItem('lord_lucro', lucro);
-            updateUI();
+                document.getElementById('key-display').innerText = q > 1 ? `${q} LICENÇAS CRIADAS` : ultima;
+                document.getElementById('success-modal').style.display = 'flex';
+                salvar();
+            } else { alert("Saldo Insuficiente!"); }
         }
 
         function updateTimers() {
@@ -245,14 +219,14 @@
             db.forEach(item => {
                 const el = document.getElementById(`timer-${item.id}`);
                 if(el) {
-                    const restante = item.expiraEm - agora;
-                    if(restante <= 0) {
+                    const r = item.expiraEm - agora;
+                    if(r <= 0) {
                         el.innerText = "EXPIRADA";
                         el.style.color = "var(--danger)";
                     } else {
-                        const h = Math.floor(restante / 3600000);
-                        const m = Math.floor((restante % 3600000) / 60000);
-                        const s = Math.floor((restante % 60000) / 1000);
+                        const h = Math.floor(r / 3600000);
+                        const m = Math.floor((r % 3600000) / 60000);
+                        const s = Math.floor((r % 60000) / 1000);
                         el.innerText = `${h}h ${m}m ${s}s`;
                     }
                 }
@@ -263,46 +237,42 @@
             document.getElementById('money-txt').innerText = `R$ ${lucro.toFixed(2)}`;
             document.getElementById('saldo-txt').innerText = saldo.toLocaleString();
             
-            const mList = document.getElementById('list-management');
-            if(!mList) return;
+            const list = document.getElementById('list-management');
+            // Filtra para o cliente ver apenas o que ELE gerou, ou o master ver TUDO
+            const keysVisiveis = (userLogado === ADMIN_MAIL) ? db : db.filter(k => k.dono === userLogado);
 
-            mList.innerHTML = db.length === 0 ? '<p style="text-align:center; color:#333; margin-top:40px;">Nenhuma key registrada.</p>' :
-            db.map((item, idx) => `
-                <div class="card-pro" style="padding:18px; border-radius:20px; margin-bottom:12px; border-left: 4px solid var(--primary);">
+            list.innerHTML = keysVisiveis.length === 0 ? '<p style="text-align:center; color:#333; margin-top:40px;">Sem keys no histórico.</p>' :
+            keysVisiveis.map((item, idx) => `
+                <div class="card-pro" style="padding:15px; border-left: 4px solid var(--primary);">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <b style="color:var(--primary); font-size:1.1rem; letter-spacing:1px;">${item.id}</b><br>
-                            <span style="font-size:0.6rem; color:#444; font-weight:800;">PLANO ${item.tipo}D</span>
-                        </div>
-                        <div style="text-align:right">
-                            <span id="timer-${item.id}" style="font-family:monospace; color:var(--gold); font-weight:800; font-size:0.9rem;">...</span>
-                        </div>
+                        <b>${item.id}</b>
+                        <span id="timer-${item.id}" style="color:var(--gold); font-family:monospace; font-weight:800;">...</span>
                     </div>
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
-                        <button class="btn-action" style="padding:10px; font-size:0.6rem; background:#111; color:var(--danger); border:1px solid rgba(255,0,0,0.1);" onclick="deletarKey(${idx})">APAGAR</button>
-                        <button class="btn-action" style="padding:10px; font-size:0.6rem;" onclick="alert('HWID Resetado!')">RESET HWID</button>
+                        <button class="btn-action" style="padding:10px; background:#111; color:var(--danger);" onclick="deletar(${idx})">APAGAR</button>
+                        <button class="btn-action" style="padding:10px;" onclick="alert('HWID RESET!')">RESET</button>
                     </div>
                 </div>
             `).join('');
-            updateTimers();
         }
 
-        function deletarKey(idx) {
-            if(confirm("Deseja deletar esta licença do banco de dados?")) {
-                db.splice(idx, 1);
-                saveAndRefresh();
-            }
+        function deletar(idx) {
+            if(confirm("Remover key?")) { db.splice(idx, 1); salvar(); }
         }
 
-        function doTransfer() {
-            const m = document.getElementById('trans-mail').value;
-            const q = parseInt(document.getElementById('trans-qty').value);
-            if(m && q > 0 && saldo >= q) {
-                saldo -= q;
-                alert(`LORD CHEATS: Transferência de ${q} créditos para ${m} realizada!`);
-                saveAndRefresh();
-            } else { alert("Erro na transferência!"); }
+        function salvar() {
+            localStorage.setItem('lord_db', JSON.stringify(db));
+            localStorage.setItem('lord_saldo', saldo);
+            localStorage.setItem('lord_lucro', lucro);
+            updateUI();
         }
+
+        function logout() {
+            localStorage.removeItem('user_sessao');
+            location.reload();
+        }
+
+        setInterval(updateTimers, 1000);
     </script>
 </body>
 </html>
