@@ -1,181 +1,197 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<title>Login</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Premium v2</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #06b6d4;
+            --admin-color: #1e293b;
+            --bg-gradient: linear-gradient(135deg, #4338ca 0%, #9333ea 100%);
+        }
 
-<style>
-body{
-  margin:0;
-  font-family:Arial, Helvetica, sans-serif;
-  background:radial-gradient(circle at top,#0f172a,#020617);
-  color:white;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-}
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
 
-.container{
-  width:100%;
-  max-width:380px;
-  padding:30px;
-}
+        body {
+            background: var(--bg-gradient);
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-.logo{
-  text-align:center;
-  margin-bottom:20px;
-}
-.logo img{
-  width:60px;
-}
+        /* Animação de Surgimento */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
 
-h2{
-  text-align:center;
-  margin-bottom:5px;
-}
-p{
-  text-align:center;
-  color:#9ca3af;
-  font-size:14px;
-  margin-bottom:25px;
-}
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+            animation: fadeInScale 0.5s ease-out;
+        }
 
-.discord{
-  background:#5865F2;
-  border:none;
-  color:white;
-  width:100%;
-  padding:14px;
-  border-radius:10px;
-  font-size:15px;
-  cursor:pointer;
-  margin-bottom:20px;
-}
+        .tabs {
+            display: flex;
+            background: #f1f5f9;
+            padding: 5px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
 
-.divider{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  color:#6b7280;
-  font-size:12px;
-  margin-bottom:15px;
-}
-.divider::before,.divider::after{
-  content:"";
-  flex:1;
-  height:1px;
-  background:#1f2933;
-}
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 8px;
+            color: #64748b;
+            font-weight: bold;
+            transition: 0.3s;
+        }
 
-label{
-  font-size:13px;
-  color:#9ca3af;
-}
+        .tab.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
 
-input{
-  width:100%;
-  padding:14px;
-  margin-top:6px;
-  margin-bottom:15px;
-  border-radius:10px;
-  border:none;
-  background:#020617;
-  color:white;
-}
+        h2 { text-align: center; color: #1e293b; margin-top: 0; }
+        p { text-align: center; color: #64748b; font-size: 0.9rem; }
 
-button.login{
-  width:100%;
-  padding:14px;
-  border-radius:10px;
-  border:none;
-  background:white;
-  color:black;
-  font-weight:bold;
-  cursor:pointer;
-  margin-top:10px;
-}
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            outline: none;
+            transition: 0.3s;
+        }
 
-button.adm{
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid #22c55e;
-  background:transparent;
-  color:#22c55e;
-  font-weight:bold;
-  cursor:pointer;
-  margin-top:10px;
-}
+        input:focus { border-color: var(--primary); }
 
-.footer{
-  text-align:center;
-  font-size:13px;
-  margin-top:20px;
-  color:#9ca3af;
-}
-.footer a{
-  color:#22c55e;
-  text-decoration:none;
-}
-</style>
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover { transform: translateY(-2px); opacity: 0.9; }
+
+        .btn-admin { background: var(--admin-color); }
+        
+        .hidden { display: none; }
+
+        .success-box {
+            text-align: center;
+            color: #059669;
+            background: #ecfdf5;
+            padding: 20px;
+            border-radius: 10px;
+        }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
+    <div class="tabs" id="nav-tabs">
+        <div class="tab active" id="t-login" onclick="mudarPara('login')">Login</div>
+        <div class="tab" id="t-create" onclick="mudarPara('create')">Criar</div>
+        <div class="tab" id="t-admin" onclick="mudarPara('admin')">Admin</div>
+    </div>
 
-  <div class="logo">
-    <img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png">
-  </div>
+    <div id="box-login">
+        <h2>Entrar</h2>
+        <input type="email" placeholder="Seu Gmail">
+        <input type="password" placeholder="Sua Senha">
+        <button>Acessar</button>
+    </div>
 
-  <h2>Bem-vindo de volta</h2>
-  <p>Entre na sua conta para continuar</p>
+    <div id="box-create" class="hidden">
+        <h2>Novo Cadastro</h2>
+        <p>Crie um novo Gmail e senha abaixo:</p>
+        <form onsubmit="finalizarCadastro(event)">
+            <input type="text" placeholder="Nome Completo" required>
+            <input type="email" placeholder="Novo Gmail @gmail.com" required>
+            <input type="password" placeholder="Senha Forte" required>
+            <button style="background: var(--secondary);">Cadastrar Usuário</button>
+        </form>
+    </div>
 
-  <button class="discord">Entrar com Discord</button>
+    <div id="box-admin" class="hidden">
+        <h2>Painel Master</h2>
+        <p>Acesso exclusivo para administradores</p>
+        <form onsubmit="loginAdmin(event)">
+            <input type="email" id="adm-mail" placeholder="Gmail do Admin" required>
+            <input type="password" id="adm-pass" placeholder="Senha do Admin" required>
+            <button class="btn-admin">Entrar como Gestor</button>
+        </form>
+    </div>
 
-  <div class="divider">ou</div>
-
-  <label>Usuário ou Email</label>
-  <input id="email" placeholder="seu@email.com ou usuário">
-
-  <label>Senha</label>
-  <input type="password" id="senha" placeholder="Digite sua senha">
-
-  <button class="login" onclick="login()">Acessar</button>
-  <button class="adm" onclick="loginADM()">Entrar como ADM</button>
-
-  <div class="footer">
-    Não possui uma conta? <a href="#">Criar conta</a>
-  </div>
-
+    <div id="box-success" class="hidden">
+        <div class="success-box">
+            <h3>Conta Criada! ✨</h3>
+            <p>Seus dados foram salvos.</p>
+            <button onclick="mudarPara('login')">Voltar ao Login</button>
+        </div>
+    </div>
 </div>
 
 <script>
-function login(){
-  const email = document.getElementById("email").value;
-  const senha = document.getElementById("senha").value;
+    // --- CONFIGURAÇÃO DO ADMINISTRADOR ---
+    const ADMIN_EMAIL = "chefe@gmail.com";
+    const ADMIN_PASS = "SenhaMestra2024";
 
-  if(!email || !senha){
-    alert("Preencha todos os campos");
-    return;
-  }
+    function mudarPara(tela) {
+        // Esconder todos
+        ['login', 'create', 'admin', 'success'].forEach(t => {
+            document.getElementById('box-' + t).classList.add('hidden');
+        });
+        
+        // Atualizar abas
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('nav-tabs').classList.remove('hidden');
 
-  // Login comum (simulado)
-  window.location.href = "painel.html";
-}
+        // Mostrar tela alvo
+        document.getElementById('box-' + tela).classList.remove('hidden');
+        const abaAtiva = document.getElementById('t-' + tela);
+        if(abaAtiva) abaAtiva.classList.add('active');
+    }
 
-function loginADM(){
-  const email = document.getElementById("email").value;
-  const senha = document.getElementById("senha").value;
+    function finalizarCadastro(e) {
+        e.preventDefault();
+        mudarPara('success');
+        document.getElementById('nav-tabs').classList.add('hidden');
+    }
 
-  if(email === "admin@admin.com" && senha === "admin123"){
-    window.location.href = "admin.html";
-  }else{
-    alert("Credenciais ADM inválidas");
-  }
-}
+    function loginAdmin(e) {
+        e.preventDefault();
+        const mail = document.getElementById('adm-mail').value;
+        const pass = document.getElementById('adm-pass').value;
+
+        if(mail === ADMIN_EMAIL && pass === ADMIN_PASS) {
+            alert("✅ Acesso de Administrador confirmado! Bem-vindo.");
+        } else {
+            alert("❌ Erro: Gmail ou Senha administrativa não conferem.");
+        }
+    }
 </script>
 
 </body>
