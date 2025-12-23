@@ -1,4 +1,17 @@
-<!DOCTYPE html>
+<script>
+// CRIA ADM PADRÃO SE NÃO EXISTIR
+if(!localStorage.getItem("users")){
+  localStorage.setItem("users", JSON.stringify([
+    {
+      user:"admin",
+      email:"admin@admin.com",
+      senha:"123456",
+      creditos:999999,
+      role:"admin"
+    }
+  ]));
+}
+  <!DOCTYPE html>
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
@@ -92,6 +105,57 @@ function save(){
   render();
 }
 function logout(){
+  window.location.href = "login.html";
+}
+<script>
+const users = JSON.parse(localStorage.getItem("users")) || [];
+const lista = document.getElementById("lista");
+
+// BLOQUEIO: só ADM entra
+const logado = JSON.parse(localStorage.getItem("logado"));
+if(!logado || logado.role !== "admin"){
+  alert("Acesso negado!");
+  window.location.href = "login.html";
+}
+
+function render(){
+  lista.innerHTML = "";
+  if(users.length === 0){
+    lista.innerHTML = `<tr><td colspan="4">Nenhum usuário cadastrado</td></tr>`;
+    return;
+  }
+
+  users.forEach((u,i)=>{
+    lista.innerHTML += `
+    <tr>
+      <td>${u.user}</td>
+      <td>${u.email}</td>
+      <td>${u.creditos}</td>
+      <td>
+        <button onclick="add(${i})">+10</button>
+        <button onclick="remove(${i})">-10</button>
+      </td>
+    </tr>`;
+  });
+}
+render();
+
+function add(i){
+  users[i].creditos += 10;
+  save();
+}
+function remove(i){
+  if(users[i].creditos >= 10){
+    users[i].creditos -= 10;
+    save();
+  }
+}
+function save(){
+  localStorage.setItem("users", JSON.stringify(users));
+  render();
+}
+function logout(){
+  localStorage.removeItem("logado");
   window.location.href = "login.html";
 }
 </script>
