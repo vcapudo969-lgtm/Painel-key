@@ -5,6 +5,7 @@
   <title>Painel - Gerar Keys</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
+    /* Estilos permanecem os mesmos para manter o visual do seu painel */
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
     body { background: #050608; color: #fff; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding-top: 20px; }
     .content { flex: 1; display: flex; justify-content: center; padding: 22px; }
@@ -81,7 +82,6 @@
     const btnGerar = document.getElementById("btnGerar");
     const resultado = document.getElementById("resultado");
 
-    // Valor inicial removendo o ponto para cálculo
     let saldoAtual = parseFloat(meusCredEl.textContent.replace(/\./g, '').replace(',', '.'));
 
     function atualizarTotal() {
@@ -94,13 +94,22 @@
     quantidadeInput.addEventListener("input", atualizarTotal);
     atualizarTotal();
 
-    function gerarKey(tamanho = 20) {
+    // NOVA FUNÇÃO COM O PREFIXO FFH4X-ANDROID
+    function gerarKeyPersonalizada() {
+      const prefixo = "FFH4X-ANDROID";
       const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-      let key = "";
-      for (let i = 0; i < tamanho; i++) {
-        key += chars.charAt(Math.floor(Math.random() * chars.length));
+      let randomPart = "";
+      
+      // Gera 12 caracteres aleatórios
+      for (let i = 0; i < 12; i++) {
+        randomPart += chars.charAt(Math.floor(Math.random() * chars.length));
       }
-      return key.match(/.{1,4}/g).join("-");
+      
+      // Formata os caracteres aleatórios em grupos de 4 (Ex: XXXX-XXXX-XXXX)
+      const formatada = randomPart.match(/.{1,4}/g).join("-");
+      
+      // Retorna o Prefixo + a parte aleatória
+      return `${prefixo}-${formatada}`;
     }
 
     btnGerar.addEventListener("click", () => {
@@ -120,13 +129,12 @@
         return;
       }
 
-      // Descontar créditos
       saldoAtual -= totalGasto;
       meusCredEl.textContent = saldoAtual.toLocaleString('pt-BR');
 
       const keys = [];
       for (let i = 0; i < qtd; i++) {
-        keys.push(gerarKey(20));
+        keys.push(gerarKeyPersonalizada());
       }
 
       resultado.style.display = "block";
