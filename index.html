@@ -2,197 +2,245 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Premium v2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FFH4X MASTER | CONTROLE DE CRÉDITOS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #4f46e5;
-            --secondary: #06b6d4;
-            --admin-color: #1e293b;
-            --bg-gradient: linear-gradient(135deg, #4338ca 0%, #9333ea 100%);
+            --primary: #00ff88;
+            --bg: #030405;
+            --card: rgba(17, 18, 23, 0.95);
+            --border: rgba(255, 255, 255, 0.08);
+            --gold: #ffb800;
+            --money: #22c55e;
+            --text: #ffffff;
+            --danger: #ff4444;
         }
 
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
 
-        body {
-            background: var(--bg-gradient);
-            height: 100vh;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        /* --- UI NAVEGAÇÃO --- */
+        .menu-btn {
+            position: fixed; top: 20px; left: 20px; z-index: 1000;
+            cursor: pointer; background: var(--card); padding: 12px;
+            border-radius: 12px; border: 1px solid var(--border);
+            display: flex; flex-direction: column; gap: 4px;
         }
+        .menu-btn div { width: 18px; height: 2px; background: var(--primary); }
 
-        /* Animação de Surgimento */
-        @keyframes fadeInScale {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+        #sidebar {
+            position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
+            background: var(--card); backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border); z-index: 999;
+            transition: 0.4s cubic-bezier(0.8, 0, 0.2, 1);
+            padding: 80px 20px 20px;
         }
+        #sidebar.active { left: 0; }
+        .sidebar-item { padding: 14px; border-radius: 12px; margin-bottom: 8px; cursor: pointer; color: #888; display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 0.9rem; }
+        .sidebar-item.active { background: rgba(0, 255, 136, 0.1); color: var(--primary); }
 
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            width: 100%;
-            max-width: 400px;
-            animation: fadeInScale 0.5s ease-out;
-        }
+        .page { display: none; padding: 85px 20px 20px; height: 100vh; overflow-y: auto; animation: fadeIn 0.3s; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .tabs {
-            display: flex;
-            background: #f1f5f9;
-            padding: 5px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-        }
-
-        .tab {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            cursor: pointer;
-            border-radius: 8px;
-            color: #64748b;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        .tab.active {
-            background: white;
-            color: var(--primary);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        h2 { text-align: center; color: #1e293b; margin-top: 0; }
-        p { text-align: center; color: #64748b; font-size: 0.9rem; }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        input:focus { border-color: var(--primary); }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            background: var(--primary);
-            color: white;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-top: 10px;
-        }
-
-        button:hover { transform: translateY(-2px); opacity: 0.9; }
-
-        .btn-admin { background: var(--admin-color); }
+        /* --- CARDS E BOTÕES --- */
+        .card-pro { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 25px; margin-bottom: 15px; }
+        .btn-action { width: 100%; padding: 18px; border-radius: 16px; border: none; background: var(--primary); color: #000; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 0.75rem; }
         
-        .hidden { display: none; }
+        .key-row-advanced { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 18px; margin-bottom: 12px; }
+        .key-actions-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 15px; }
+        .btn-opt { padding: 10px 5px; border-radius: 10px; border: 1px solid var(--border); font-size: 0.6rem; font-weight: 800; cursor: pointer; background: rgba(255,255,255,0.03); color: #fff; text-align: center; }
+        .btn-reset-opt { border-color: var(--gold); color: var(--gold); }
+        .btn-del-opt { border-color: var(--danger); color: var(--danger); }
 
-        .success-box {
-            text-align: center;
-            color: #059669;
-            background: #ecfdf5;
-            padding: 20px;
-            border-radius: 10px;
-        }
+        select, input { width: 100%; padding: 16px; background: #000; border: 1px solid var(--border); color: #fff; border-radius: 14px; margin-bottom: 15px; outline: none; }
+        #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="tabs" id="nav-tabs">
-        <div class="tab active" id="t-login" onclick="mudarPara('login')">Login</div>
-        <div class="tab" id="t-create" onclick="mudarPara('create')">Criar</div>
-        <div class="tab" id="t-admin" onclick="mudarPara('admin')">Admin</div>
-    </div>
-
-    <div id="box-login">
-        <h2>Entrar</h2>
-        <input type="email" placeholder="Seu Gmail">
-        <input type="password" placeholder="Sua Senha">
-        <button>Acessar</button>
-    </div>
-
-    <div id="box-create" class="hidden">
-        <h2>Novo Cadastro</h2>
-        <p>Crie um novo Gmail e senha abaixo:</p>
-        <form onsubmit="finalizarCadastro(event)">
-            <input type="text" placeholder="Nome Completo" required>
-            <input type="email" placeholder="Novo Gmail @gmail.com" required>
-            <input type="password" placeholder="Senha Forte" required>
-            <button style="background: var(--secondary);">Cadastrar Usuário</button>
-        </form>
-    </div>
-
-    <div id="box-admin" class="hidden">
-        <h2>Painel Master</h2>
-        <p>Acesso exclusivo para administradores</p>
-        <form onsubmit="loginAdmin(event)">
-            <input type="email" id="adm-mail" placeholder="Gmail do Admin" required>
-            <input type="password" id="adm-pass" placeholder="Senha do Admin" required>
-            <button class="btn-admin">Entrar como Gestor</button>
-        </form>
-    </div>
-
-    <div id="box-success" class="hidden">
-        <div class="success-box">
-            <h3>Conta Criada! ✨</h3>
-            <p>Seus dados foram salvos.</p>
-            <button onclick="mudarPara('login')">Voltar ao Login</button>
+    <div id="login-screen">
+        <div style="background: var(--card); padding: 40px; border-radius: 30px; width: 90%; max-width: 380px; text-align: center; border: 1px solid var(--border);">
+            <h2 style="margin-bottom: 25px;">ADMIN <span style="color:var(--primary)">CORE</span></h2>
+            <input type="email" id="adm-mail" placeholder="E-mail">
+            <input type="password" id="adm-pass" placeholder="Senha Master">
+            <button class="btn-action" onclick="login()">ACESSAR PAINEL</button>
         </div>
     </div>
-</div>
 
-<script>
-    // --- CONFIGURAÇÃO DO ADMINISTRADOR ---
-    const ADMIN_EMAIL = "chefe@gmail.com";
-    const ADMIN_PASS = "SenhaMestra2024";
+    <div class="menu-btn" onclick="toggleSidebar()">
+        <div></div><div></div><div></div>
+    </div>
 
-    function mudarPara(tela) {
-        // Esconder todos
-        ['login', 'create', 'admin', 'success'].forEach(t => {
-            document.getElementById('box-' + t).classList.add('hidden');
-        });
+    <div id="sidebar">
+        <div class="sidebar-item active" onclick="showPage('dashboard', this)">📊 Dashboard</div>
+        <div class="sidebar-item" onclick="showPage('gerar', this)">🚀 Gerar / Vender</div>
+        <div class="sidebar-item" onclick="showPage('transferir', this)">💸 Transferir</div>
+        <div class="sidebar-item" onclick="showPage('pausar', this)">⚙️ Gerir Keys</div>
+        <div class="sidebar-item" onclick="showPage('historico', this)">📜 Histórico</div>
+        <div style="margin-top: 40px;" class="sidebar-item" onclick="location.reload()">🔴 Sair</div>
+    </div>
+
+    <div id="page-dashboard" class="page active">
+        <div class="card-pro">
+            <span style="font-size: 0.7rem; color: #666; font-weight: 800;">LUCRO TOTAL</span>
+            <h1 id="money-txt" style="font-size: 2.8rem; color: var(--money);">R$ 0,00</h1>
+        </div>
+        <div class="card-pro">
+            <div style="display: flex; justify-content: space-between;">
+                <div><span style="font-size: 0.6rem; color: #666;">ESTOQUE DE CRÉDITOS</span><h2 id="saldo-txt" style="color: var(--gold);">1.000.000</h2></div>
+                <div style="text-align: right;"><span style="font-size: 0.6rem; color: #666;">KEYS ATIVAS</span><h2 id="vendas-count">0</h2></div>
+            </div>
+            
+            <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 15px;">
+                <p style="color: var(--primary); font-weight: 800; font-size: 0.65rem; margin-bottom: 12px; letter-spacing: 1px;">TABELA DE CUSTOS (CRÉDITOS)</p>
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:6px;">
+                    <span style="color:#888">Plano 24 Horas</span>
+                    <b style="color:var(--gold)">1 Crédito</b>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:6px;">
+                    <span style="color:#888">Plano 07 Dias</span>
+                    <b style="color:var(--gold)">10 Créditos</b>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem;">
+                    <span style="color:#888">Plano 30 Dias</span>
+                    <b style="color:var(--gold)">50 Créditos</b>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-gerar" class="page">
+        <div class="card-pro">
+            <h3>Vender Nova Key</h3>
+            <label style="font-size:0.6rem; color:#555; margin-left:5px;">PLANO DA LICENÇA</label>
+            <select id="sel-time">
+                <option value="1">24 Horas (Custo: 1 Crd)</option>
+                <option value="7">7 Dias (Custo: 10 Crd)</option>
+                <option value="30">30 Dias (Custo: 50 Crd)</option>
+            </select>
+            <label style="font-size:0.6rem; color:#555; margin-left:5px;">QUANTIDADE</label>
+            <input type="number" id="sel-qty" value="1">
+            <button class="btn-action" onclick="processGen()">GERAR LICENÇA</button>
+        </div>
+    </div>
+
+    <div id="page-pausar" class="page">
+        <div id="list-management"></div>
+    </div>
+
+    <div id="page-transferir" class="page">
+        <div class="card-pro">
+            <h3>Transferir Créditos</h3>
+            <input type="email" id="t-mail" placeholder="Gmail do Destinatário">
+            <input type="number" id="t-amt" placeholder="Quantidade">
+            <button class="btn-action" style="background:var(--gold)" onclick="doTransfer()">ENVIAR AGORA</button>
+        </div>
+    </div>
+
+    <div id="page-historico" class="page">
+        <div id="hist-list"></div>
+    </div>
+
+    <script>
+        let saldo = 1000000;
+        let lucro = 0;
+        let db = [];
         
-        // Atualizar abas
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.getElementById('nav-tabs').classList.remove('hidden');
+        // TABELA DE CUSTOS DEFINIDA POR VOCÊ
+        const CUSTOS = { "1": 1, "7": 10, "30": 50 };
+        // VALORES DE REVENDA (R$)
+        const VALORES = { "1": 5, "7": 20, "30": 50 };
 
-        // Mostrar tela alvo
-        document.getElementById('box-' + tela).classList.remove('hidden');
-        const abaAtiva = document.getElementById('t-' + tela);
-        if(abaAtiva) abaAtiva.classList.add('active');
-    }
-
-    function finalizarCadastro(e) {
-        e.preventDefault();
-        mudarPara('success');
-        document.getElementById('nav-tabs').classList.add('hidden');
-    }
-
-    function loginAdmin(e) {
-        e.preventDefault();
-        const mail = document.getElementById('adm-mail').value;
-        const pass = document.getElementById('adm-pass').value;
-
-        if(mail === ADMIN_EMAIL && pass === ADMIN_PASS) {
-            alert("✅ Acesso de Administrador confirmado! Bem-vindo.");
-        } else {
-            alert("❌ Erro: Gmail ou Senha administrativa não conferem.");
+        function login() { if(document.getElementById('adm-mail').value === "admin@ffh4x.com") document.getElementById('login-screen').style.display='none'; }
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+        
+        function showPage(p, e) {
+            document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.sidebar-item').forEach(x => x.classList.remove('active'));
+            document.getElementById('page-'+p).classList.add('active');
+            e.classList.add('active');
+            if(window.innerWidth < 768) toggleSidebar();
+            updateUI();
         }
-    }
-</script>
 
+        function processGen() {
+            const t = document.getElementById('sel-time').value;
+            const q = parseInt(document.getElementById('sel-qty').value);
+            const custoTotal = CUSTOS[t] * q;
+
+            if(saldo >= custoTotal) {
+                saldo -= custoTotal;
+                lucro += VALORES[t] * q;
+                for(let i=0; i<q; i++) {
+                    db.unshift({ 
+                        id: "FF-"+Math.random().toString(36).substring(2,8).toUpperCase(), 
+                        status: 'Ativo', 
+                        tipo: t, 
+                        data: new Date().toLocaleString() 
+                    });
+                }
+                updateUI();
+                alert(`Sucesso! ${q} keys geradas. Custo: ${custoTotal} créditos.`);
+                showPage('dashboard', document.querySelectorAll('.sidebar-item')[0]);
+            } else { alert("Saldo insuficiente!"); }
+        }
+
+        function resetKey(idx) {
+            const tipo = db[idx].tipo;
+            const custoReset = CUSTOS[tipo];
+
+            if(saldo >= custoReset) {
+                if(confirm(`Resetar o tempo desta key custará ${custoReset} créditos. Continuar?`)) {
+                    saldo -= custoReset;
+                    db[idx].data = new Date().toLocaleString() + " (Resetada)";
+                    updateUI();
+                    alert("Tempo resetado!");
+                }
+            } else { alert("Saldo insuficiente para resetar!"); }
+        }
+
+        function doTransfer() {
+            const mail = document.getElementById('t-mail').value;
+            const amt = parseInt(document.getElementById('t-amt').value);
+            if(mail && amt > 0 && saldo >= amt) {
+                saldo -= amt;
+                alert(`Transferido ${amt} créditos para ${mail}`);
+                updateUI();
+            } else { alert("Erro na transferência!"); }
+        }
+
+        function updateUI() {
+            document.getElementById('money-txt').innerText = `R$ ${lucro.toFixed(2)}`;
+            document.getElementById('saldo-txt').innerText = saldo.toLocaleString();
+            document.getElementById('vendas-count').innerText = db.length;
+
+            const mList = document.getElementById('list-management');
+            mList.innerHTML = db.length === 0 ? '<p style="text-align:center; color:#444; margin-top:50px;">Nenhuma key ativa.</p>' :
+            db.map((item, idx) => `
+                <div class="key-row-advanced">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                        <b style="color:var(--primary); font-family:monospace;">${item.id}</b>
+                        <span style="font-size:0.6rem; font-weight:800; color:${item.status === 'Ativo' ? 'var(--primary)' : 'var(--danger)'}">${item.status.toUpperCase()}</span>
+                    </div>
+                    <div style="font-size:0.6rem; color:#555;">PLANO: ${item.tipo} DIAS | DATA: ${item.data}</div>
+                    <div class="key-actions-grid">
+                        <button class="btn-opt" onclick="db[${idx}].status = db[${idx}].status === 'Ativo' ? 'Pausado' : 'Ativo'; updateUI();">PAUSAR</button>
+                        <button class="btn-opt btn-reset-opt" onclick="resetKey(${idx})">🔄 RESETAR</button>
+                        <button class="btn-opt btn-del-opt" onclick="db.splice(${idx},1); updateUI();">EXCLUIR</button>
+                    </div>
+                </div>
+            `).join('');
+
+            const hList = document.getElementById('hist-list');
+            hList.innerHTML = db.map(item => `
+                <div class="card-pro" style="padding:15px; font-size:0.75rem;">
+                    <b>${item.id}</b> | Plano: ${item.tipo} Dias <br>
+                    <small style="color:#555">${item.data}</small>
+                </div>
+            `).join('');
+        }
+    </script>
 </body>
 </html>
