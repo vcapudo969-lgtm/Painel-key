@@ -1,1 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Painel do Usuário</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-950 text-white">
 
+<script>
+if (sessionStorage.getItem('role') !== 'member') {
+  location.href = 'index.html'
+}
+</script>
+
+<nav class="bg-gray-900 p-4 flex justify-between">
+  <strong>Painel do Usuário</strong>
+  <button onclick="logout()" class="text-red-500">Sair</button>
+</nav>
+
+<div class="p-6 grid md:grid-cols-3 gap-6">
+
+<div class="bg-gray-900 p-4 rounded-xl">
+  <h2 class="font-bold">Perfil</h2>
+  <p>Usuário: <span id="username"></span></p>
+  <p>Créditos: <span id="credits"></span></p>
+</div>
+
+<div class="bg-gray-900 p-4 rounded-xl">
+  <h2 class="font-bold">Gerar Key</h2>
+  <button onclick="generateKey()" class="bg-green-600 p-2 rounded w-full">Gerar</button>
+  <p id="keyOut" class="mt-2 break-all"></p>
+</div>
+
+<div class="bg-gray-900 p-4 rounded-xl">
+  <h2 class="font-bold">Minhas Keys</h2>
+  <ul id="history" class="text-sm"></ul>
+</div>
+
+</div>
+
+<script>
+const users = JSON.parse(localStorage.getItem('users'))
+let keys = JSON.parse(localStorage.getItem('keys')) || []
+
+const user = sessionStorage.getItem('user')
+username.innerText = user
+credits.innerText = users[user].credits
+
+function generateKey() {
+  if (users[user].credits <= 0) return
+
+  const expires = Date.now() + (1000 * 60 * 60 * 24) // 24h
+  const key = 'KEY-' + crypto.randomUUID().slice(0,10).toUpperCase()
+
+  keys.push({ key, owner:user, used:false, expires })
+  users[user].credits--
+
+  save()
+  keyOut.innerText = key
+  loadHistory()
+}
+
+function loadHistory() {
+  history.innerHTML = ''
+  const now = Date.now()
+
+  keys.filter(k => k.owner === user).forEach(k => {
+    let status = k.used ? 'Usada' : now > k.expires ? 'Expirada' : 'Ativa'
+    history.innerHTML += `<li>${k.key} - ${status}</li>`
+  })
+}
+
+function save() {
+  localStorage.setItem('keys', JSON.stringify(keys))
+  localStorage.setItem('users', JSON.stringify(users))
+  credits.innerText = users[user].credits
+}
+
+function logout() {
+  sessionStorage.clear()
+  location.href = 'index.html'
+}
+
+loadHistory()
+</script>
+</body>
+</html>
