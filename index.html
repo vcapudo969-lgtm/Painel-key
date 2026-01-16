@@ -1,317 +1,104 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KeyMaster Pro - Premium Management</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .tab-content { display: none; animation: fadeIn 0.4s ease-out forwards; }
-        .tab-content.active { display: block; }
-        body { background: #0b0f1a; color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        .glass { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
-        .status-badge { font-size: 9px; padding: 2px 10px; border-radius: 99px; font-weight: 800; text-transform: uppercase; }
-        #fab-menu { transform: scale(0); transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); transform-origin: bottom right; }
-        #fab-menu.show { transform: scale(1); }
-        .fab-btn { width: 60px; height: 60px; transition: all 0.3s; z-index: 50; }
-        .fab-btn.open { transform: rotate(45deg); background: #ef4444; }
-    </style>
+  <meta charset="UTF-8">
+  <title>Key Generator PRO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="p-4 md:p-6 pb-24">
+<body class="bg-gray-950 text-white flex items-center justify-center min-h-screen">
 
-    <div class="max-w-5xl mx-auto">
-        <div class="flex justify-between items-center mb-6 glass p-5 rounded-3xl border-b-2 border-blue-500/30">
-            <div>
-                <h1 class="text-xl font-black italic text-blue-500 tracking-tighter">KEYMASTER <span class="text-white font-light text-xs not-italic">V4.0</span></h1>
-            </div>
-            <div class="text-right">
-                <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Saldo Disponível</p>
-                <p id="balance-display" class="text-green-400 font-mono text-xl font-bold">R$ 1.250,00</p>
-            </div>
-        </div>
+<div class="bg-gray-900 p-8 rounded-xl w-full max-w-md">
+  <h1 class="text-2xl font-bold text-center mb-6">Key Generator PRO</h1>
 
-        <div id="tab-dashboard" class="tab-content active space-y-6">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="glass p-4 rounded-2xl border-l-4 border-blue-500">
-                    <p class="text-[10px] text-gray-400 uppercase font-bold">Total Keys</p>
-                    <p id="stat-total" class="text-2xl font-black">0</p>
-                </div>
-                <div class="glass p-4 rounded-2xl border-l-4 border-green-500">
-                    <p class="text-[10px] text-gray-400 uppercase font-bold">Ativas</p>
-                    <p id="stat-ativas" class="text-2xl font-black text-green-400">0</p>
-                </div>
-                <div class="glass p-4 rounded-2xl border-l-4 border-yellow-500">
-                    <p class="text-[10px] text-gray-400 uppercase font-bold">Pausadas</p>
-                    <p id="stat-pausadas" class="text-2xl font-black text-yellow-400">0</p>
-                </div>
-                <div class="glass p-4 rounded-2xl border-l-4 border-red-500">
-                    <p class="text-[10px] text-gray-400 uppercase font-bold">Bloqueadas</p>
-                    <p id="stat-bloqueadas" class="text-2xl font-black text-red-500">0</p>
-                </div>
-            </div>
+  <!-- LOGIN -->
+  <div id="loginBox">
+    <input id="loginUser" placeholder="Usuário" class="w-full p-2 mb-3 bg-gray-800 rounded">
+    <input id="loginPass" type="password" placeholder="Senha" class="w-full p-2 mb-4 bg-gray-800 rounded">
 
-            <div class="glass p-6 rounded-3xl">
-                <h3 class="text-sm font-black text-blue-500 uppercase tracking-widest mb-4"><i class="fas fa-tags mr-2"></i>Tabela de Preços</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="flex justify-between items-center bg-slate-900/60 p-4 rounded-2xl border border-white/5">
-                        <span class="font-bold">01 Dia</span>
-                        <span class="text-green-400 font-mono font-bold">R$ 5,00</span>
-                    </div>
-                    <div class="flex justify-between items-center bg-slate-900/60 p-4 rounded-2xl border border-white/5">
-                        <span class="font-bold">07 Dias</span>
-                        <span class="text-green-400 font-mono font-bold">R$ 10,00</span>
-                    </div>
-                    <div class="flex justify-between items-center bg-slate-900/60 p-4 rounded-2xl border border-white/5">
-                        <span class="font-bold">15 Dias</span>
-                        <span class="text-green-400 font-mono font-bold">R$ 20,00</span>
-                    </div>
-                    <div class="flex justify-between items-center bg-slate-900/60 p-4 rounded-2xl border border-white/5">
-                        <span class="font-bold">30 Dias</span>
-                        <span class="text-green-400 font-mono font-bold">R$ 50,00</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <button onclick="login()" class="w-full bg-blue-600 p-2 rounded">Entrar</button>
 
-        <div id="tab-gerador" class="tab-content">
-            <div class="glass p-8 rounded-3xl max-w-lg mx-auto border-t-4 border-blue-600">
-                <h2 class="text-xl font-bold mb-6 text-center">Criar Nova Credencial</h2>
-                <select id="keyDuration" class="w-full bg-slate-900 border-2 border-gray-800 p-4 rounded-2xl mb-4 text-white focus:border-blue-500 outline-none">
-                    <option value="24">01 Dia - R$ 5,00</option>
-                    <option value="168">07 Dias - R$ 10,00</option>
-                    <option value="360">15 Dias - R$ 20,00</option>
-                    <option value="720">30 Dias - R$ 50,00</option>
-                </select>
-                <button onclick="generateNewKey()" class="w-full bg-blue-600 hover:bg-blue-500 p-4 rounded-2xl font-bold uppercase tracking-widest text-sm transition-all shadow-lg shadow-blue-900/40">Gerar Agora</button>
-            </div>
-        </div>
+    <p class="text-center text-sm mt-3">
+      Não tem conta?
+      <button onclick="toggle()" class="text-blue-400">Registrar</button>
+    </p>
+  </div>
 
-        <div id="tab-usuarios" class="tab-content">
-            <div class="glass p-6 rounded-3xl">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2 text-blue-400"><i class="fas fa-users"></i> Usuários no Gerador</h2>
-                <div id="usersList" class="space-y-4">
-                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-blue-500/30 flex justify-between items-center">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center font-bold">01</div>
-                            <div>
-                                <p class="font-bold">Você (Administrador)</p>
-                                <p class="text-[10px] text-green-400 uppercase font-bold">Online Agora</p>
-                            </div>
-                        </div>
-                        <i class="fas fa-circle text-green-500 text-[8px] animate-pulse"></i>
-                    </div>
-                    <div id="otherUsers"></div>
-                </div>
-            </div>
-        </div>
+  <!-- REGISTRO -->
+  <div id="registerBox" class="hidden">
+    <input id="regUser" placeholder="Novo usuário" class="w-full p-2 mb-3 bg-gray-800 rounded">
+    <input id="regPass" type="password" placeholder="Senha" class="w-full p-2 mb-4 bg-gray-800 rounded">
 
-        <div id="tab-ativas" class="tab-content">
-            <div class="glass p-6 rounded-3xl">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i class="fas fa-bolt text-yellow-400"></i> Monitor em Tempo Real</h2>
-                <div id="activeKeysBody" class="space-y-4">
-                    <p class="text-center text-gray-500 py-10 italic">Nenhuma key em execução.</p>
-                </div>
-            </div>
-        </div>
+    <button onclick="register()" class="w-full bg-green-600 p-2 rounded">Registrar</button>
 
-        <div id="tab-historico" class="tab-content">
-            <div class="glass p-6 rounded-3xl">
-                <h2 class="text-xl font-bold mb-6 text-gray-400 uppercase tracking-widest text-xs">Administração de Keys</h2>
-                <div id="historyLog" class="space-y-4"></div>
-            </div>
-        </div>
-    </div>
+    <p class="text-center text-sm mt-3">
+      Já tem conta?
+      <button onclick="toggle()" class="text-blue-400">Login</button>
+    </p>
+  </div>
 
-    <div class="fixed bottom-6 right-6 flex flex-col items-end gap-4 z-50">
-        <div id="fab-menu" class="flex flex-col gap-3 mb-2">
-            <button onclick="changeTab('tab-dashboard')" class="flex items-center gap-3 bg-slate-800 p-3 pr-5 rounded-full border border-gray-700 hover:bg-blue-600 transition-all">
-                <span class="text-[10px] font-bold uppercase">Dashboard</span>
-                <div class="bg-blue-500 p-2 rounded-full w-10 h-10 flex items-center justify-center"><i class="fas fa-home"></i></div>
-            </button>
-            <button onclick="changeTab('tab-gerador')" class="flex items-center gap-3 bg-slate-800 p-3 pr-5 rounded-full border border-gray-700 hover:bg-blue-600 transition-all">
-                <span class="text-[10px] font-bold uppercase">Gerador</span>
-                <div class="bg-purple-500 p-2 rounded-full w-10 h-10 flex items-center justify-center"><i class="fas fa-plus"></i></div>
-            </button>
-            <button onclick="changeTab('tab-usuarios')" class="flex items-center gap-3 bg-slate-800 p-3 pr-5 rounded-full border border-gray-700 hover:bg-blue-600 transition-all">
-                <span class="text-[10px] font-bold uppercase">Usuários</span>
-                <div class="bg-cyan-500 p-2 rounded-full w-10 h-10 flex items-center justify-center"><i class="fas fa-users"></i></div>
-            </button>
-            <button onclick="changeTab('tab-ativas')" class="flex items-center gap-3 bg-slate-800 p-3 pr-5 rounded-full border border-gray-700 hover:bg-blue-600 transition-all">
-                <span class="text-[10px] font-bold uppercase">Ativas</span>
-                <div class="bg-green-500 p-2 rounded-full w-10 h-10 flex items-center justify-center"><i class="fas fa-bolt"></i></div>
-            </button>
-            <button onclick="changeTab('tab-historico')" class="flex items-center gap-3 bg-slate-800 p-3 pr-5 rounded-full border border-gray-700 hover:bg-blue-600 transition-all">
-                <span class="text-[10px] font-bold uppercase">Gestão</span>
-                <div class="bg-orange-500 p-2 rounded-full w-10 h-10 flex items-center justify-center"><i class="fas fa-tools"></i></div>
-            </button>
-        </div>
-        <button onclick="toggleFab()" id="main-fab" class="fab-btn bg-blue-600 rounded-full shadow-2xl flex items-center justify-center text-xl border-4 border-white/10 ring-8 ring-blue-600/10">
-            <i class="fas fa-bars"></i>
-        </button>
-    </div>
+  <p id="msg" class="text-red-500 mt-3 text-center"></p>
+</div>
 
-    <script>
-        // Dados persistentes
-        let keys = JSON.parse(localStorage.getItem('kmp_keys')) || [];
-        let balance = parseFloat(localStorage.getItem('kmp_balance')) || 1250.00;
+<script>
+let users = JSON.parse(localStorage.getItem('users')) || {
+  admin: { pass: 'admin123', role: 'admin', credits: Infinity }
+}
 
-        function saveData() {
-            localStorage.setItem('kmp_keys', JSON.stringify(keys));
-            localStorage.setItem('kmp_balance', balance.toString());
-        }
+// alternar login/registro
+function toggle() {
+  loginBox.classList.toggle('hidden')
+  registerBox.classList.toggle('hidden')
+  msg.innerText = ''
+}
 
-        function toggleFab() {
-            const menu = document.getElementById('fab-menu');
-            const btn = document.getElementById('main-fab');
-            menu.classList.toggle('show');
-            btn.classList.toggle('open');
-            btn.querySelector('i').classList.toggle('fa-bars');
-            btn.querySelector('i').classList.toggle('fa-times');
-        }
+// REGISTRO (NUNCA ADM)
+function register() {
+  const u = regUser.value.trim()
+  const p = regPass.value.trim()
 
-        function changeTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            if(document.getElementById('fab-menu').classList.contains('show')) toggleFab();
-        }
+  if (!u || !p) {
+    msg.innerText = 'Preencha todos os campos'
+    return
+  }
 
-        function generateNewKey() {
-            const sel = document.getElementById('keyDuration');
-            const h = parseInt(sel.value);
-            let price = h === 24 ? 5 : h === 168 ? 10 : h === 360 ? 20 : 50;
+  if (u.toLowerCase() === 'admin') {
+    msg.innerText = 'Nome reservado'
+    return
+  }
 
-            if(balance < price) {
-                alert("Saldo insuficiente!");
-                return;
-            }
+  if (users[u]) {
+    msg.innerText = 'Usuário já existe'
+    return
+  }
 
-            const label = sel.options[sel.selectedIndex].text.split(' - ')[0];
-            const code = 'KMP-' + Math.random().toString(36).substring(2, 10).toUpperCase();
-            
-            const newKey = {
-                id: Date.now(),
-                code: code,
-                durationMs: h * 60 * 60 * 1000,
-                remainingMs: h * 60 * 60 * 1000,
-                lastUpdate: Date.now(),
-                status: 'ativa',
-                label: label
-            };
+  users[u] = { pass: p, role: 'member', credits: 5 }
+  localStorage.setItem('users', JSON.stringify(users))
 
-            balance -= price;
-            keys.unshift(newKey);
-            saveData();
-            updateUI();
-            changeTab('tab-dashboard');
-        }
+  msg.innerText = 'Conta criada com sucesso'
+  toggle()
+}
 
-        function togglePause(id) {
-            const k = keys.find(x => x.id === id);
-            if(k.status === 'bloqueada') return;
-            k.status = k.status === 'ativa' ? 'pausada' : 'ativa';
-            k.lastUpdate = Date.now();
-            saveData();
-            updateUI();
-        }
+// LOGIN
+function login() {
+  const u = loginUser.value.trim()
+  const p = loginPass.value.trim()
 
-        function blockKey(id) {
-            const k = keys.find(x => x.id === id);
-            k.status = k.status === 'bloqueada' ? 'ativa' : 'bloqueada';
-            k.lastUpdate = Date.now();
-            saveData();
-            updateUI();
-        }
+  if (!users[u] || users[u].pass !== p) {
+    msg.innerText = 'Login inválido'
+    return
+  }
 
-        function resetKey(id) {
-            const k = keys.find(x => x.id === id);
-            k.remainingMs = k.durationMs;
-            k.lastUpdate = Date.now();
-            saveData();
-            updateUI();
-        }
+  sessionStorage.setItem('user', u)
+  sessionStorage.setItem('role', users[u].role)
 
-        function updateUI() {
-            document.getElementById('balance-display').innerText = `R$ ${balance.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-            document.getElementById('stat-total').innerText = keys.length;
-            document.getElementById('stat-ativas').innerText = keys.filter(k => k.status === 'ativa').length;
-            document.getElementById('stat-pausadas').innerText = keys.filter(k => k.status === 'pausada').length;
-            document.getElementById('stat-bloqueadas').innerText = keys.filter(k => k.status === 'bloqueada').length;
-
-            const activeDiv = document.getElementById('activeKeysBody');
-            const historyDiv = document.getElementById('historyLog');
-            
-            activeDiv.innerHTML = keys.filter(k => k.status !== 'bloqueada').length === 0 ? '<p class="text-center text-gray-500 py-10 italic">Nenhuma key em execução.</p>' : '';
-            historyDiv.innerHTML = '';
-
-            keys.forEach(k => {
-                const badgeClass = k.status === 'ativa' ? 'bg-green-500/20 text-green-400' : k.status === 'pausada' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-red-500/20 text-red-400';
-                
-                if(k.status !== 'bloqueada') {
-                    activeDiv.innerHTML += `
-                        <div class="bg-slate-900/80 p-5 rounded-3xl border border-gray-800 flex justify-between items-center animate-fade">
-                            <div>
-                                <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest">${k.label}</p>
-                                <p class="font-mono text-lg font-bold">${k.code}</p>
-                            </div>
-                            <div class="text-right">
-                                <p id="timer-${k.id}" class="font-mono ${k.status === 'ativa' ? 'text-green-400' : 'text-yellow-400'} font-bold text-lg">--:--:--</p>
-                                <span class="status-badge ${badgeClass}">${k.status}</span>
-                            </div>
-                        </div>`;
-                }
-
-                historyDiv.innerHTML += `
-                    <div class="bg-slate-900/40 p-5 rounded-3xl border border-white/5 space-y-4">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-sm font-bold text-white font-mono">${k.code}</p>
-                                <p class="text-[10px] text-gray-500 uppercase">${k.label}</p>
-                            </div>
-                            <span class="status-badge ${badgeClass}">${k.status}</span>
-                        </div>
-                        <div class="grid grid-cols-3 gap-2">
-                            <button onclick="togglePause(${k.id})" class="bg-slate-800 hover:bg-yellow-600/20 text-gray-400 hover:text-yellow-500 p-2 rounded-xl text-[10px] font-bold transition-all border border-white/5">
-                                <i class="fas ${k.status === 'pausada' ? 'fa-play' : 'fa-pause'} mb-1 block"></i> STATUS
-                            </button>
-                            <button onclick="blockKey(${k.id})" class="bg-slate-800 hover:bg-red-600/20 text-gray-400 hover:text-red-500 p-2 rounded-xl text-[10px] font-bold transition-all border border-white/5">
-                                <i class="fas fa-ban mb-1 block"></i> BANIR
-                            </button>
-                            <button onclick="resetKey(${k.id})" class="bg-slate-800 hover:bg-blue-600/20 text-gray-400 hover:text-blue-500 p-2 rounded-xl text-[10px] font-bold transition-all border border-white/5">
-                                <i class="fas fa-sync-alt mb-1 block"></i> RESET
-                            </button>
-                        </div>
-                    </div>`;
-            });
-        }
-
-        setInterval(() => {
-            let changed = false;
-            keys.forEach(k => {
-                if (k.status === 'ativa' && k.remainingMs > 0) {
-                    const now = Date.now();
-                    k.remainingMs -= (now - k.lastUpdate);
-                    k.lastUpdate = now;
-                    changed = true;
-                } else if (k.status === 'ativa') {
-                    k.lastUpdate = Date.now();
-                }
-                if(k.remainingMs < 0) k.remainingMs = 0;
-                const display = document.getElementById(`timer-${k.id}`);
-                if (display) {
-                    const diff = k.remainingMs;
-                    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-                    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                    const s = Math.floor((diff % (1000 * 60)) / 1000);
-                    display.innerText = `${d > 0 ? d+'d ' : ''}${h.toString().padStart(2,'0')}h ${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
-                }
-            });
-            if(changed) saveData();
-        }, 1000);
-
-        updateUI();
-    </script>
+  if (users[u].role === 'admin') {
+    sessionStorage.setItem('adm_token', 'ADM-' + crypto.randomUUID())
+    location.href = 'admin.html'
+  } else {
+    location.href = 'user.html'
+  }
+}
+</script>
 </body>
 </html>
