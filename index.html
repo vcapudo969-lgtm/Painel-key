@@ -2,35 +2,85 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Key System PRO</title>
+<title>KEY SYSTEM DARK</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
 <style>
-body{margin:0;font-family:Arial;background:#020617;color:#fff}
-.box{max-width:420px;margin:80px auto;background:#020617;border:1px solid #1e293b;padding:20px;border-radius:10px}
-input,select,button{
-  width:100%;padding:10px;margin-top:10px;
-  background:#020617;color:#fff;border:1px solid #334155;border-radius:6px
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:'Orbitron',sans-serif;
+  background:radial-gradient(circle at top,#020617,#000);
+  color:#e5e7eb
 }
-button{background:#2563eb;border:none;font-weight:bold}
-button.red{background:#dc2626}
-button.gray{background:#475569}
+.glow{box-shadow:0 0 15px #38bdf8}
+.box{
+  max-width:420px;
+  margin:70px auto;
+  padding:20px;
+  background:#020617;
+  border:1px solid #0ea5e9;
+  border-radius:12px;
+  box-shadow:0 0 30px rgba(14,165,233,.3)
+}
+input,select,button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  background:#020617;
+  color:#fff;
+  border:1px solid #0ea5e9;
+  border-radius:8px;
+  font-family:'Orbitron'
+}
+button{
+  background:linear-gradient(90deg,#0ea5e9,#22d3ee);
+  color:#020617;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow:0 0 15px #22d3ee
+}
+button.red{
+  background:linear-gradient(90deg,#dc2626,#ef4444);
+  box-shadow:0 0 15px #ef4444
+}
+button.gray{
+  background:#020617;
+  color:#38bdf8
+}
+button:hover{opacity:.9}
 .hidden{display:none}
-.menu{background:#020617;padding:10px;border-bottom:1px solid #1e293b}
-.card{background:#020617;border:1px solid #1e293b;padding:10px;margin-top:10px;border-radius:6px}
-.small{font-size:13px;color:#cbd5f5}
+.menu{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px;
+  border-bottom:1px solid #0ea5e9
+}
+.menuBox button{margin-top:8px}
+.card{
+  margin-top:12px;
+  padding:12px;
+  border:1px solid #0ea5e9;
+  border-radius:10px;
+  background:#020617;
+  box-shadow:0 0 15px rgba(14,165,233,.4)
+}
+.small{font-size:12px;color:#38bdf8}
 </style>
 </head>
 
 <body>
 
 <!-- LOGIN -->
-<div id="loginBox" class="box">
-<h2>Login / Registro</h2>
+<div id="loginBox" class="box glow">
+<h2>🔐 LOGIN</h2>
 <input id="loginUser" placeholder="Usuário">
 <input id="loginPass" type="password" placeholder="Senha">
-<button onclick="login()">Entrar</button>
-<button onclick="register()" class="gray">Registrar</button>
-<p id="msg" style="color:red"></p>
+<button onclick="login()">ENTRAR</button>
+<button onclick="register()" class="gray">REGISTRAR</button>
+<p id="msg" style="color:#ef4444"></p>
 </div>
 
 <!-- APP -->
@@ -38,23 +88,22 @@ button.gray{background:#475569}
   <div class="menu">
     <button onclick="toggleMenu()">☰</button>
     <span id="userInfo"></span>
-    <button onclick="logout()" class="red">Sair</button>
+    <button onclick="logout()" class="red">SAIR</button>
   </div>
-  <div id="menuBox" class="hidden"></div>
+  <div id="menuBox" class="menuBox hidden box"></div>
   <div id="content" class="box"></div>
 </div>
 
 <script>
-/* ===== PLANOS ===== */
+/* ===== CONFIG ===== */
 const PLANS={
-  "24h":{h:24,c:1},
-  "3d":{h:72,c:5},
-  "5d":{h:120,c:10},
-  "15d":{h:360,c:20},
-  "30d":{h:720,c:30}
+ "24h":{h:24,c:1},
+ "3d":{h:72,c:5},
+ "5d":{h:120,c:10},
+ "15d":{h:360,c:20},
+ "30d":{h:720,c:30}
 }
 
-/* ===== DADOS ===== */
 let users=JSON.parse(localStorage.getItem('users')||'{}')
 let keys=JSON.parse(localStorage.getItem('keys')||'[]')
 
@@ -66,163 +115,170 @@ let role=sessionStorage.getItem('role')
 
 /* ===== LOGIN ===== */
 function login(){
-  const u=loginUser.value.trim()
-  const p=loginPass.value.trim()
-  if(!users[u]||users[u].pass!==p||users[u].banned){
-    msg.innerText='Login inválido';return
-  }
-  sessionStorage.setItem('user',u)
-  sessionStorage.setItem('role',users[u].role)
-  location.reload()
+ const u=loginUser.value.trim()
+ const p=loginPass.value.trim()
+ if(!users[u]||users[u].pass!==p||users[u].banned){
+   msg.innerText='LOGIN INVÁLIDO'
+   return
+ }
+ sessionStorage.setItem('user',u)
+ sessionStorage.setItem('role',users[u].role)
+ location.reload()
 }
 
 function register(){
-  const u=prompt('Usuário:')
-  const p=prompt('Senha:')
-  if(!u||!p||users[u])return alert('Inválido')
-  users[u]={pass:p,role:'user',credits:5,banned:false,prefix:'KEY'}
-  save();alert('Registrado com 5 créditos')
+ const u=prompt('Usuário:')
+ const p=prompt('Senha:')
+ if(!u||!p||users[u])return alert('Inválido')
+ users[u]={pass:p,role:'user',credits:5,banned:false,prefix:'KEY'}
+ save();alert('Conta criada')
 }
 
 /* ===== MENU ===== */
 function toggleMenu(){
-  menuBox.innerHTML=''
-  menuBox.classList.toggle('hidden')
+ menuBox.innerHTML=''
+ menuBox.classList.toggle('hidden')
 
-  if(role==='admin'){
-    menuBox.innerHTML+=btn('Gerenciar Usuários','usersPanel()')
-    menuBox.innerHTML+=btn('Gerenciar Keys','keysPanel()')
-  }else{
-    menuBox.innerHTML+=btn('Personalizar Key','customPanel()')
-    menuBox.innerHTML+=btn('Gerar Key','genPanel()')
-    menuBox.innerHTML+=btn('Minhas Keys','myKeys()')
-  }
+ if(role==='admin'){
+   menuBox.innerHTML+=btn('👑 GERENCIAR USUÁRIOS','usersPanel()')
+   menuBox.innerHTML+=btn('🔑 GERENCIAR KEYS','keysPanel()')
+ }else{
+   menuBox.innerHTML+=btn('🎨 PERSONALIZAR KEY','customPanel()')
+   menuBox.innerHTML+=btn('⚡ GERAR KEY','genPanel()')
+   menuBox.innerHTML+=btn('📦 MINHAS KEYS','myKeys()')
+ }
 }
 
 function btn(t,f){return `<button onclick="${f}" class="gray">${t}</button>`}
 
 /* ===== PERSONALIZAR ===== */
 function customPanel(){
-  content.innerHTML=`
-  <h3>Personalizar Key</h3>
-  <input id="newPrefix" placeholder="Prefixo da Key" value="${users[currentUser].prefix}">
-  <button onclick="savePrefix()">Salvar</button>`
+ content.innerHTML=`
+ <h3>🎨 Personalizar Key</h3>
+ <input id="newPrefix" value="${users[currentUser].prefix}">
+ <button onclick="savePrefix()">SALVAR</button>`
 }
 function savePrefix(){
-  users[currentUser].prefix=newPrefix.value||'KEY'
-  save();alert('Prefixo salvo')
+ users[currentUser].prefix=newPrefix.value||'KEY'
+ save();alert('Prefixo atualizado')
 }
 
 /* ===== GERAR ===== */
 function genPanel(){
-  content.innerHTML=`
-  <h3>Gerar Key</h3>
-  <select id="plan">
-    <option value="24h">24h (1)</option>
-    <option value="3d">3 dias (5)</option>
-    <option value="5d">5 dias (10)</option>
-    <option value="15d">15 dias (20)</option>
-    <option value="30d">30 dias (30)</option>
-  </select>
-  <button onclick="generate()">Gerar</button>`
+ content.innerHTML=`
+ <h3>⚡ Gerar Key</h3>
+ <select id="plan">
+   <option value="24h">24h (1)</option>
+   <option value="3d">3 dias (5)</option>
+   <option value="5d">5 dias (10)</option>
+   <option value="15d">15 dias (20)</option>
+   <option value="30d">30 dias (30)</option>
+ </select>
+ <button onclick="generate()">GERAR</button>`
 }
 
 function generate(){
-  const p=PLANS[plan.value]
-  if(users[currentUser].credits<p.c)return alert('Sem créditos')
-  const k=users[currentUser].prefix+'-'+crypto.randomUUID().slice(0,10).toUpperCase()
-  keys.push({
-    key:k,
-    owner:currentUser,
-    expires:Date.now()+p.h*3600000,
-    paused:false,
-    remaining:p.h*3600000
-  })
-  users[currentUser].credits-=p.c
-  save();alert('Key criada')
+ const p=PLANS[plan.value]
+ if(users[currentUser].credits<p.c)return alert('SEM CRÉDITOS')
+ const k=users[currentUser].prefix+'-'+crypto.randomUUID().slice(0,10).toUpperCase()
+ keys.push({
+   key:k,
+   owner:currentUser,
+   expires:Date.now()+p.h*3600000,
+   paused:false,
+   duration:p.h*3600000
+ })
+ users[currentUser].credits-=p.c
+ save();alert('KEY CRIADA')
 }
 
-/* ===== KEYS USUÁRIO ===== */
+/* ===== KEYS ===== */
 function myKeys(){
-  content.innerHTML='<h3>Minhas Keys</h3>'
-  keys.filter(k=>k.owner===currentUser).forEach(k=>{
-    content.innerHTML+=`
-    <div class="card">
-      ${k.key}
-      <div class="small">${countdown(k)}</div>
-      <button onclick="togglePause(k)">⏸ Pausar</button>
-      <button onclick="resetKey(k)">🔄 Reset</button>
-    </div>`
-  })
+ content.innerHTML='<h3>📦 Minhas Keys</h3>'
+ keys.filter(k=>k.owner===currentUser).forEach((k,i)=>{
+ content.innerHTML+=`
+ <div class="card">
+   ${k.key}
+   <div class="small">${countdown(k)}</div>
+   <button onclick="pauseKey(${i})">⏸ PAUSAR</button>
+   <button onclick="resetKey(${i})" class="gray">🔄 RESET</button>
+ </div>`
+ })
 }
 
-function togglePause(k){
-  k.paused=!k.paused
-  if(k.paused) k.remaining=k.expires-Date.now()
-  else k.expires=Date.now()+k.remaining
-  save();myKeys()
+function pauseKey(i){
+ let k=keys[i]
+ if(!k.paused){
+   k.remaining=k.expires-Date.now()
+   k.paused=true
+ }else{
+   k.expires=Date.now()+k.remaining
+   k.paused=false
+ }
+ save();myKeys()
 }
 
-function resetKey(k){
-  k.expires=Date.now()+k.remaining
-  save();myKeys()
+function resetKey(i){
+ let k=keys[i]
+ k.expires=Date.now()+k.duration
+ k.paused=false
+ save();myKeys()
 }
 
 /* ===== ADMIN ===== */
 function usersPanel(){
-  content.innerHTML='<h3>Usuários</h3>'
-  Object.keys(users).forEach(u=>{
-    if(u==='admin')return
-    content.innerHTML+=`
-    <div class="card">
-      ${u} | Créditos: ${users[u].credits}
-      <button onclick="users['${u}'].credits+=10;save();usersPanel()">+10</button>
-      <button onclick="users['${u}'].banned=true;save();usersPanel()" class="red">Banir</button>
-    </div>`
-  })
+ content.innerHTML='<h3>👑 Usuários</h3>'
+ Object.keys(users).forEach(u=>{
+  if(u==='admin')return
+  content.innerHTML+=`
+  <div class="card">
+    ${u} | Créditos: ${users[u].credits}
+    <button onclick="users['${u}'].credits+=10;save();usersPanel()">+10</button>
+    <button onclick="users['${u}'].banned=true;save();usersPanel()" class="red">BANIR</button>
+  </div>`
+ })
 }
 
 function keysPanel(){
-  content.innerHTML='<h3>Todas as Keys</h3>'
-  keys.forEach(k=>{
-    content.innerHTML+=`
-    <div class="card">
-      ${k.key} (${k.owner})
-      <div class="small">${countdown(k)}</div>
-    </div>`
-  })
+ content.innerHTML='<h3>🔑 Todas as Keys</h3>'
+ keys.forEach(k=>{
+  content.innerHTML+=`
+  <div class="card">
+    ${k.key} (${k.owner})
+    <div class="small">${countdown(k)}</div>
+  </div>`
+ })
 }
 
 /* ===== UTIL ===== */
 function countdown(k){
-  if(k.paused)return '⏸ Pausada'
-  let t=k.expires-Date.now()
-  if(t<=0)return '⌛ Expirada'
-  let d=Math.floor(t/86400000)
-  let h=Math.floor(t%86400000/3600000)
-  let m=Math.floor(t%3600000/60000)
-  let s=Math.floor(t%60000/1000)
-  return `⏳ ${d}d ${h}h ${m}m ${s}s`
+ if(k.paused)return'⏸ PAUSADA'
+ let t=k.expires-Date.now()
+ if(t<=0)return'⌛ EXPIRADA'
+ let d=Math.floor(t/86400000)
+ let h=Math.floor(t%86400000/3600000)
+ let m=Math.floor(t%3600000/60000)
+ let s=Math.floor(t%60000/1000)
+ return `⏳ ${d}d ${h}h ${m}m ${s}s`
 }
 
 function save(){
-  localStorage.setItem('users',JSON.stringify(users))
-  localStorage.setItem('keys',JSON.stringify(keys))
+ localStorage.setItem('users',JSON.stringify(users))
+ localStorage.setItem('keys',JSON.stringify(keys))
 }
 
 function logout(){
-  sessionStorage.clear();location.reload()
+ sessionStorage.clear();location.reload()
 }
 
 /* ===== START ===== */
 if(currentUser){
-  loginBox.classList.add('hidden')
-  app.classList.remove('hidden')
-  userInfo.innerText=
-    currentUser+' | Créditos: '+(users[currentUser].credits===Infinity?'∞':users[currentUser].credits)
-  setInterval(()=>{ if(content.innerHTML.includes('Minhas Keys')) myKeys() },1000)
+ loginBox.classList.add('hidden')
+ app.classList.remove('hidden')
+ userInfo.innerText=currentUser+' | Créditos: '+(users[currentUser].credits===Infinity?'∞':users[currentUser].credits)
+ setInterval(()=>{ if(content.innerHTML.includes('Minhas Keys')) myKeys() },1000)
 }
 </script>
 
 </body>
-</html>
+</html> 
