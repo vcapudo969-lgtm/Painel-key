@@ -1,117 +1,166 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>Key Generator PRO</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8">
+<title>Key Generator PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-950 text-white flex items-center justify-center min-h-screen">
 
-<div class="bg-gray-900 p-8 rounded-xl w-full max-w-md">
-  <h1 class="text-2xl font-bold text-center mb-6">Key Generator PRO</h1>
+<body class="bg-gray-950 text-white">
 
-  <!-- LOGIN -->
-  <div id="loginBox">
-    <input id="loginUser" placeholder="Usuário" class="w-full p-2 mb-3 bg-gray-800 rounded">
-    <input id="loginPass" type="password" placeholder="Senha" class="w-full p-2 mb-4 bg-gray-800 rounded">
+<script>
+/* ===== INIT ===== */
+const PLANS = {
+  "24h": {h:24,c:1},
+  "3d": {h:72,c:5},
+  "5d": {h:120,c:10},
+  "15d": {h:360,c:20},
+  "30d": {h:720,c:30}
+}
 
-    <button onclick="login()" class="w-full bg-blue-600 p-2 rounded">Entrar</button>
+let users = JSON.parse(localStorage.getItem('users')) || {}
+let keys = JSON.parse(localStorage.getItem('keys')) || []
 
-    <p class="text-center text-sm mt-3">
-      Não tem conta?
-      <button onclick="toggle()" class="text-blue-400">Registrar</button>
-    </p>
-  </div>
+if(!users.admin){
+  users.admin={pass:'admin123',role:'admin',credits:Infinity,banned:false}
+  localStorage.setItem('users',JSON.stringify(users))
+}
 
-  <!-- REGISTRO -->
-  <div id="registerBox" class="hidden">
-    <input id="regUser" placeholder="Novo usuário" class="w-full p-2 mb-3 bg-gray-800 rounded">
-    <input id="regPass" type="password" placeholder="Senha" class="w-full p-2 mb-4 bg-gray-800 rounded">
+let user = sessionStorage.getItem('user')
+let role = sessionStorage.getItem('role')
 
-    <button onclick="register()" class="w-full bg-green-600 p-2 rounded">Registrar</button>
+/* ===== HELPERS ===== */
+function save(){localStorage.setItem('users',JSON.stringify(users));localStorage.setItem('keys',JSON.stringify(keys))}
+function logout(){sessionStorage.clear();location.reload()}
+function status(k){
+ if(k.paused) return '⏸ Pausada'
+ if(Date.now()>k.expires) return '⌛ Expirada'
+ return '✅ Ativa'
+}
+</script>
 
-    <p class="text-center text-sm mt-3">
-      Já tem conta?
-      <button onclick="toggle()" class="text-blue-400">Login</button>
-    </p>
-  </div>
+<!-- LOGIN -->
+<div id="login" class="min-h-screen flex items-center justify-center">
+<div class="bg-gray-900 p-6 rounded-xl w-full max-w-md">
+<h1 class="text-xl font-bold text-center mb-4">Key Generator PRO</h1>
+<input id="lu" class="w-full p-2 mb-2 bg-gray-800 rounded" placeholder="Usuário">
+<input id="lp" type="password" class="w-full p-2 mb-3 bg-gray-800 rounded" placeholder="Senha">
+<button onclick="login()" class="w-full bg-blue-600 p-2 rounded">Entrar</button>
+<p class="text-center mt-2 text-sm">Não tem conta? <button onclick="reg()" class="text-blue-400">Registrar</button></p>
+<p id="err" class="text-red-500 text-center mt-2"></p>
+</div>
+</div>
 
-  <p id="msg" class="text-red-500 mt-3 text-center"></p>
+<!-- APP -->
+<div id="app" class="hidden">
+
+<!-- MENU -->
+<div class="bg-gray-900 p-4 flex justify-between">
+<button onclick="menu()" class="text-xl">☰</button>
+<div>
+<span id="info"></span>
+<button onclick="logout()" class="ml-3 text-red-400">Sair</button>
+</div>
+</div>
+
+<div id="menu" class="hidden bg-gray-800 p-4 space-y-2"></div>
+
+<div id="content" class="p-4"></div>
 </div>
 
 <script>
-// 🔒 INICIALIZAÇÃO SEGURA DO SISTEMA
-let users = JSON.parse(localStorage.getItem('users'))
-
-if (!users) {
-  users = {
-    admin: {
-      pass: 'admin123',
-      role: 'admin',
-      credits: Infinity
-    }
-  }
-  localStorage.setItem('users', JSON.stringify(users))
+/* ===== LOGIN / REGISTER ===== */
+function login(){
+ let u=lu.value,p=lp.value
+ if(!users[u]||users[u].pass!==p||users[u].banned){err.innerText='Login inválido';return}
+ sessionStorage.setItem('user',u)
+ sessionStorage.setItem('role',users[u].role)
+ location.reload()
 }
 
-// alternar telas
-function toggle() {
-  loginBox.classList.toggle('hidden')
-  registerBox.classList.toggle('hidden')
-  msg.innerText = ''
+function reg(){
+ let u=prompt('Usuário:'),p=prompt('Senha:')
+ if(!u||!p||users[u])return
+ users[u]={pass:p,role:'user',credits:5,banned:false}
+ save();alert('Registrado com 5 créditos')
 }
 
-// REGISTRO (NUNCA ADM)
-function register() {
-  const u = regUser.value.trim()
-  const p = regPass.value.trim()
+/* ===== MENU ===== */
+function menu(){
+ menuDiv.innerHTML=''
+ menuDiv.classList.toggle('hidden')
+ if(role==='admin'){
+ menuDiv.innerHTML+=btn('Gerenciar Usuários',usersPanel)
+ menuDiv.innerHTML+=btn('Gerenciar Keys',keysPanel)
+ }else{
+ menuDiv.innerHTML+=btn('Gerar Key',genPanel)
+ menuDiv.innerHTML+=btn('Minhas Keys',myKeys)
+ }
+}
+function btn(t,f){return `<button onclick="${f.name}()" class="block w-full bg-gray-700 p-2 rounded">${t}</button>`}
 
-  if (!u || !p) {
-    msg.innerText = 'Preencha todos os campos'
-    return
-  }
-
-  if (u.toLowerCase() === 'admin') {
-    msg.innerText = 'Nome reservado'
-    return
-  }
-
-  if (users[u]) {
-    msg.innerText = 'Usuário já existe'
-    return
-  }
-
-  users[u] = {
-    pass: p,
-    role: 'member',
-    credits: 5
-  }
-
-  localStorage.setItem('users', JSON.stringify(users))
-  msg.innerText = 'Conta criada com sucesso'
-  toggle()
+/* ===== USER ===== */
+function genPanel(){
+ content.innerHTML=`
+ <h2 class="text-lg mb-2">Gerar Key</h2>
+ <input id="pref" class="w-full p-2 mb-2 bg-gray-800 rounded" placeholder="Prefixo">
+ <select id="plan" class="w-full p-2 bg-gray-800 rounded">
+ <option value="24h">24h (1)</option>
+ <option value="3d">3 dias (5)</option>
+ <option value="5d">5 dias (10)</option>
+ <option value="15d">15 dias (20)</option>
+ <option value="30d">30 dias (30)</option>
+ </select>
+ <button onclick="gen()" class="mt-3 bg-blue-600 w-full p-2 rounded">Gerar</button>`
 }
 
-// LOGIN (ADM OU MEMBRO)
-function login() {
-  const u = loginUser.value.trim()
-  const p = loginPass.value.trim()
+function gen(){
+ let p=PLANS[plan.value]
+ if(users[user].credits<p.c){alert('Sem créditos');return}
+ let k=(pref.value||'KEY')+'-'+crypto.randomUUID().slice(0,10).toUpperCase()
+ keys.push({key:k,owner:user,expires:Date.now()+p.h*3600000,paused:false})
+ users[user].credits-=p.c;save();alert(k)
+}
 
-  if (!users[u] || users[u].pass !== p) {
-    msg.innerText = 'Login inválido'
-    return
-  }
+function myKeys(){
+ content.innerHTML='<h2 class="text-lg mb-2">Minhas Keys</h2>'
+ keys.filter(k=>k.owner===user).forEach(k=>{
+ content.innerHTML+=`<div class="bg-gray-800 p-2 rounded mb-2">${k.key}<br>${status(k)}</div>`
+ })
+}
 
-  sessionStorage.setItem('user', u)
-  sessionStorage.setItem('role', users[u].role)
+/* ===== ADMIN ===== */
+function usersPanel(){
+ content.innerHTML='<h2 class="text-lg mb-2">Usuários</h2>'
+ Object.keys(users).forEach(u=>{
+ if(u==='admin')return
+ content.innerHTML+=`
+ <div class="bg-gray-800 p-2 rounded mb-2">
+ ${u} | Créditos: ${users[u].credits}
+ <button onclick="users['${u}'].credits+=10;save();usersPanel()" class="ml-2 text-green-400">+10</button>
+ <button onclick="users['${u}'].banned=true;save();usersPanel()" class="ml-2 text-red-400">Banir</button>
+ </div>`
+ })
+}
 
-  if (users[u].role === 'admin') {
-    sessionStorage.setItem('adm_token', 'ADM-' + crypto.randomUUID())
-    location.href = 'admin.html'
-  } else {
-    location.href = 'user.html'
-  }
+function keysPanel(){
+ content.innerHTML='<h2 class="text-lg mb-2">Keys</h2>'
+ keys.forEach((k,i)=>{
+ content.innerHTML+=`
+ <div class="bg-gray-800 p-2 rounded mb-2">
+ ${k.key} (${k.owner}) - ${status(k)}
+ <button onclick="k.paused=!k.paused;save();keysPanel()" class="ml-2">⏸</button>
+ <button onclick="k.expires=Date.now()+86400000;save();keysPanel()" class="ml-2">🔄</button>
+ </div>`
+ })
+}
+
+/* ===== START ===== */
+if(user){
+ login.classList.add('hidden')
+ app.classList.remove('hidden')
+ info.innerText=user+' | Créditos: '+(users[user].credits===Infinity?'∞':users[user].credits)
 }
 </script>
 
