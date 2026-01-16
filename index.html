@@ -41,11 +41,21 @@
 </div>
 
 <script>
-let users = JSON.parse(localStorage.getItem('users')) || {
-  admin: { pass: 'admin123', role: 'admin', credits: Infinity }
+// 🔒 INICIALIZAÇÃO SEGURA DO SISTEMA
+let users = JSON.parse(localStorage.getItem('users'))
+
+if (!users) {
+  users = {
+    admin: {
+      pass: 'admin123',
+      role: 'admin',
+      credits: Infinity
+    }
+  }
+  localStorage.setItem('users', JSON.stringify(users))
 }
 
-// alternar login/registro
+// alternar telas
 function toggle() {
   loginBox.classList.toggle('hidden')
   registerBox.classList.toggle('hidden')
@@ -72,14 +82,18 @@ function register() {
     return
   }
 
-  users[u] = { pass: p, role: 'member', credits: 5 }
-  localStorage.setItem('users', JSON.stringify(users))
+  users[u] = {
+    pass: p,
+    role: 'member',
+    credits: 5
+  }
 
+  localStorage.setItem('users', JSON.stringify(users))
   msg.innerText = 'Conta criada com sucesso'
   toggle()
 }
 
-// LOGIN
+// LOGIN (ADM OU MEMBRO)
 function login() {
   const u = loginUser.value.trim()
   const p = loginPass.value.trim()
@@ -100,5 +114,6 @@ function login() {
   }
 }
 </script>
+
 </body>
 </html>
