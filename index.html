@@ -2,11 +2,11 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Key Generator PRO</title>
+<title>Key System PRO</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body{margin:0;font-family:Arial;background:#020617;color:#fff}
-.box{max-width:400px;margin:80px auto;background:#020617;border:1px solid #1e293b;padding:20px;border-radius:10px}
+.box{max-width:420px;margin:80px auto;background:#020617;border:1px solid #1e293b;padding:20px;border-radius:10px}
 input,select,button{
   width:100%;padding:10px;margin-top:10px;
   background:#020617;color:#fff;border:1px solid #334155;border-radius:6px
@@ -17,6 +17,7 @@ button.gray{background:#475569}
 .hidden{display:none}
 .menu{background:#020617;padding:10px;border-bottom:1px solid #1e293b}
 .card{background:#020617;border:1px solid #1e293b;padding:10px;margin-top:10px;border-radius:6px}
+.small{font-size:13px;color:#cbd5f5}
 </style>
 </head>
 
@@ -44,7 +45,7 @@ button.gray{background:#475569}
 </div>
 
 <script>
-/* ===== DADOS ===== */
+/* ===== PLANOS ===== */
 const PLANS={
   "24h":{h:24,c:1},
   "3d":{h:72,c:5},
@@ -53,11 +54,11 @@ const PLANS={
   "30d":{h:720,c:30}
 }
 
+/* ===== DADOS ===== */
 let users=JSON.parse(localStorage.getItem('users')||'{}')
 let keys=JSON.parse(localStorage.getItem('keys')||'[]')
 
-/* ===== CRIAR ADMIN SEMPRE ===== */
-users.admin={pass:'admin123',role:'admin',credits:Infinity,banned:false}
+users.admin={pass:'admin123',role:'admin',credits:Infinity,banned:false,prefix:'KEY'}
 localStorage.setItem('users',JSON.stringify(users))
 
 let currentUser=sessionStorage.getItem('user')
@@ -65,53 +66,57 @@ let role=sessionStorage.getItem('role')
 
 /* ===== LOGIN ===== */
 function login(){
-  const u=document.getElementById('loginUser').value.trim()
-  const p=document.getElementById('loginPass').value.trim()
-  const msg=document.getElementById('msg')
-
+  const u=loginUser.value.trim()
+  const p=loginPass.value.trim()
   if(!users[u]||users[u].pass!==p||users[u].banned){
-    msg.innerText='Login inválido'
-    return
+    msg.innerText='Login inválido';return
   }
   sessionStorage.setItem('user',u)
   sessionStorage.setItem('role',users[u].role)
   location.reload()
 }
 
-/* ===== REGISTRO ===== */
 function register(){
   const u=prompt('Usuário:')
   const p=prompt('Senha:')
   if(!u||!p||users[u])return alert('Inválido')
-  users[u]={pass:p,role:'user',credits:5,banned:false}
-  localStorage.setItem('users',JSON.stringify(users))
-  alert('Registrado com 5 créditos')
+  users[u]={pass:p,role:'user',credits:5,banned:false,prefix:'KEY'}
+  save();alert('Registrado com 5 créditos')
 }
 
 /* ===== MENU ===== */
 function toggleMenu(){
-  const m=document.getElementById('menuBox')
-  m.innerHTML=''
-  m.classList.toggle('hidden')
+  menuBox.innerHTML=''
+  menuBox.classList.toggle('hidden')
 
   if(role==='admin'){
-    m.innerHTML+=btn('Gerenciar Usuários','usersPanel()')
-    m.innerHTML+=btn('Gerenciar Keys','keysPanel()')
+    menuBox.innerHTML+=btn('Gerenciar Usuários','usersPanel()')
+    menuBox.innerHTML+=btn('Gerenciar Keys','keysPanel()')
   }else{
-    m.innerHTML+=btn('Gerar Key','genPanel()')
-    m.innerHTML+=btn('Minhas Keys','myKeys()')
+    menuBox.innerHTML+=btn('Personalizar Key','customPanel()')
+    menuBox.innerHTML+=btn('Gerar Key','genPanel()')
+    menuBox.innerHTML+=btn('Minhas Keys','myKeys()')
   }
 }
 
-function btn(t,fn){
-  return `<button onclick="${fn}" class="gray">${t}</button>`
+function btn(t,f){return `<button onclick="${f}" class="gray">${t}</button>`}
+
+/* ===== PERSONALIZAR ===== */
+function customPanel(){
+  content.innerHTML=`
+  <h3>Personalizar Key</h3>
+  <input id="newPrefix" placeholder="Prefixo da Key" value="${users[currentUser].prefix}">
+  <button onclick="savePrefix()">Salvar</button>`
+}
+function savePrefix(){
+  users[currentUser].prefix=newPrefix.value||'KEY'
+  save();alert('Prefixo salvo')
 }
 
-/* ===== USER ===== */
+/* ===== GERAR ===== */
 function genPanel(){
   content.innerHTML=`
   <h3>Gerar Key</h3>
-  <input id="prefix" placeholder="Prefixo">
   <select id="plan">
     <option value="24h">24h (1)</option>
     <option value="3d">3 dias (5)</option>
@@ -123,19 +128,44 @@ function genPanel(){
 }
 
 function generate(){
-  const plan=PLANS[document.getElementById('plan').value]
-  if(users[currentUser].credits<plan.c)return alert('Sem créditos')
-  const k=(prefix.value||'KEY')+'-'+crypto.randomUUID().slice(0,10).toUpperCase()
-  keys.push({key:k,owner:currentUser,expires:Date.now()+plan.h*3600000,paused:false})
-  users[currentUser].credits-=plan.c
-  save();alert('Key: '+k)
+  const p=PLANS[plan.value]
+  if(users[currentUser].credits<p.c)return alert('Sem créditos')
+  const k=users[currentUser].prefix+'-'+crypto.randomUUID().slice(0,10).toUpperCase()
+  keys.push({
+    key:k,
+    owner:currentUser,
+    expires:Date.now()+p.h*3600000,
+    paused:false,
+    remaining:p.h*3600000
+  })
+  users[currentUser].credits-=p.c
+  save();alert('Key criada')
 }
 
+/* ===== KEYS USUÁRIO ===== */
 function myKeys(){
   content.innerHTML='<h3>Minhas Keys</h3>'
   keys.filter(k=>k.owner===currentUser).forEach(k=>{
-    content.innerHTML+=`<div class="card">${k.key}<br>${status(k)}</div>`
+    content.innerHTML+=`
+    <div class="card">
+      ${k.key}
+      <div class="small">${countdown(k)}</div>
+      <button onclick="togglePause(k)">⏸ Pausar</button>
+      <button onclick="resetKey(k)">🔄 Reset</button>
+    </div>`
   })
+}
+
+function togglePause(k){
+  k.paused=!k.paused
+  if(k.paused) k.remaining=k.expires-Date.now()
+  else k.expires=Date.now()+k.remaining
+  save();myKeys()
+}
+
+function resetKey(k){
+  k.expires=Date.now()+k.remaining
+  save();myKeys()
 }
 
 /* ===== ADMIN ===== */
@@ -153,40 +183,46 @@ function usersPanel(){
 }
 
 function keysPanel(){
-  content.innerHTML='<h3>Keys</h3>'
+  content.innerHTML='<h3>Todas as Keys</h3>'
   keys.forEach(k=>{
     content.innerHTML+=`
     <div class="card">
-      ${k.key} (${k.owner})<br>${status(k)}
-      <button onclick="k.paused=!k.paused;save();keysPanel()">Pausar</button>
-      <button onclick="k.expires=Date.now()+86400000;save();keysPanel()">Reset</button>
+      ${k.key} (${k.owner})
+      <div class="small">${countdown(k)}</div>
     </div>`
   })
 }
 
 /* ===== UTIL ===== */
-function status(k){
-  if(k.paused)return'⏸ Pausada'
-  if(Date.now()>k.expires)return'⌛ Expirada'
-  return'✅ Ativa'
+function countdown(k){
+  if(k.paused)return '⏸ Pausada'
+  let t=k.expires-Date.now()
+  if(t<=0)return '⌛ Expirada'
+  let d=Math.floor(t/86400000)
+  let h=Math.floor(t%86400000/3600000)
+  let m=Math.floor(t%3600000/60000)
+  let s=Math.floor(t%60000/1000)
+  return `⏳ ${d}d ${h}h ${m}m ${s}s`
 }
+
 function save(){
   localStorage.setItem('users',JSON.stringify(users))
   localStorage.setItem('keys',JSON.stringify(keys))
 }
+
 function logout(){
-  sessionStorage.clear()
-  location.reload()
+  sessionStorage.clear();location.reload()
 }
 
 /* ===== START ===== */
 if(currentUser){
-  document.getElementById('loginBox').classList.add('hidden')
-  document.getElementById('app').classList.remove('hidden')
-  document.getElementById('userInfo').innerText=
+  loginBox.classList.add('hidden')
+  app.classList.remove('hidden')
+  userInfo.innerText=
     currentUser+' | Créditos: '+(users[currentUser].credits===Infinity?'∞':users[currentUser].credits)
+  setInterval(()=>{ if(content.innerHTML.includes('Minhas Keys')) myKeys() },1000)
 }
 </script>
 
 </body>
-</html> 
+</html>
