@@ -9,41 +9,22 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <style>
-body {
-  margin:0;
-  font-family: 'Orbitron', Arial, sans-serif;
-  background: linear-gradient(135deg,#0b0f16,#0a1c2e);
-  color:#fff;
-}
-.menu-btn{
-  position:fixed; top:10px; left:10px;
-  background:#1a1f35; color:#fff; border:none;
-  padding:8px 10px; border-radius:6px; cursor:pointer; z-index:999;
-}
-.menu{
-  position:fixed; top:0; left:-260px;
-  width:240px; height:100%; background:#0f1428; padding:15px; transition:0.3s; z-index:998;
-}
-.menu button{
-  width:100%; margin:5px 0; padding:10px;
-  background:#1a1f35; color:white; border:none; border-radius:6px; cursor:pointer;
-}
-.content{ margin-left:20px; padding:20px; }
-.box{
-  background: rgba(20,30,50,0.95); padding:40px; border-radius:15px; width:380px;
-  text-align:center; box-shadow: 0 0 25px #6a00ff; margin:auto; margin-top:50px;
-}
-h2{ font-size:32px; margin-bottom:20px; color:#6a00ff; text-shadow:0 0 10px #fff; }
-input,button,select{ width:100%; padding:12px; margin:8px 0; border:none; border-radius:10px; font-size:16px; }
-button{ background: linear-gradient(45deg,#6a00ff,#ff00aa); color:white; font-weight:bold; transition:0.3s; }
-button:hover{ transform:scale(1.05); box-shadow: 0 0 15px #ff00aa; }
-small{ color:#aaa; cursor:pointer; display:block; margin-top:10px; font-size:14px; }
-small:hover{ color:#6a00ff; text-shadow:0 0 5px #fff; }
-.card{ background:#11162a; padding:15px; border-radius:10px; margin-bottom:10px; }
-.error{ color:#ff4d4d; font-weight:bold; }
+body {margin:0;font-family:'Orbitron',Arial,sans-serif;background:linear-gradient(135deg,#0b0f16,#0a1c2e);color:#fff;}
+.menu-btn{position:fixed;top:10px;left:10px;background:#1a1f35;color:#fff;border:none;padding:8px 10px;border-radius:6px;cursor:pointer;z-index:999;}
+.menu{position:fixed;top:0;left:-260px;width:240px;height:100%;background:#0f1428;padding:15px;transition:0.3s;z-index:998;}
+.menu button{width:100%;margin:5px 0;padding:10px;background:#1a1f35;color:white;border:none;border-radius:6px;cursor:pointer;}
+.content{margin-left:20px;padding:20px;}
+.box{background:rgba(20,30,50,0.95);padding:40px;border-radius:15px;width:380px;text-align:center;box-shadow:0 0 25px #6a00ff;margin:auto;margin-top:50px;}
+h2{font-size:32px;margin-bottom:20px;color:#6a00ff;text-shadow:0 0 10px #fff;}
+input,button,select{width:100%;padding:12px;margin:8px 0;border:none;border-radius:10px;font-size:16px;}
+button{background:linear-gradient(45deg,#6a00ff,#ff00aa);color:white;font-weight:bold;transition:0.3s;}
+button:hover{transform:scale(1.05);box-shadow:0 0 15px #ff00aa;}
+small{color:#aaa;cursor:pointer;display:block;margin-top:10px;font-size:14px;}
+small:hover{color:#6a00ff;text-shadow:0 0 5px #fff;}
+.card{background:#11162a;padding:15px;border-radius:10px;margin-bottom:10px;}
+.error{color:#ff4d4d;font-weight:bold;}
 </style>
 </head>
-
 <body>
 
 <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
@@ -74,7 +55,6 @@ function toggleMenu(){
 
 /* LOGIN / REGISTRO */
 showLogin();
-
 function showLogin(){
   content.innerHTML = `<div class="box">
     <h2>LOGIN</h2>
@@ -85,7 +65,6 @@ function showLogin(){
     <p id="errorLogin" class="error"></p>
   </div>`;
 }
-
 function showRegister(){
   content.innerHTML = `<div class="box">
     <h2>REGISTRO</h2>
@@ -102,26 +81,20 @@ function login(){
   const emailVal = document.getElementById("email").value;
   const passVal = document.getElementById("pass").value;
   const errorP = document.getElementById("errorLogin");
-
-  if(!navigator.onLine){
-    errorP.innerText = "Sem conexão com a internet!";
-    return;
-  }
+  if(!navigator.onLine){ errorP.innerText="Sem conexão!"; return; }
 
   auth.signInWithEmailAndPassword(emailVal, passVal)
     .then(async uc=>{
       currentUser = uc.user;
       try{
         const snap = await db.collection("users").doc(currentUser.uid).get();
-        if(!snap.exists) throw new Error("Usuário não encontrado no Firestore");
+        if(!snap.exists) throw new Error("Usuário não encontrado!");
         userData = snap.data();
-        buildMenu();
+        buildMenu(); // monta menu após carregar userData
         showDashboard();
-      }catch(err){
-        errorP.innerText = "Erro Firestore: "+err.message;
-      }
+      }catch(err){ errorP.innerText="Erro Firestore: "+err.message; }
     })
-    .catch(e=>errorP.innerText = "Erro Auth: "+e.message);
+    .catch(e=>errorP.innerText="Erro Auth: "+e.message);
 }
 
 /* REGISTRO */
@@ -129,11 +102,7 @@ function register(){
   const emailVal = document.getElementById("email").value;
   const passVal = document.getElementById("pass").value;
   const errorP = document.getElementById("errorRegister");
-
-  if(!navigator.onLine){
-    errorP.innerText = "Sem conexão com a internet!";
-    return;
-  }
+  if(!navigator.onLine){ errorP.innerText="Sem conexão!"; return; }
 
   auth.createUserWithEmailAndPassword(emailVal, passVal)
     .then(async r=>{
@@ -146,41 +115,35 @@ function register(){
         });
         alert("Conta criada com sucesso!");
         showLogin();
-      }catch(err){
-        errorP.innerText = "Erro Firestore: "+err.message;
-      }
-    }).catch(e=>errorP.innerText = "Erro Auth: "+e.message);
+      }catch(err){ errorP.innerText="Erro Firestore: "+err.message; }
+    }).catch(e=>errorP.innerText="Erro Auth: "+e.message);
 }
 
 /* USUÁRIO LOGADO */
 auth.onAuthStateChanged(async user=>{
   if(!user) return;
   currentUser = user;
+  if(!navigator.onLine){ content.innerHTML="<p class='error'>Sem conexão!</p>"; return; }
   try{
-    if(!navigator.onLine){
-      content.innerHTML = `<p class="error">Sem conexão com a internet!</p>`;
-      return;
-    }
     const snap = await db.collection("users").doc(currentUser.uid).get();
-    if(!snap.exists) throw new Error("Usuário não encontrado no Firestore");
+    if(!snap.exists) throw new Error("Usuário não encontrado!");
     userData = snap.data();
-    buildMenu();
+    buildMenu(); // monta menu **após carregar dados**
     showDashboard();
-  }catch(err){
-    content.innerHTML = `<p class="error">Erro Firestore: ${err.message}</p>`;
-  }
+  }catch(err){ content.innerHTML="<p class='error'>Erro Firestore: "+err.message+"</p>"; }
 });
 
 /* MENU */
 function buildMenu(){
   const m = document.getElementById("menu");
+  if(!userData) return;
   m.innerHTML = `<h3>${userData.role}</h3>
     <button onclick="showDashboard()">📊 Dashboard</button>
     <button onclick="showGenerate()">⚡ Gerar Key</button>
     <button onclick="showMyKeys()">🔑 Minhas Keys</button>
-    ${userData.role==="ADM"?`
-      <button onclick="showUsers()">👤 Usuários</button>
-      <button onclick="showAllKeys()">🔑 Todas Keys</button>`:""}
+    ${userData.role==="ADM" ? `
+      <button onclick="showUsers()">👤 Gerenciar Usuários</button>
+      <button onclick="showAllKeys()">🔑 Todas Keys</button>` : ''}
     <button onclick="logout()">Sair</button>`;
 }
 
@@ -190,17 +153,11 @@ function logout(){ auth.signOut(); location.reload(); }
 /* DASHBOARD */
 async function showDashboard(){
   try{
-    if(!navigator.onLine){
-      content.innerHTML = `<p class="error">Sem conexão com a internet!</p>`;
-      return;
-    }
+    if(!navigator.onLine){ content.innerHTML="<p class='error'>Sem conexão!</p>"; return; }
     const snap = await db.collection("keys").where("owner","==",currentUser.uid).get();
     content.innerHTML = `<div class="card"><h2>Dashboard</h2>
-      <p>Total de keys: ${snap.size}</p>
-    </div>`;
-  }catch(err){
-    content.innerHTML = `<p class="error">Erro Firestore: ${err.message}</p>`;
-  }
+      <p>Total de keys: ${snap.size}</p></div>`;
+  }catch(err){ content.innerHTML="<p class='error'>Erro Firestore: "+err.message+"</p>"; }
 }
 
 /* GERAR KEYS */
@@ -226,52 +183,35 @@ async function generateKey(){
   const errorP = document.getElementById("errorGenerate");
 
   try{
-    if(!navigator.onLine){ throw new Error("Sem conexão com a internet!"); }
-    if(userData.role!=="ADM" && userData.credits<cost){ throw new Error("Sem créditos"); }
-
+    if(!navigator.onLine) throw new Error("Sem conexão!");
+    if(userData.role!=="ADM" && userData.credits<cost) throw new Error("Sem créditos!");
     const key = "KEY-"+Math.random().toString(36).substr(2,8).toUpperCase();
     const exp = Date.now()+d*86400000;
-
-    await db.collection("keys").add({
-      key:key,
-      owner:currentUser.uid,
-      created:Date.now(),
-      expires:exp,
-      paused:false
-    });
-
+    await db.collection("keys").add({key:key,owner:currentUser.uid,created:Date.now(),expires:exp,paused:false});
     if(userData.role!=="ADM"){
       await db.collection("users").doc(currentUser.uid)
         .update({credits: firebase.firestore.FieldValue.increment(-cost)});
     }
     alert("Key gerada: "+key);
     showMyKeys();
-  }catch(err){
-    errorP.innerText = err.message;
-  }
+  }catch(err){ errorP.innerText=err.message; }
 }
 
 /* MINHAS KEYS */
 async function showMyKeys(){
   try{
-    if(!navigator.onLine){
-      content.innerHTML = `<p class="error">Sem conexão com a internet!</p>`;
-      return;
-    }
+    if(!navigator.onLine){ content.innerHTML="<p class='error'>Sem conexão!</p>"; return; }
     const snap = await db.collection("keys").where("owner","==",currentUser.uid).get();
-    content.innerHTML = "<h2>Minhas Keys</h2>";
+    content.innerHTML="<h2>Minhas Keys</h2>";
     snap.forEach(d=>{
       const k=d.data();
       content.innerHTML+=`<div class="card">
-        <b>${k.key}</b><br>
-        Status: ${k.paused?"PAUSADA":"ATIVA"}<br>
+        <b>${k.key}</b><br>Status: ${k.paused?"PAUSADA":"ATIVA"}<br>
         <small>Expira em: ${Math.max(0,Math.floor((k.expires-Date.now())/1000))}s</small><br>
         <button onclick="toggleKey('${d.id}',${k.paused})">Pausar/Ativar</button>
       </div>`;
     });
-  }catch(err){
-    content.innerHTML = `<p class="error">Erro Firestore: ${err.message}</p>`;
-  }
+  }catch(err){ content.innerHTML="<p class='error'>Erro Firestore: "+err.message+"</p>"; }
 }
 
 function toggleKey(id,state){
@@ -282,7 +222,7 @@ function toggleKey(id,state){
 /* ADM USUÁRIOS */
 async function showUsers(){
   try{
-    if(!navigator.onLine){ content.innerHTML = `<p class="error">Sem conexão com a internet!</p>`; return; }
+    if(!navigator.onLine){ content.innerHTML="<p class='error'>Sem conexão!</p>"; return; }
     const snap = await db.collection("users").get();
     content.innerHTML="<h2>Usuários</h2>";
     snap.forEach(d=>{
@@ -293,23 +233,18 @@ async function showUsers(){
           .update({credits:firebase.firestore.FieldValue.increment(5)})">+5 Créditos</button>
       </div>`;
     });
-  }catch(err){
-    content.innerHTML = `<p class="error">Erro Firestore: ${err.message}</p>`;
-  }
+  }catch(err){ content.innerHTML="<p class='error'>Erro Firestore: "+err.message+"</p>"; }
 }
 
 /* ADM TODAS KEYS */
 async function showAllKeys(){
   try{
-    if(!navigator.onLine){ content.innerHTML = `<p class="error">Sem conexão com a internet!</p>`; return; }
+    if(!navigator.onLine){ content.innerHTML="<p class='error'>Sem conexão!</p>"; return; }
     const snap = await db.collection("keys").get();
     content.innerHTML="<h2>Todas Keys</h2>";
-    snap.forEach(d=>{ content.innerHTML+=`<div class="card">${d.data().key}</div>`; });
-  }catch(err){
-    content.innerHTML = `<p class="error">Erro Firestore: ${err.message}</p>`;
-  }
+    snap.forEach(d=>{ content.innerHTML+=`<div class='card'>${d.data().key}</div>`; });
+  }catch(err){ content.innerHTML="<p class='error'>Erro Firestore: "+err.message+"</p>"; }
 }
 </script>
-
 </body>
 </html>
