@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Key System - Gamer</title>
-
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -32,7 +31,6 @@ small:hover{color:#6a00ff;text-shadow:0 0 5px #fff;}
 <div class="content" id="content"></div>
 
 <script>
-/* FIREBASE CONFIG */
 firebase.initializeApp({
   apiKey: "AIzaSyAAOIbO-iUWQgjtIDtuwjUS2ViMoVo4Csc",
   authDomain: "key-system-54e4f.firebaseapp.com",
@@ -44,17 +42,14 @@ firebase.initializeApp({
 });
 const auth = firebase.auth();
 const db = firebase.firestore();
+let currentUser=null, userData=null;
 
-let currentUser, userData;
-
-/* MENU */
 function toggleMenu(){
-  const m = document.getElementById("menu");
-  m.style.left = m.style.left=="0px" ? "-260px" : "0px";
+  const m=document.getElementById("menu");
+  m.style.left=m.style.left=="0px"? "-260px":"0px";
 }
 
 /* LOGIN / REGISTRO */
-showLogin();
 function showLogin(){
   content.innerHTML = `<div class="box">
     <h2>LOGIN</h2>
@@ -78,91 +73,80 @@ function showRegister(){
 
 /* LOGIN */
 function login(){
-  const emailVal = document.getElementById("email").value;
-  const passVal = document.getElementById("pass").value;
-  const errorP = document.getElementById("errorLogin");
+  const email=document.getElementById("email").value;
+  const pass=document.getElementById("pass").value;
+  const errorP=document.getElementById("errorLogin");
   if(!navigator.onLine){ errorP.innerText="Sem conexão!"; return; }
-
-  auth.signInWithEmailAndPassword(emailVal, passVal)
-    .then(async uc=>{
-      currentUser = uc.user;
-      try{
-        const snap = await db.collection("users").doc(currentUser.uid).get();
-        if(!snap.exists) throw new Error("Usuário não encontrado!");
-        userData = snap.data();
-        buildMenu(); // monta menu após carregar userData
-        showDashboard();
-      }catch(err){ errorP.innerText="Erro Firestore: "+err.message; }
+  auth.signInWithEmailAndPassword(email,pass)
+    .then(async u=>{
+      currentUser=u.user;
+      await loadUserData();
     })
     .catch(e=>errorP.innerText="Erro Auth: "+e.message);
 }
 
 /* REGISTRO */
 function register(){
-  const emailVal = document.getElementById("email").value;
-  const passVal = document.getElementById("pass").value;
-  const errorP = document.getElementById("errorRegister");
+  const email=document.getElementById("email").value;
+  const pass=document.getElementById("pass").value;
+  const errorP=document.getElementById("errorRegister");
   if(!navigator.onLine){ errorP.innerText="Sem conexão!"; return; }
-
-  auth.createUserWithEmailAndPassword(emailVal, passVal)
-    .then(async r=>{
-      try{
-        await db.collection("users").doc(r.user.uid).set({
-          email: emailVal,
-          role:"USER",
-          credits:0,
-          created:Date.now()
-        });
-        alert("Conta criada com sucesso!");
-        showLogin();
-      }catch(err){ errorP.innerText="Erro Firestore: "+err.message; }
-    }).catch(e=>errorP.innerText="Erro Auth: "+e.message);
+  auth.createUserWithEmailAndPassword(email,pass)
+    .then(async u=>{
+      await db.collection("users").doc(u.user.uid).set({
+        email:email,role:"USER",credits:0,created:Date.now()
+      });
+      alert("Conta criada!");
+      showLogin();
+    })
+    .catch(e=>errorP.innerText="Erro Auth: "+e.message);
 }
 
-/* USUÁRIO LOGADO */
-auth.onAuthStateChanged(async user=>{
-  if(!user) return;
-  currentUser = user;
+/* LOAD USER DATA */
+async function loadUserData(){
   if(!navigator.onLine){ content.innerHTML="<p class='error'>Sem conexão!</p>"; return; }
   try{
-    const snap = await db.collection("users").doc(currentUser.uid).get();
+    const snap=await db.collection("users").doc(currentUser.uid).get();
     if(!snap.exists) throw new Error("Usuário não encontrado!");
-    userData = snap.data();
-    buildMenu(); // monta menu **após carregar dados**
+    userData=snap.data();
+    buildMenu();
     showDashboard();
-  }catch(err){ content.innerHTML="<p class='error'>Erro Firestore: "+err.message+"</p>"; }
+  }catch(err){ content.innerHTML="<p class='error'>"+err.message+"</p>"; }
+}
+
+/* AUTH STATE CHANGE */
+auth.onAuthStateChanged(user=>{
+  if(user){ currentUser=user; loadUserData(); } 
+  else { showLogin(); }
 });
 
 /* MENU */
 function buildMenu(){
-  const m = document.getElementById("menu");
+  const m=document.getElementById("menu");
   if(!userData) return;
-  m.innerHTML = `<h3>${userData.role}</h3>
+  m.innerHTML=`<h3>${userData.role}</h3>
     <button onclick="showDashboard()">📊 Dashboard</button>
     <button onclick="showGenerate()">⚡ Gerar Key</button>
     <button onclick="showMyKeys()">🔑 Minhas Keys</button>
-    ${userData.role==="ADM" ? `
+    ${userData.role==="ADM"?`
       <button onclick="showUsers()">👤 Gerenciar Usuários</button>
-      <button onclick="showAllKeys()">🔑 Todas Keys</button>` : ''}
+      <button onclick="showAllKeys()">🔑 Todas Keys</button>`:''}
     <button onclick="logout()">Sair</button>`;
 }
 
 /* LOGOUT */
-function logout(){ auth.signOut(); location.reload(); }
+function logout(){ auth.signOut(); currentUser=null; userData=null; showLogin(); }
 
 /* DASHBOARD */
 async function showDashboard(){
-  try{
-    if(!navigator.onLine){ content.innerHTML="<p class='error'>Sem conexão!</p>"; return; }
-    const snap = await db.collection("keys").where("owner","==",currentUser.uid).get();
-    content.innerHTML = `<div class="card"><h2>Dashboard</h2>
-      <p>Total de keys: ${snap.size}</p></div>`;
-  }catch(err){ content.innerHTML="<p class='error'>Erro Firestore: "+err.message+"</p>"; }
+  if(!navigator.onLine){ content.innerHTML="<p class='error'>Sem conexão!</p>"; return; }
+  const snap=await db.collection("keys").where("owner","==",currentUser.uid).get();
+  content.innerHTML=`<div class="card"><h2>Dashboard</h2><p>Total de keys: ${snap.size}</p></div>`;
 }
 
 /* GERAR KEYS */
 function showGenerate(){
-  content.innerHTML = `<div class="card">
+  content.innerHTML=`<div class="card">
     <h2>Gerar Key</h2>
     <select id="days">
       <option value="1">24h - 1 crédito</option>
@@ -175,23 +159,19 @@ function showGenerate(){
     <p id="errorGenerate" class="error"></p>
   </div>`;
 }
-
 async function generateKey(){
   const map={1:1,3:5,5:10,15:20,30:30};
   const d=parseInt(document.getElementById("days").value);
-  const cost = map[d];
-  const errorP = document.getElementById("errorGenerate");
-
+  const cost=map[d];
+  const errorP=document.getElementById("errorGenerate");
   try{
     if(!navigator.onLine) throw new Error("Sem conexão!");
     if(userData.role!=="ADM" && userData.credits<cost) throw new Error("Sem créditos!");
-    const key = "KEY-"+Math.random().toString(36).substr(2,8).toUpperCase();
-    const exp = Date.now()+d*86400000;
+    const key="KEY-"+Math.random().toString(36).substr(2,8).toUpperCase();
+    const exp=Date.now()+d*86400000;
     await db.collection("keys").add({key:key,owner:currentUser.uid,created:Date.now(),expires:exp,paused:false});
-    if(userData.role!=="ADM"){
-      await db.collection("users").doc(currentUser.uid)
-        .update({credits: firebase.firestore.FieldValue.increment(-cost)});
-    }
+    if(userData.role!=="ADM")
+      await db.collection("users").doc(currentUser.uid).update({credits:firebase.firestore.FieldValue.increment(-cost)});
     alert("Key gerada: "+key);
     showMyKeys();
   }catch(err){ errorP.innerText=err.message; }
@@ -199,51 +179,43 @@ async function generateKey(){
 
 /* MINHAS KEYS */
 async function showMyKeys(){
-  try{
-    if(!navigator.onLine){ content.innerHTML="<p class='error'>Sem conexão!</p>"; return; }
-    const snap = await db.collection("keys").where("owner","==",currentUser.uid).get();
-    content.innerHTML="<h2>Minhas Keys</h2>";
-    snap.forEach(d=>{
-      const k=d.data();
-      content.innerHTML+=`<div class="card">
-        <b>${k.key}</b><br>Status: ${k.paused?"PAUSADA":"ATIVA"}<br>
-        <small>Expira em: ${Math.max(0,Math.floor((k.expires-Date.now())/1000))}s</small><br>
-        <button onclick="toggleKey('${d.id}',${k.paused})">Pausar/Ativar</button>
-      </div>`;
-    });
-  }catch(err){ content.innerHTML="<p class='error'>Erro Firestore: "+err.message+"</p>"; }
+  if(!navigator.onLine){ content.innerHTML="<p class='error'>Sem conexão!</p>"; return; }
+  const snap=await db.collection("keys").where("owner","==",currentUser.uid).get();
+  content.innerHTML="<h2>Minhas Keys</h2>";
+  snap.forEach(d=>{
+    const k=d.data();
+    content.innerHTML+=`<div class="card">
+      <b>${k.key}</b><br>Status: ${k.paused?"PAUSADA":"ATIVA"}<br>
+      <small>Expira em: ${Math.max(0,Math.floor((k.expires-Date.now())/1000))}s</small><br>
+      <button onclick="toggleKey('${d.id}',${k.paused})">Pausar/Ativar</button>
+    </div>`;
+  });
 }
-
 function toggleKey(id,state){
   db.collection("keys").doc(id).update({paused:!state});
   showMyKeys();
 }
 
-/* ADM USUÁRIOS */
+/* ADM USERS */
 async function showUsers(){
-  try{
-    if(!navigator.onLine){ content.innerHTML="<p class='error'>Sem conexão!</p>"; return; }
-    const snap = await db.collection("users").get();
-    content.innerHTML="<h2>Usuários</h2>";
-    snap.forEach(d=>{
-      const u=d.data();
-      content.innerHTML+=`<div class="card">
-        ${u.email} | Créditos: ${u.credits}<br>
-        <button onclick="db.collection('users').doc('${d.id}')
-          .update({credits:firebase.firestore.FieldValue.increment(5)})">+5 Créditos</button>
-      </div>`;
-    });
-  }catch(err){ content.innerHTML="<p class='error'>Erro Firestore: "+err.message+"</p>"; }
+  if(!navigator.onLine){ content.innerHTML="<p class='error'>Sem conexão!</p>"; return; }
+  const snap=await db.collection("users").get();
+  content.innerHTML="<h2>Usuários</h2>";
+  snap.forEach(d=>{
+    const u=d.data();
+    content.innerHTML+=`<div class="card">${u.email} | Créditos: ${u.credits}<br>
+      <button onclick="db.collection('users').doc('${d.id}')
+        .update({credits:firebase.firestore.FieldValue.increment(5)})">+5 Créditos</button>
+    </div>`;
+  });
 }
 
 /* ADM TODAS KEYS */
 async function showAllKeys(){
-  try{
-    if(!navigator.onLine){ content.innerHTML="<p class='error'>Sem conexão!</p>"; return; }
-    const snap = await db.collection("keys").get();
-    content.innerHTML="<h2>Todas Keys</h2>";
-    snap.forEach(d=>{ content.innerHTML+=`<div class='card'>${d.data().key}</div>`; });
-  }catch(err){ content.innerHTML="<p class='error'>Erro Firestore: "+err.message+"</p>"; }
+  if(!navigator.onLine){ content.innerHTML="<p class='error'>Sem conexão!</p>"; return; }
+  const snap=await db.collection("keys").get();
+  content.innerHTML="<h2>Todas Keys</h2>";
+  snap.forEach(d=>{ content.innerHTML+=`<div class='card'>${d.data().key}</div>`; });
 }
 </script>
 </body>
