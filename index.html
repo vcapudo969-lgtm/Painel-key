@@ -2,273 +2,313 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Key System Gamer</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Key System - Gamer</title>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <style>
-*{box-sizing:border-box;font-family:Arial}
-body{margin:0;background:#05070f;color:#fff}
-header{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#0a0f1f}
-.menu-btn{background:none;border:none;color:#0ff;font-size:18px}
-.logout{font-size:12px;padding:5px 10px;border:1px solid #f55;background:none;color:#f55;border-radius:6px}
-.sidebar{position:fixed;top:0;left:-260px;width:260px;height:100%;background:#070b18;padding:20px;transition:.3s;z-index:10}
-.sidebar.active{left:0}
-.sidebar button{width:100%;margin:5px 0;padding:10px;background:#0c1225;color:#fff;border:none;border-radius:8px;text-align:left}
-.content{padding:15px}
-.card{background:#0b1022;padding:12px;border-radius:10px;margin:8px 0}
-input,select,button{width:100%;padding:10px;margin:5px 0;border-radius:8px;border:none}
-input,select{background:#111;color:#fff}
-button.action{background:#0aa}
-.copy{font-size:12px;background:#222;color:#0ff;padding:4px;border-radius:4px}
-small{color:#aaa}
+body {
+  margin:0;
+  font-family: 'Orbitron', Arial, sans-serif;
+  background: linear-gradient(135deg,#0b0f16,#0a1c2e);
+  color:#fff;
+}
+.menu-btn{
+  position:fixed; top:10px; left:10px;
+  background:#1a1f35; color:#fff; border:none;
+  padding:8px 10px; border-radius:6px; cursor:pointer; z-index:999;
+}
+.menu{
+  position:fixed; top:0; left:-260px;
+  width:240px; height:100%; background:#0f1428; padding:15px; transition:0.3s; z-index:998;
+}
+.menu button{
+  width:100%; margin:5px 0; padding:10px;
+  background:#1a1f35; color:white; border:none; border-radius:6px; cursor:pointer;
+}
+.content{ margin-left:20px; padding:20px; }
+.box{
+  background: rgba(20,30,50,0.95); padding:40px; border-radius:15px; width:380px;
+  text-align:center; box-shadow: 0 0 25px #6a00ff; margin:auto; margin-top:50px;
+}
+h2{ font-size:32px; margin-bottom:20px; color:#6a00ff; text-shadow:0 0 10px #fff; }
+input,button,select{ width:100%; padding:12px; margin:8px 0; border:none; border-radius:10px; font-size:16px; }
+button{ background: linear-gradient(45deg,#6a00ff,#ff00aa); color:white; font-weight:bold; transition:0.3s; }
+button:hover{ transform:scale(1.05); box-shadow: 0 0 15px #ff00aa; }
+small{ color:#aaa; cursor:pointer; display:block; margin-top:10px; font-size:14px; }
+small:hover{ color:#6a00ff; text-shadow:0 0 5px #fff; }
+.card{ background:#11162a; padding:15px; border-radius:10px; margin-bottom:10px; }
+.error{ color:#ff4d4d; font-weight:bold; }
 </style>
 </head>
+
 <body>
 
-<header>
-<button class="menu-btn" onclick="toggleMenu()">☰</button>
-<div id="userInfo"></div>
-<button class="logout" onclick="logout()">SAIR</button>
-</header>
-
-<div class="sidebar" id="menu"></div>
+<button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
+<div id="menu" class="menu"></div>
 <div class="content" id="content"></div>
 
 <script>
-/* ================= URL AFILIADO ================= */
-const params=new URLSearchParams(window.location.search)
-const refLink=params.get('ref')
+/* FIREBASE CONFIG */
+firebase.initializeApp({
+  apiKey: "AIzaSyAAOIbO-iUWQgjtIDtuwjUS2ViMoVo4Csc",
+  authDomain: "key-system-54e4f.firebaseapp.com",
+  projectId: "key-system-54e4f",
+  storageBucket: "key-system-54e4f.firebasestorage.app",
+  messagingSenderId: "59328259414",
+  appId: "1:59328259414:web:aaa3188415ebceb12022f7",
+  measurementId: "G-SD71Z2KVPC"
+});
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-/* ================= DADOS ================= */
-let users=JSON.parse(localStorage.getItem('users'))||{
- admin:{pass:'admin123',role:'admin',credits:Infinity,history:[],affiliate:'admin',referred:[],parent:null}
-}
-let keys=JSON.parse(localStorage.getItem('keys'))||[]
-let currentUser=localStorage.getItem('currentUser')
-let role=currentUser?users[currentUser].role:null
+let currentUser, userData;
 
-const PLANS={
- '24h':{h:24,c:1},
- '3d':{h:72,c:5},
- '5d':{h:120,c:10},
- '15d':{h:360,c:20},
- '30d':{h:720,c:30}
-}
-
-/* ================= UTIL ================= */
-function save(){
- localStorage.setItem('users',JSON.stringify(users))
- localStorage.setItem('keys',JSON.stringify(keys))
-}
-function atualizarTopo(){
- userInfo.innerText=currentUser+' | Créditos: '+(users[currentUser].credits===Infinity?'∞':users[currentUser].credits)
+/* MENU */
+function toggleMenu(){
+  const m = document.getElementById("menu");
+  m.style.left = m.style.left=="0px" ? "-260px" : "0px";
 }
 
-/* ================= MENU ================= */
-function toggleMenu(){menu.classList.toggle('active')}
-function closeMenu(){menu.classList.remove('active')}
-document.addEventListener('click',e=>{
- if(!menu.contains(e.target)&&!e.target.classList.contains('menu-btn')) menu.classList.remove('active')
-})
+/* LOGIN / REGISTRO */
+showLogin();
 
-/* ================= LOGIN ================= */
-if(!currentUser) loginPage()
-else init()
-
-function loginPage(){
- document.querySelector('header').style.display='none'
- content.innerHTML=`
- <div class="card">
- <h3>Login</h3>
- <input id="lu" placeholder="Usuário">
- <input id="lp" type="password" placeholder="Senha">
- <button class="action" onclick="login()">Entrar</button>
- <hr>
- <h3>Registrar</h3>
- <input id="ru" placeholder="Usuário">
- <input id="rp" type="password" placeholder="Senha">
- ${refLink?`<small>Afiliado de: <b>${refLink}</b></small>`:''}
- <button onclick="register()">Registrar</button>
- </div>`
+function showLogin(){
+  content.innerHTML = `<div class="box">
+    <h2>LOGIN</h2>
+    <input id="email" placeholder="Email">
+    <input id="pass" type="password" placeholder="Senha"><br>
+    <button onclick="login()">Entrar</button>
+    <small onclick="showRegister()">Criar conta</small>
+    <p id="errorLogin" class="error"></p>
+  </div>`;
 }
 
+function showRegister(){
+  content.innerHTML = `<div class="box">
+    <h2>REGISTRO</h2>
+    <input id="email" placeholder="Email">
+    <input id="pass" type="password" placeholder="Senha"><br>
+    <button onclick="register()">Registrar</button>
+    <small onclick="showLogin()">Já tenho conta</small>
+    <p id="errorRegister" class="error"></p>
+  </div>`;
+}
+
+/* LOGIN */
 function login(){
- if(!users[lu.value]||users[lu.value].pass!==lp.value) return alert('Login inválido')
- currentUser=lu.value
- localStorage.setItem('currentUser',currentUser)
- location.reload()
+  const emailVal = document.getElementById("email").value;
+  const passVal = document.getElementById("pass").value;
+  const errorP = document.getElementById("errorLogin");
+
+  if(!navigator.onLine){
+    errorP.innerText = "Sem conexão com a internet!";
+    return;
+  }
+
+  auth.signInWithEmailAndPassword(emailVal, passVal)
+    .then(async uc=>{
+      currentUser = uc.user;
+      try{
+        const snap = await db.collection("users").doc(currentUser.uid).get();
+        if(!snap.exists) throw new Error("Usuário não encontrado no Firestore");
+        userData = snap.data();
+        buildMenu();
+        showDashboard();
+      }catch(err){
+        errorP.innerText = "Erro Firestore: "+err.message;
+      }
+    })
+    .catch(e=>errorP.innerText = "Erro Auth: "+e.message);
 }
 
+/* REGISTRO */
 function register(){
- if(users[ru.value]||ru.value==='admin') return alert('Usuário inválido')
- users[ru.value]={pass:rp.value,role:'user',credits:5,history:[],affiliate:ru.value,referred:[],parent:(refLink&&users[refLink])?refLink:null}
- if(users[ru.value].parent) users[users[ru.value].parent].referred.push(ru.value)
- save();alert('Registrado com sucesso!')
+  const emailVal = document.getElementById("email").value;
+  const passVal = document.getElementById("pass").value;
+  const errorP = document.getElementById("errorRegister");
+
+  if(!navigator.onLine){
+    errorP.innerText = "Sem conexão com a internet!";
+    return;
+  }
+
+  auth.createUserWithEmailAndPassword(emailVal, passVal)
+    .then(async r=>{
+      try{
+        await db.collection("users").doc(r.user.uid).set({
+          email: emailVal,
+          role:"USER",
+          credits:0,
+          created:Date.now()
+        });
+        alert("Conta criada com sucesso!");
+        showLogin();
+      }catch(err){
+        errorP.innerText = "Erro Firestore: "+err.message;
+      }
+    }).catch(e=>errorP.innerText = "Erro Auth: "+e.message);
 }
 
-/* ================= APP ================= */
-function init(){
- document.querySelector('header').style.display='flex'
- atualizarTopo()
- buildMenu()
- dashboard()
-}
+/* USUÁRIO LOGADO */
+auth.onAuthStateChanged(async user=>{
+  if(!user) return;
+  currentUser = user;
+  try{
+    if(!navigator.onLine){
+      content.innerHTML = `<p class="error">Sem conexão com a internet!</p>`;
+      return;
+    }
+    const snap = await db.collection("users").doc(currentUser.uid).get();
+    if(!snap.exists) throw new Error("Usuário não encontrado no Firestore");
+    userData = snap.data();
+    buildMenu();
+    showDashboard();
+  }catch(err){
+    content.innerHTML = `<p class="error">Erro Firestore: ${err.message}</p>`;
+  }
+});
 
+/* MENU */
 function buildMenu(){
- if(role==='admin'){
- menu.innerHTML=`
- <button onclick="dashboard();closeMenu()">📊 Dashboard</button>
- <button onclick="generatePage();closeMenu()">⚡ Gerar Key</button>
- <button onclick="customKeyPage();closeMenu()">🎨 Personalizar Key</button>
- <button onclick="keysPage();closeMenu()">🔑 Gerenciar Keys</button>
- <button onclick="usersPage();closeMenu()">👥 Usuários</button>
- <button onclick="affiliatePage();closeMenu()">🤝 Afiliados</button>`
- }else{
- menu.innerHTML=`
- <button onclick="dashboard();closeMenu()">📊 Dashboard</button>
- <button onclick="generatePage();closeMenu()">⚡ Gerar Key</button>
- <button onclick="customKeyPage();closeMenu()">🎨 Personalizar Key</button>
- <button onclick="keysPage();closeMenu()">🔑 Minhas Keys</button>
- <button onclick="affiliatePage();closeMenu()">🤝 Afiliados</button>
- <button onclick="historyPage();closeMenu()">💰 Histórico</button>`
- }
+  const m = document.getElementById("menu");
+  m.innerHTML = `<h3>${userData.role}</h3>
+    <button onclick="showDashboard()">📊 Dashboard</button>
+    <button onclick="showGenerate()">⚡ Gerar Key</button>
+    <button onclick="showMyKeys()">🔑 Minhas Keys</button>
+    ${userData.role==="ADM"?`
+      <button onclick="showUsers()">👤 Usuários</button>
+      <button onclick="showAllKeys()">🔑 Todas Keys</button>`:""}
+    <button onclick="logout()">Sair</button>`;
 }
 
-/* ================= DASHBOARD ================= */
-function dashboard(){
- let total=keys.filter(k=>k.owner===currentUser).length
- content.innerHTML=`<div class="card"><h3>Dashboard</h3>Keys geradas: ${total}</div>`
+/* LOGOUT */
+function logout(){ auth.signOut(); location.reload(); }
+
+/* DASHBOARD */
+async function showDashboard(){
+  try{
+    if(!navigator.onLine){
+      content.innerHTML = `<p class="error">Sem conexão com a internet!</p>`;
+      return;
+    }
+    const snap = await db.collection("keys").where("owner","==",currentUser.uid).get();
+    content.innerHTML = `<div class="card"><h2>Dashboard</h2>
+      <p>Total de keys: ${snap.size}</p>
+    </div>`;
+  }catch(err){
+    content.innerHTML = `<p class="error">Erro Firestore: ${err.message}</p>`;
+  }
 }
 
-/* ================= GERAR KEY ================= */
-function generatePage(){
- content.innerHTML=`
- <div class="card">
- <h3>Gerar Key</h3>
- <select id="plan">${Object.keys(PLANS).map(p=>`<option>${p}</option>`)}</select>
- <button class="action" onclick="generate()">Gerar</button>
- </div>`
-}
-function generate(){
- let p=PLANS[plan.value]
- if(role!=='admin' && users[currentUser].credits<p.c) return alert('Sem créditos')
- keys.push({key:'KEY-'+crypto.randomUUID().slice(0,8).toUpperCase(),owner:currentUser,created:Date.now(),expires:Date.now()+p.h*3600000,paused:false,duration:p.h*3600000})
- if(role!=='admin') users[currentUser].credits-=p.c
- save();atualizarTopo();alert('Key criada')
-}
-
-/* ================= PERSONALIZAR ================= */
-function customKeyPage(){
- content.innerHTML=`
- <div class="card">
- <h3>Personalizar Key</h3>
- <input id="prefix" placeholder="Prefixo ex: VIP-">
- <select id="plan">${Object.keys(PLANS).map(p=>`<option>${p}</option>`)}</select>
- <button class="action" onclick="generateCustom()">Gerar</button>
- </div>`
-}
-function generateCustom(){
- let p=PLANS[plan.value]
- if(role!=='admin' && users[currentUser].credits<p.c) return alert('Sem créditos')
- keys.push({key:(prefix.value||'KEY-')+crypto.randomUUID().slice(0,8).toUpperCase(),owner:currentUser,created:Date.now(),expires:Date.now()+p.h*3600000,paused:false,duration:p.h*3600000})
- if(role!=='admin') users[currentUser].credits-=p.c
- save();atualizarTopo();alert('Key personalizada criada')
+/* GERAR KEYS */
+function showGenerate(){
+  content.innerHTML = `<div class="card">
+    <h2>Gerar Key</h2>
+    <select id="days">
+      <option value="1">24h - 1 crédito</option>
+      <option value="3">3 dias - 5 créditos</option>
+      <option value="5">5 dias - 10 créditos</option>
+      <option value="15">15 dias - 20 créditos</option>
+      <option value="30">30 dias - 30 créditos</option>
+    </select><br><br>
+    <button onclick="generateKey()">Gerar</button>
+    <p id="errorGenerate" class="error"></p>
+  </div>`;
 }
 
-/* ================= KEYS ================= */
-function status(k){
- if(k.paused) return 'PAUSADA'
- if(Date.now()>k.expires) return 'EXPIRADA'
- let d=k.expires-Date.now()
- return `ATIVA ⏳ ${Math.floor(d/3600000)}h ${Math.floor(d%3600000/60000)}m ${Math.floor(d%60000/1000)}s`
-}
-function keysPage(){
- content.innerHTML='<h3>Keys</h3>'
- keys.filter(k=>role==='admin'||k.owner===currentUser).forEach(k=>{
- content.innerHTML+=`
- <div class="card">
- <b>${k.key}</b><br>${status(k)}
- <button class="copy" onclick="navigator.clipboard.writeText('${k.key}')">Copiar</button>
- ${(k.owner===currentUser||role==='admin')?`
- <button onclick="k.paused=!k.paused;save();keysPage()">⏸</button>
- <button onclick="k.expires=Date.now()+k.duration;save();keysPage()">🔄</button>`:''}
- </div>`
- })
+async function generateKey(){
+  const map={1:1,3:5,5:10,15:20,30:30};
+  const d=parseInt(document.getElementById("days").value);
+  const cost = map[d];
+  const errorP = document.getElementById("errorGenerate");
+
+  try{
+    if(!navigator.onLine){ throw new Error("Sem conexão com a internet!"); }
+    if(userData.role!=="ADM" && userData.credits<cost){ throw new Error("Sem créditos"); }
+
+    const key = "KEY-"+Math.random().toString(36).substr(2,8).toUpperCase();
+    const exp = Date.now()+d*86400000;
+
+    await db.collection("keys").add({
+      key:key,
+      owner:currentUser.uid,
+      created:Date.now(),
+      expires:exp,
+      paused:false
+    });
+
+    if(userData.role!=="ADM"){
+      await db.collection("users").doc(currentUser.uid)
+        .update({credits: firebase.firestore.FieldValue.increment(-cost)});
+    }
+    alert("Key gerada: "+key);
+    showMyKeys();
+  }catch(err){
+    errorP.innerText = err.message;
+  }
 }
 
-/* ================= AFILIADOS ================= */
-function affiliatePage(){
- let u=users[currentUser]
- content.innerHTML=`
- <div class="card">
- <h3>Afiliados</h3>
- <p>Seu link:</p>
- <small>${location.origin+location.pathname}?ref=${currentUser}</small>
- <hr>
- </div>`
- u.referred.forEach(a=>{
- content.innerHTML+=`
- <div class="card">
- ${a} | Créditos: ${users[a].credits}
- <input type="number" placeholder="Enviar créditos"
- onchange="sendAffiliateCredits('${a}',this.value)">
- </div>`
- })
-}
-function sendAffiliateCredits(a,amount){
- amount=Number(amount)
- if(amount<=0) return
- if(role!=='admin' && users[currentUser].credits<amount) return alert('Sem créditos')
- if(role!=='admin') users[currentUser].credits-=amount
- users[a].credits+=amount
- users[currentUser].history.push({date:Date.now(),value:-amount,desc:'Enviou créditos para '+a})
- users[a].history.push({date:Date.now(),value:+amount,desc:'Recebeu créditos de '+currentUser})
- save();atualizarTopo();affiliatePage()
+/* MINHAS KEYS */
+async function showMyKeys(){
+  try{
+    if(!navigator.onLine){
+      content.innerHTML = `<p class="error">Sem conexão com a internet!</p>`;
+      return;
+    }
+    const snap = await db.collection("keys").where("owner","==",currentUser.uid).get();
+    content.innerHTML = "<h2>Minhas Keys</h2>";
+    snap.forEach(d=>{
+      const k=d.data();
+      content.innerHTML+=`<div class="card">
+        <b>${k.key}</b><br>
+        Status: ${k.paused?"PAUSADA":"ATIVA"}<br>
+        <small>Expira em: ${Math.max(0,Math.floor((k.expires-Date.now())/1000))}s</small><br>
+        <button onclick="toggleKey('${d.id}',${k.paused})">Pausar/Ativar</button>
+      </div>`;
+    });
+  }catch(err){
+    content.innerHTML = `<p class="error">Erro Firestore: ${err.message}</p>`;
+  }
 }
 
-/* ================= HISTÓRICO ================= */
-function historyPage(){
- content.innerHTML='<h3>Histórico</h3>'
- users[currentUser].history.forEach(h=>{
- content.innerHTML+=`<div class="card">${h.desc} (${h.value})</div>`
- })
+function toggleKey(id,state){
+  db.collection("keys").doc(id).update({paused:!state});
+  showMyKeys();
 }
 
-/* ================= ADM USUÁRIOS ================= */
-function usersPage(){
- content.innerHTML=`
- <div class="card">
- <h3>Adicionar Usuário</h3>
- <input id="newUser" placeholder="Usuário">
- <input id="newPass" type="password" placeholder="Senha">
- <input id="newCredits" type="number" placeholder="Créditos iniciais">
- <button class="action" onclick="addUser()">Criar Usuário</button>
- </div>
- <h3>Usuários</h3>`
- Object.keys(users).forEach(u=>{
- if(users[u].role==='admin')return
- content.innerHTML+=`
- <div class="card">
- ${u} | Créditos: ${users[u].credits}
- <input type="number" placeholder="+ créditos" onchange="users['${u}'].credits+=Number(this.value);save()">
- <button onclick="delete users['${u}'];save();usersPage()">🚫 Expulsar</button>
- </div>`
- })
-}
-function addUser(){
- if(!newUser.value||!newPass.value) return alert('Preencha tudo')
- if(users[newUser.value]||newUser.value==='admin') return alert('Usuário inválido')
- users[newUser.value]={pass:newPass.value,role:'user',credits:Number(newCredits.value||0),history:[],affiliate:newUser.value,referred:[],parent:null}
- save();alert('Usuário criado');usersPage()
+/* ADM USUÁRIOS */
+async function showUsers(){
+  try{
+    if(!navigator.onLine){ content.innerHTML = `<p class="error">Sem conexão com a internet!</p>`; return; }
+    const snap = await db.collection("users").get();
+    content.innerHTML="<h2>Usuários</h2>";
+    snap.forEach(d=>{
+      const u=d.data();
+      content.innerHTML+=`<div class="card">
+        ${u.email} | Créditos: ${u.credits}<br>
+        <button onclick="db.collection('users').doc('${d.id}')
+          .update({credits:firebase.firestore.FieldValue.increment(5)})">+5 Créditos</button>
+      </div>`;
+    });
+  }catch(err){
+    content.innerHTML = `<p class="error">Erro Firestore: ${err.message}</p>`;
+  }
 }
 
-/* ================= LOGOUT ================= */
-function logout(){
- localStorage.removeItem('currentUser')
- location.reload()
+/* ADM TODAS KEYS */
+async function showAllKeys(){
+  try{
+    if(!navigator.onLine){ content.innerHTML = `<p class="error">Sem conexão com a internet!</p>`; return; }
+    const snap = await db.collection("keys").get();
+    content.innerHTML="<h2>Todas Keys</h2>";
+    snap.forEach(d=>{ content.innerHTML+=`<div class="card">${d.data().key}</div>`; });
+  }catch(err){
+    content.innerHTML = `<p class="error">Erro Firestore: ${err.message}</p>`;
+  }
 }
-
-/* ================= TIMER ================= */
-setInterval(()=>{if(content.innerHTML.includes('Keys'))keysPage()},1000)
 </script>
 
 </body>
