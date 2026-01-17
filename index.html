@@ -19,6 +19,7 @@ input,select,button{width:100%;padding:10px;margin:5px 0;border-radius:8px;borde
 input,select{background:#111;color:#fff}
 button.action{background:#0aa}
 .copy{font-size:12px;background:#222;color:#0ff;padding:4px;border-radius:4px}
+small{color:#aaa}
 </style>
 </head>
 <body>
@@ -33,17 +34,17 @@ button.action{background:#0aa}
 <div class="content" id="content"></div>
 
 <script>
-/* ====== URL AFILIADO ====== */
-const params = new URLSearchParams(window.location.search)
-const refLink = params.get('ref')
+/* ================= URL AFILIADO ================= */
+const params=new URLSearchParams(window.location.search)
+const refLink=params.get('ref')
 
-/* ====== DADOS ====== */
-let users = JSON.parse(localStorage.getItem('users')) || {
+/* ================= DADOS ================= */
+let users=JSON.parse(localStorage.getItem('users'))||{
  admin:{pass:'admin123',role:'admin',credits:Infinity,history:[],affiliate:'admin',referred:[],parent:null}
 }
-let keys = JSON.parse(localStorage.getItem('keys')) || []
-let currentUser = localStorage.getItem('currentUser')
-let role = currentUser ? users[currentUser].role : null
+let keys=JSON.parse(localStorage.getItem('keys'))||[]
+let currentUser=localStorage.getItem('currentUser')
+let role=currentUser?users[currentUser].role:null
 
 const PLANS={
  '24h':{h:24,c:1},
@@ -53,24 +54,23 @@ const PLANS={
  '30d':{h:720,c:30}
 }
 
-/* ====== UTIL ====== */
+/* ================= UTIL ================= */
 function save(){
  localStorage.setItem('users',JSON.stringify(users))
  localStorage.setItem('keys',JSON.stringify(keys))
 }
 function atualizarTopo(){
- document.getElementById('userInfo').innerText=
- currentUser+' | Créditos: '+(users[currentUser].credits===Infinity?'∞':users[currentUser].credits)
+ userInfo.innerText=currentUser+' | Créditos: '+(users[currentUser].credits===Infinity?'∞':users[currentUser].credits)
 }
 
-/* ====== MENU ====== */
+/* ================= MENU ================= */
 function toggleMenu(){menu.classList.toggle('active')}
 function closeMenu(){menu.classList.remove('active')}
 document.addEventListener('click',e=>{
  if(!menu.contains(e.target)&&!e.target.classList.contains('menu-btn')) menu.classList.remove('active')
 })
 
-/* ====== LOGIN ====== */
+/* ================= LOGIN ================= */
 if(!currentUser) loginPage()
 else init()
 
@@ -100,26 +100,12 @@ function login(){
 
 function register(){
  if(users[ru.value]||ru.value==='admin') return alert('Usuário inválido')
-
- users[ru.value]={
-   pass:rp.value,
-   role:'user',
-   credits:5,
-   history:[],
-   affiliate:ru.value,
-   referred:[],
-   parent:(refLink&&users[refLink])?refLink:null
- }
-
- if(users[ru.value].parent){
-   users[users[ru.value].parent].referred.push(ru.value)
- }
-
- save()
- alert('Registrado com sucesso!')
+ users[ru.value]={pass:rp.value,role:'user',credits:5,history:[],affiliate:ru.value,referred:[],parent:(refLink&&users[refLink])?refLink:null}
+ if(users[ru.value].parent) users[users[ru.value].parent].referred.push(ru.value)
+ save();alert('Registrado com sucesso!')
 }
 
-/* ====== APP ====== */
+/* ================= APP ================= */
 function init(){
  document.querySelector('header').style.display='flex'
  atualizarTopo()
@@ -135,8 +121,7 @@ function buildMenu(){
  <button onclick="customKeyPage();closeMenu()">🎨 Personalizar Key</button>
  <button onclick="keysPage();closeMenu()">🔑 Gerenciar Keys</button>
  <button onclick="usersPage();closeMenu()">👥 Usuários</button>
- <button onclick="affiliatePage();closeMenu()">🤝 Afiliados</button>
- `
+ <button onclick="affiliatePage();closeMenu()">🤝 Afiliados</button>`
  }else{
  menu.innerHTML=`
  <button onclick="dashboard();closeMenu()">📊 Dashboard</button>
@@ -144,18 +129,17 @@ function buildMenu(){
  <button onclick="customKeyPage();closeMenu()">🎨 Personalizar Key</button>
  <button onclick="keysPage();closeMenu()">🔑 Minhas Keys</button>
  <button onclick="affiliatePage();closeMenu()">🤝 Afiliados</button>
- <button onclick="historyPage();closeMenu()">💰 Histórico</button>
- `
+ <button onclick="historyPage();closeMenu()">💰 Histórico</button>`
  }
 }
 
-/* ====== DASHBOARD ====== */
+/* ================= DASHBOARD ================= */
 function dashboard(){
  let total=keys.filter(k=>k.owner===currentUser).length
  content.innerHTML=`<div class="card"><h3>Dashboard</h3>Keys geradas: ${total}</div>`
 }
 
-/* ====== GERAR KEY ====== */
+/* ================= GERAR KEY ================= */
 function generatePage(){
  content.innerHTML=`
  <div class="card">
@@ -167,19 +151,12 @@ function generatePage(){
 function generate(){
  let p=PLANS[plan.value]
  if(role!=='admin' && users[currentUser].credits<p.c) return alert('Sem créditos')
- keys.push({
-   key:'KEY-'+crypto.randomUUID().slice(0,8).toUpperCase(),
-   owner:currentUser,
-   created:Date.now(),
-   expires:Date.now()+p.h*3600000,
-   paused:false,
-   duration:p.h*3600000
- })
+ keys.push({key:'KEY-'+crypto.randomUUID().slice(0,8).toUpperCase(),owner:currentUser,created:Date.now(),expires:Date.now()+p.h*3600000,paused:false,duration:p.h*3600000})
  if(role!=='admin') users[currentUser].credits-=p.c
  save();atualizarTopo();alert('Key criada')
 }
 
-/* ====== PERSONALIZAR ====== */
+/* ================= PERSONALIZAR ================= */
 function customKeyPage(){
  content.innerHTML=`
  <div class="card">
@@ -192,19 +169,12 @@ function customKeyPage(){
 function generateCustom(){
  let p=PLANS[plan.value]
  if(role!=='admin' && users[currentUser].credits<p.c) return alert('Sem créditos')
- keys.push({
-   key:(prefix.value||'KEY-')+crypto.randomUUID().slice(0,8).toUpperCase(),
-   owner:currentUser,
-   created:Date.now(),
-   expires:Date.now()+p.h*3600000,
-   paused:false,
-   duration:p.h*3600000
- })
+ keys.push({key:(prefix.value||'KEY-')+crypto.randomUUID().slice(0,8).toUpperCase(),owner:currentUser,created:Date.now(),expires:Date.now()+p.h*3600000,paused:false,duration:p.h*3600000})
  if(role!=='admin') users[currentUser].credits-=p.c
  save();atualizarTopo();alert('Key personalizada criada')
 }
 
-/* ====== KEYS ====== */
+/* ================= KEYS ================= */
 function status(k){
  if(k.paused) return 'PAUSADA'
  if(Date.now()>k.expires) return 'EXPIRADA'
@@ -225,7 +195,7 @@ function keysPage(){
  })
 }
 
-/* ====== AFILIADOS ====== */
+/* ================= AFILIADOS ================= */
 function affiliatePage(){
  let u=users[currentUser]
  content.innerHTML=`
@@ -236,15 +206,14 @@ function affiliatePage(){
  <hr>
  </div>`
  u.referred.forEach(a=>{
-   content.innerHTML+=`
-   <div class="card">
-   ${a} | Créditos: ${users[a].credits}
-   <input type="number" placeholder="Enviar créditos"
-   onchange="sendAffiliateCredits('${a}',this.value)">
-   </div>`
+ content.innerHTML+=`
+ <div class="card">
+ ${a} | Créditos: ${users[a].credits}
+ <input type="number" placeholder="Enviar créditos"
+ onchange="sendAffiliateCredits('${a}',this.value)">
+ </div>`
  })
 }
-
 function sendAffiliateCredits(a,amount){
  amount=Number(amount)
  if(amount<=0) return
@@ -256,7 +225,7 @@ function sendAffiliateCredits(a,amount){
  save();atualizarTopo();affiliatePage()
 }
 
-/* ====== HISTÓRICO ====== */
+/* ================= HISTÓRICO ================= */
 function historyPage(){
  content.innerHTML='<h3>Histórico</h3>'
  users[currentUser].history.forEach(h=>{
@@ -264,26 +233,41 @@ function historyPage(){
  })
 }
 
-/* ====== ADM ====== */
+/* ================= ADM USUÁRIOS ================= */
 function usersPage(){
- content.innerHTML='<h3>Usuários</h3>'
+ content.innerHTML=`
+ <div class="card">
+ <h3>Adicionar Usuário</h3>
+ <input id="newUser" placeholder="Usuário">
+ <input id="newPass" type="password" placeholder="Senha">
+ <input id="newCredits" type="number" placeholder="Créditos iniciais">
+ <button class="action" onclick="addUser()">Criar Usuário</button>
+ </div>
+ <h3>Usuários</h3>`
  Object.keys(users).forEach(u=>{
  if(users[u].role==='admin')return
  content.innerHTML+=`
  <div class="card">
  ${u} | Créditos: ${users[u].credits}
- <input placeholder="+ créditos" onchange="users['${u}'].credits+=Number(this.value);save()">
- <button onclick="delete users['${u}'];save();usersPage()">Expulsar</button>
+ <input type="number" placeholder="+ créditos" onchange="users['${u}'].credits+=Number(this.value);save()">
+ <button onclick="delete users['${u}'];save();usersPage()">🚫 Expulsar</button>
  </div>`
  })
 }
+function addUser(){
+ if(!newUser.value||!newPass.value) return alert('Preencha tudo')
+ if(users[newUser.value]||newUser.value==='admin') return alert('Usuário inválido')
+ users[newUser.value]={pass:newPass.value,role:'user',credits:Number(newCredits.value||0),history:[],affiliate:newUser.value,referred:[],parent:null}
+ save();alert('Usuário criado');usersPage()
+}
 
-/* ====== LOGOUT ====== */
+/* ================= LOGOUT ================= */
 function logout(){
  localStorage.removeItem('currentUser')
  location.reload()
 }
 
+/* ================= TIMER ================= */
 setInterval(()=>{if(content.innerHTML.includes('Keys'))keysPage()},1000)
 </script>
 
